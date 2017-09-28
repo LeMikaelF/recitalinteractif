@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<AnchorPane fx:id="anchorPanePres" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="480.0" prefWidth="800.0" stylesheets="/styles.css" xmlns="http://javafx.com/javafx/8.0.60"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.ContrPres">
+    <children>
+        <ToolBar fx:id="tBarPres" layoutX="600.0" layoutY="440.0" AnchorPane.bottomAnchor="0.0"
+                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <items>
+                <HBox prefWidth="788.0">
+                    <children>
+                        <Label text="Lien A : ">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienA"/>
+                            </styleClass>
+                        </Label>
+                        <Label fx:id="lblNumAVis" text="00">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienA"/>
+                            </styleClass>
+                        </Label>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Label text="Lien B : ">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienB"/>
+                            </styleClass>
+                        </Label>
+                        <Label fx:id="lblNumBVis" text="00">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienB"/>
+                            </styleClass>
+                        </Label>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Label text="Lien C : ">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienC"/>
+                            </styleClass>
+                        </Label>
+                        <Label fx:id="lblNumCVis" text="00">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienC"/>
+                            </styleClass>
+                        </Label>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Label text="Lien D : ">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienD"/>
+                            </styleClass>
+                        </Label>
+                        <Label fx:id="lblNumDVis" text="00">
+                            <styleClass>
+                                <String fx:value="lien"/>
+                                <String fx:value="lienD"/>
+                            </styleClass>
+                        </Label>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Label prefHeight="17.0" prefWidth="111.0" styleClass="lien" text="Votes enregistrés : "/>
+                        <Label fx:id="lblVotesEnregistresVis" styleClass="lien" text="27"/>
+                        <Label styleClass="lien" text=" / "/>
+                        <Label fx:id="lblTotalVotesVis" styleClass="lien" text="42"/>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Separator orientation="VERTICAL"/>
+                        <Region prefWidth="20.0" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblSeuilPresText" styleClass="lien" text="Seuil critique  : "/>
+                        <Label fx:id="lblSeuilPres" styleClass="lien" text="12"/>
+                    </children>
+                </HBox>
+            </items>
+        </ToolBar>
+    </children>
+</AnchorPane>

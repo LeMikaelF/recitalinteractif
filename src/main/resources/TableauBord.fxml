@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+            prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="presentation.ContrPres">
+    <children>
+        <MenuBar layoutX="224.0" layoutY="37.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                 AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu fx:id="menuFichier" mnemonicParsing="false" text="Fichier">
+                    <items>
+                        <MenuItem fx:id="menuOuvrirRecital" mnemonicParsing="false" onAction="#menuHandler"
+                                  text="Ouvrir récital"/>
+                        <MenuItem fx:id="menuNaviguerAuTexton" mnemonicParsing="false" onAction="#menuHandler"
+                                  text="Naviguer au texton..."/>
+                        <Menu mnemonicParsing="false" text="Naviguer au lien...">
+                            <items>
+                                <MenuItem fx:id="menuLienA" mnemonicParsing="false" onAction="#menuHandler"
+                                          text="Lien A"/>
+                                <MenuItem fx:id="menuLienB" mnemonicParsing="false" onAction="#menuHandler"
+                                          text="Lien B"/>
+                                <MenuItem fx:id="menuLienC" mnemonicParsing="false" onAction="#menuHandler"
+                                          text="Lien C"/>
+                                <MenuItem fx:id="menuLienD" mnemonicParsing="false" onAction="#menuHandler"
+                                          text="Lien D"/>
+                            </items>
+                        </Menu>
+                        <MenuItem fx:id="menuPrecedent" mnemonicParsing="false" onAction="#menuHandler"
+                                  text="Précédent"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem fx:id="menuInstaller" mnemonicParsing="false" onAction="#menuHandler"
+                                  text="Installer présentation"/>
+                        <MenuItem fx:id="menuRestaurer" mnemonicParsing="false" onAction="#menuHandler"
+                                  text="Restaurer présentation"/>
+                        <MenuItem fx:id="menuFermer" mnemonicParsing="false" onAction="#menuHandler" text="Fermer"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <HBox layoutY="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="25.0">
+            <children>
+                <SplitPane dividerPositions="0.6404886561954625" orientation="VERTICAL" prefHeight="200.0"
+                           prefWidth="160.0" HBox.hgrow="ALWAYS">
+                    <items>
+                        <AnchorPane fx:id="anchorPaneTabBord" minHeight="0.0" minWidth="0.0" prefHeight="100.0"
+                                    prefWidth="160.0">
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                            <children>
+                                <TextArea fx:id="textAreaTexte" prefHeight="200.0" prefWidth="200.0"
+                                          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                            </children>
+                        </AnchorPane>
+                    </items>
+                </SplitPane>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <HBox>
+                            <children>
+                                <Label text="Enreg. : ">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblNumEnregistres" text="999">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="A : ">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblNumA" text="999">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="B : ">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblNumB" text="999">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="C : ">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblNumC" text="999">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="D : ">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblNumD" text="999">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="s.c.">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblNumSeuil" text="999">
+                                    <padding>
+                                        <Insets left="5.0" right="5.0"/>
+                                    </padding>
+                                </Label>
+                            </children>
+                            <padding>
+                                <Insets left="5.0" right="5.0"/>
+                            </padding>
+                        </HBox>
+                        <ToggleButton fx:id="tglSeuil" contentDisplay="CENTER" maxWidth="1.7976931348623157E308"
+                                      mnemonicParsing="false" prefWidth="94.0" text="Seuil critique"/>
+                        <VBox alignment="CENTER">
+                            <children>
+                                <Button fx:id="btnTermine" alignment="CENTER" contentDisplay="CENTER"
+                                        mnemonicParsing="false" onAction="#handleButtonAction" text="Terminé"
+                                        textAlignment="CENTER"/>
+                            </children>
+                        </VBox>
+                        <Separator prefWidth="200.0">
+                            <padding>
+                                <Insets bottom="10.0" top="10.0"/>
+                            </padding>
+                        </Separator>
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Texton courant :" textAlignment="CENTER"
+                               underline="true"/>
+                        <HBox>
+                            <children>
+                                <Label text="Num. :"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblNumTexton" text="999"/>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="Type"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblType" text="999"/>
+                            </children>
+                        </HBox>
+                        <HBox disable="true">
+                            <children>
+                                <Label text="Minuterie"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblTimer" text="999"/>
+                            </children>
+                        </HBox>
+                        <Label text="Source :"/>
+                        <TextArea fx:id="textAreaSource" editable="false" prefHeight="200.0" prefWidth="100.0"
+                                  VBox.vgrow="ALWAYS"/>
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Minuteries" textAlignment="CENTER"
+                               underline="true"/>
+                        <HBox>
+                            <children>
+                                <Label text="Texton"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblHorlTexton" text="00:00:00"/>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="Récital"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblHorlRecital" text="00:00:00"/>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Label text="Horloge"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblHorloge" text="00:00:00"/>
+                            </children>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets left="2.0" right="2.0"/>
+                    </padding>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>
