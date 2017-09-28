@@ -1,4 +1,6 @@
-package textonclasses;
+package textonIO;
+
+import textonclasses.Texton;
 
 import java.io.IOException;
 import java.sql.SQLException;

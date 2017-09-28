@@ -2,7 +2,7 @@ package presentation;
 
 /**
  * Created by Mikaël on 2016-11-03.
- */
+ **/
 
 import anim.ChangeAnim;
 import anim.ChangeAnimFactory;
@@ -35,8 +35,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import server.*;
-import sql.SqlCapable;
-import sql.SqlConnector;
+import textonIO.SqlConnector;
 import textonclasses.Texton;
 import textonclasses.TextonV;
 import util.*;
@@ -45,7 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class ContrPres implements SqlCapable {
+public class ContrPres {
 
     final private int COUNTERHIDEDELAY = 5000;
     private final Timeline blurAnim = new Timeline();
@@ -579,11 +578,6 @@ public class ContrPres implements SqlCapable {
 
     void setStageVis(Stage stageVis) {
         this.stageVis = stageVis;
-    }
-
-    @Override
-    public SqlConnector getSqlConnector() {
-        return sqlConnector;
     }
 
     public Texton getCurTexton() {

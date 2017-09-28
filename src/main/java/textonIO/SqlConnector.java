@@ -1,4 +1,4 @@
-package sql;
+package textonIO;
 
 import javafx.geometry.Rectangle2D;
 import org.jetbrains.annotations.NotNull;
@@ -36,17 +36,6 @@ public class SqlConnector implements TextonReaderWriter {
         }
 
     }
-
-   /* public static void closeSqlOnCloseRequest(Stage stage, SqlCapable sqlCapable) {
-        stage.setOnCloseRequest(event -> {
-            try {
-                sqlCapable.getSqlConnector().closeConnection();
-            } catch (SQLException e) {
-                System.out.println("Could not close SQL Connection.");
-                e.printStackTrace();
-            }
-        });
-    }*/
 
     public Texton readTexton(int numTexton) throws SQLException, IOException {
         Texton texton = null;
