@@ -1,90 +1,87 @@
-var currentVote = null;
 var currentTexton = null;
 var connectstatus;
 var instructionsarea;
 var votedisplay;
 var connecterror = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Erreur de connexion. Rafraîchissez la page.";
-var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté."
+var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté.";
 var ws = null;
-var firstVoteSent = false;
+var address = '1.2.3.4:80/ws';
+var id = function (id) {
+    return document.getElementById(id);
+};
+var changeTexton = function (numTexton, numLiens) {
+    currentTexton = numTexton;
+    disableControls();
+    displayInstructions('Changement de texton');
+    setTimeout(function () {
+        enableControls(numLiens);
+    }, 2000);
+};
+
 window.onload = function () {
-
-    document.getElementById("abutton").onclick = function () {
+    id('abutton').onclick = function () {
         this.blur();
-        checkAndSend("A");
+        checkAndSend('A');
     };
-    document.getElementById("bbutton").onclick = function () {
+    id('bbutton').onclick = function () {
         this.blur();
-        checkAndSend("B");
+        checkAndSend('B');
     };
-    document.getElementById("cbutton").onclick = function () {
+    id('cbutton').onclick = function () {
         this.blur();
-        checkAndSend("C");
+        checkAndSend('C');
     };
-    document.getElementById("dbutton").onclick = function () {
+    id('dbutton').onclick = function () {
         this.blur();
-        checkAndSend("D");
+        checkAndSend('D');
     };
-    document.getElementById("annulerbtn").onclick = function () {
+    id('annulerbtn').onclick = function () {
         this.blur();
-        cancelVote();
+        checkAndSend('NULL')
     };
-
-    connectstatus = document.getElementById("connectstatus");
-    instructionsarea = document.getElementById("instructionsarea");
-    votedisplay = document.getElementById("votedisplay");
+    connectstatus = id('connectstatus');
+    instructionsarea = id('instructionsarea');
+    votedisplay = id('votedisplay');
 
     disableControls();
-    var ip = prompt("Entrer l'adresse IP donnée.", "192.168.2.13");
-    if (ip == null) {
-        displayNotConnMess();
-    }
-    else {
-        var fullIp = "ws://" + ip.toString() + ":5555/";
-        ws = new WebSocket(fullIp);
-    }
+
+    ws = new WebSocket(address);
 
     ws.onopen = function () {
+        //TODO Est-ce qu'il faut activer les contrôles tout de suite, ou seulement quand un numéro de texton est reçu?
         enableControls();
         displayConnMess();
-        displayInstructions("En attente du serveur…");
     };
 
-    ws.onmessage = function (event) {
-        console.log("Message reçu du serveur : " + event.data);
-        //ws.send("BLANK");
-        console.log(event.data.includes(";"));
-        if (event.data.includes(";")) {
-            var msg = event.data.split([";"]);
-            console.log("CurrentTexton" + currentTexton);
-            if (msg[1] !== currentTexton || currentTexton == null) {
-                currentTexton = msg[1];
-                currentVote = null;
-                disableControls();
-                displayInstructions("Changement de texton. Veuillez patienter…");
-                setTimeout(function () {
-                    console.log("Nombre de liens : " + msg[0]);
-                    enableControls(msg[0]);
-                }, 3000);
-            }
+    ws.onmessage = function (msg) {
+        var msgobj = JSON.parse(msg);
+        enableControls(msgobj.numLiens);
+        if (currentTexton !== msgobj.textonCourant && msgObj.textonCourant !== 0) {
+            changeTexton(msgobj.textonCourant);
         }
-
+        if(msgobj.textonCourant === 0){
+            disableControls();
+            displayInstructions('Vote désactivé');
+        }
     };
 
     ws.onclose = function () {
-        console.log("Connexion terminée." + "<br>");
         disableControls();
         displayNotConnMess();
-        displayInstructions("");
-    };
+        displayInstructions('');
 
-    ws.onerror = function (err) {
-        displayInstructions("Erreur de connexion : " + err + "<br>Veuillez rapporter l'erreur à la fin du récital.");
-        displayNotConnMess();
-        console.log("Erreur de connexion : " + err);
-    };
+        ws.onerror = function () {
+            disableControls();
+            displayNotConnMess();
+            displayInstructions('Erreur de connexion. Essayez de rafraîchir la page.');
+        }
+    }
 };
 
+function checkAndSend(str) {
+    //No check implemented.
+    ws.send(str);
+}
 
 window.onbeforeunload = function () {
     ws.close();
@@ -92,72 +89,25 @@ window.onbeforeunload = function () {
 };
 
 function disableControls() {
-    document.getElementById("abutton").disabled = true;
-    document.getElementById("bbutton").disabled = true;
-    document.getElementById("cbutton").disabled = true;
-    document.getElementById("dbutton").disabled = true;
-    document.getElementById("annulerbtn").disabled = true;
-    displayInstructions("Panneau d'interactions désactivé.");
+    id('abutton').disabled = true;
+    id('bbutton').disabled = true;
+    id('cbutton').disabled = true;
+    id('dbutton').disabled = true;
+    id('annulerbtn').disabled = true;
 }
 
-function enableControls(num) {
-    if (num > 0 && num < 5) {
-        if (num > 0)
-            document.getElementById("abutton").disabled = false;
-        if (num > 1)
-            document.getElementById("bbutton").disabled = false;
-        if (num > 2)
-            document.getElementById("cbutton").disabled = false;
-        if (num > 3)
-            document.getElementById("dbutton").disabled = false;
-        document.getElementById("annulerbtn").disabled = false;
-        displayInstructions("Panneau d'interactions activé.");
+function enableControls(numLiens) {
+    if (numLiens > 0 && numLiens < 5) {
+        if (numLiens > 0)
+            id('abutton').disabled = false;
+        if (numLiens > 1)
+            id('bbutton').disabled = false;
+        if (numLiens > 2)
+            id('cbutton').disabled = false;
+        if (numLiens > 3)
+            id('dbutton').disabled = false;
+        id('annulerbtn').disabled = false;
     }
-}
-
-function sendMessage(val) {
-    votedisplay.innerHTML = "Votre vote : " + val;
-    if (val !== null && firstVoteSent) {
-        switch (currentVote) {
-            case "A":
-                ws.send("AMINUS");
-                break;
-            case "B":
-                ws.send("BMINUS");
-                break;
-            case "C":
-                ws.send("CMINUS");
-                break;
-            case "D":
-                ws.send("DMINUS");
-                break;
-            default:
-                break;
-        }
-    }
-    firstVoteSent = true;
-    ws.send(val + "PLUS");
-    console.log("Message " + val + " sent.")
-    currentVote = val;
-}
-
-function checkAndSend(str) {
-    //Send message, but first check if vote is already sent.
-    if (currentVote == str){
-        console.log("currentVote is equivalent to pressed button.")
-        return;
-    }
-    sendMessage(str);
-}
-
-function cancelVote() {
-    if (currentVote == null) {
-        console.log("currentVote is null.");
-        return;
-    }
-    ws.send(currentVote + "MINUS");
-    currentVote = null;
-    votedisplay.innerHTML = "Votre vote est annulé.";
 }
 
 function displayConnMess() {
@@ -171,6 +121,7 @@ function displayNotConnMess() {
 }
 
 function displayInstructions(str) {
-    if (str == "") instructionsarea.innerHTML = "";
+    if (str === "") instructionsarea.innerHTML = "";
     instructionsarea.innerHTML = "<div class = 'well well-sm'><span class='glyphicon glyphicon-info-sign'></span>" + str + "</div>";
 }
+

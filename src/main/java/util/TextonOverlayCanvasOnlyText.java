@@ -9,6 +9,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  */
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
+    private Graph graph;
     private boolean isTextonSet = false;
     private List<Text> texts = new ArrayList<>(4);
 
@@ -30,16 +32,17 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
         AnchorPane parent = (AnchorPane) getParent();
         parent.getChildren().removeAll(texts);
 
-        texts = getTexton().getLienTexton().stream().map(lienTexton -> {
-            Text text = new Text(lienTexton.getName());
+       texts = Arrays.stream(graph.getChildren(getTexton().getNumTexton())).mapToObj(i -> {
+           String name = graph.getName(i);
+           Text text = new Text(name);
 
-            //TODO Vérifier les deux lignes suivantes et ajouter une citation.
-            ObjectExpression<Font> fontTracking = Bindings.createObjectBinding(() -> Font.font(getWidth() / 4), widthProperty());
-            text.fontProperty().bind(fontTracking);
-            text.setFont(new Font(20));
-            //text.setWrappingWidth(getWidth() - 40);
-            return text;
-        }).collect(Collectors.toList());
+           //TODO Vérifier les deux lignes suivantes et ajouter une citation.
+           ObjectExpression<Font> fontTracking = Bindings.createObjectBinding(() -> Font.font(getWidth() / 4), widthProperty());
+           text.fontProperty().bind(fontTracking);
+           text.setFont(new Font(20));
+           //text.setWrappingWidth(getWidth() - 40);
+           return text;
+       }).collect(Collectors.toList());
 
         setBottomAnchorsOnTexts(getHeight());
         if (!isTextonSet) {
@@ -72,4 +75,8 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
         return onSetTextonAction;
     }
 
+    @Override
+    public void setGraph(Graph graph) {
+        this.graph = graph;
+    }
 }

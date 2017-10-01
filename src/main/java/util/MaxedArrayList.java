@@ -6,7 +6,7 @@ import java.util.Collection;
 /**
  * Created by Mikaël on 2016-11-01.
  */
-
+//TODO Pousser cette classe vers un autre repository pour la garder.
 public class MaxedArrayList<E> extends ArrayList<E> {
     private final int MAXSIZE;
 

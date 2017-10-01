@@ -2,6 +2,7 @@ package util;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.embed.swing.SwingFXUtils;
 import textonclasses.Texton;
 
 /**
@@ -10,6 +11,7 @@ import textonclasses.Texton;
 //Cette classe ne fait qu'afficher l'image du texton.
 class TextonImageCanvas extends ResizableCanvas implements TCWithTexton {
     private Texton texton;
+    private Graph graph;
     BooleanProperty nullTextonProperty = new SimpleBooleanProperty(true);
 
     @Override
@@ -17,12 +19,17 @@ class TextonImageCanvas extends ResizableCanvas implements TCWithTexton {
         clearCanvas();
         getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
         if (texton != null)
-            fitImage(texton.getBimage());
+            fitImage(SwingFXUtils.fromFXImage(texton.getImage(), null));
     }
 
     @Override
     public Texton getTexton() {
         return texton;
+    }
+
+    @Override
+    public void setGraph(Graph graph) {
+        this.graph = graph;
     }
 
     @Override

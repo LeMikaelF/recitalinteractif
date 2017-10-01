@@ -103,7 +103,7 @@ public class FXCustomDialogs {
         return textArea;
     }
 
-    public static <T extends Object> String ListToString(List<T> rectList, Class<T> clazz){
+    public static <T> String ListToString(List<T> rectList, Class<T> clazz){
         return rectList.toString().replace(", ", "\n").replace(clazz.getSimpleName() + " [",
                 "---Élément " + "---\n").replace("[", "").replace("]", "\n");
 

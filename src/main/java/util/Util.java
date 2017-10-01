@@ -1,7 +1,7 @@
 package util;
 
 import javafx.beans.property.BooleanProperty;
-import server.ControlCode;
+import server.Vote;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -63,51 +63,16 @@ public class Util {
         return true;
     }
 
-    public static int ccToInt(ControlCode cc) {
-        Map<ControlCode, Integer> map = new HashMap<>();
-        map.put(ControlCode.A, 0);
-        map.put(ControlCode.B, 1);
-        map.put(ControlCode.C, 2);
-        map.put(ControlCode.D, 3);
+    public static int ccToInt(Vote cc) {
+        Map<Vote, Integer> map = new HashMap<>();
+        map.put(Vote.A, 0);
+        map.put(Vote.B, 1);
+        map.put(Vote.C, 2);
+        map.put(Vote.D, 3);
         return map.get(cc);
-    }
-
-    public static void blipProperty(BooleanProperty prop, boolean blipTo) {
-        prop.set(blipTo);
-        prop.set(!blipTo);
-    }
-
-    public static void blipProperty(BooleanProperty prop) {
-        prop.set(!prop.get());
-        prop.set(!prop.get());
     }
 
     public static void toggleProperty(BooleanProperty prop) {
         prop.set(!prop.get());
-    }
-
-
-    public static class Triple<A, B, C>{
-        private A a;
-        private B b;
-        private C c;
-
-        public Triple(A a, B b, C c) {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-        }
-
-        public A getA() {
-            return a;
-        }
-
-        public B getB() {
-            return b;
-        }
-
-        public C getC() {
-            return c;
-        }
     }
 }

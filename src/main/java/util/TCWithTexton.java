@@ -8,5 +8,7 @@ import textonclasses.Texton;
 interface TCWithTexton {
     Texton getTexton();
 
+    void setGraph(Graph graph);
+
     void setTexton(Texton texton);
 }

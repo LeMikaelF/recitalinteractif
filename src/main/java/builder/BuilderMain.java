@@ -20,7 +20,7 @@ public class BuilderMain extends Application {
     public void start(Stage primaryStage) throws IOException {
         Parent root;
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/BuilderContr.fxml"));
+        loader.setLocation(getClass().getResource("/fxml/BuilderContr.fxml"));
         root = loader.load();
 
         primaryStage.setTitle("Outil de lecture/écriture de textons");
