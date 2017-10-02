@@ -55,8 +55,6 @@ public class ServerRunnableImpl implements ServerRunnable {
 */
 
         try {
-            System.out.println("AAAAAAAAAAAAA le serveur va démarrer");
-            System.out.println("Venant du thread " + Thread.currentThread());
             server.start();
             //server.dump(System.err);
             server.join();
