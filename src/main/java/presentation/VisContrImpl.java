@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import events.EventCode;
+import events.ControlEvent;
 import events.TextonChangeEvent;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyIntegerProperty;
@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
-import server.Vote;
 import textonclasses.Texton;
 import util.CompositeTextonCanvas;
 import util.Graph;
@@ -85,15 +84,15 @@ public class VisContrImpl implements VisContr {
     }
 
     @Subscribe
-    private void onEventCode(EventCode code) {
+    private void onEventCode(ControlEvent code) {
         switch (code) {
             case INSTALLER:
                 installer();
                 break;
-            case RESATURER:
+            case RESTAURER:
                 restaurer();
                 break;
-            case TERMINÉ:
+            case TERMINE:
                 over();
                 break;
         }

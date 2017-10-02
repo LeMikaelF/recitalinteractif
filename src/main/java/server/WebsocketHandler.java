@@ -3,46 +3,32 @@ package server;
 import com.google.common.eventbus.Subscribe;
 import events.TextonChangeEvent;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Created by Mikaël on 2017-09-29.
+ * Created by Mikaël on 2017-10-02.
  */
-@WebSocket
-public class WebsocketHandler extends WebsocketHandlerBase {
-
-    @Override
+public interface WebsocketHandler extends VoteCollector {
     @Subscribe
-    public void onTextonChangeEvent(TextonChangeEvent tce) {
-        setNumberOfLinks(tce.getGraph().getChildren(tce.getTexton().getNumTexton()).length);
-        setNumTextonCourant(tce.getTexton().getNumTexton());
-        resetVotes();
-    }
-
-    @Override
+    void onTextonChangeEvent(TextonChangeEvent tce);
     @OnWebSocketMessage
-    public void onMessage(Session session, String str) {
-        Vote vote = Vote.valueOf(str);
-        getClientsVotesMap().put(session, vote);
-        updateProperties();
-    }
-
-    @Override
+    void onMessage(Session session, String str);
     @OnWebSocketClose
-    public void onClose(Session session, int statusCode, String reason) {
-        getClientsVotesMap().remove(session);
-    }
-
-    @Override
+    void onClose(Session session, int statusCode, String reason);
     @OnWebSocketConnect
-    public void onConnect(Session session) {
-        getClientsVotesMap().put(session, Vote.NULL);
-    }
-
-    @Override
+    void onConnect(Session session);
     @OnWebSocketError
-    public void onError(Session session, Throwable throwable) {
-        //Do nothing
-    }
-
+    void onError(Session session, Throwable throwable);
+    @Override
+    void setNumTextonCourant(int numTextonCourant);
+    @Override
+    void startBroadcasting();
+    @Override
+    void resetVotes();
 }

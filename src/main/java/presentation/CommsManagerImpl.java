@@ -3,7 +3,8 @@ package presentation;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import events.EventCode;
+import com.google.inject.Provider;
+import events.ControlEvent;
 import events.TextonChangeEvent;
 import javafx.beans.property.*;
 import server.Server;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
  * Created by Mikaël on 2017-09-29.
  */
 public class CommsManagerImpl implements CommsManager {
+//TODO register all eventBus subscribers.
 
     @Inject
     private VisContr visContr;
@@ -25,21 +27,26 @@ public class CommsManagerImpl implements CommsManager {
     private TabBordContr tabBordContr;
     @Inject
     private EventBus eventBus;
+    @Inject
+    private Server server;
 
     private List<IntegerProperty> propVote = Stream.generate(SimpleIntegerProperty::new).limit(5).collect(Collectors.toList());
     private IntegerProperty propNumEnr = new SimpleIntegerProperty();
 
     {
-        Server.startServer();
     }
 
     @Inject
-    public CommsManagerImpl() {
+    //TODO Comment obtenir le serveur ici?
+    public CommsManagerImpl(Provider<Server> provider) {
+        this.server = provider.get();
         System.out.println("CommsManagerImpl constructor");
+        System.out.println("server = " + server);
+        server.startServer();
     }
 
     private void over() {
-        eventBus.post(EventCode.TERMINÉ);
+        eventBus.post(ControlEvent.TERMINE);
     }
 
     @Subscribe

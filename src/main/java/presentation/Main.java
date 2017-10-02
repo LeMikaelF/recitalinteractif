@@ -53,7 +53,6 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         try {
-            Server.stopServer();
             System.out.println("Sent stop request to server.");
         } catch (Exception e) {
             System.out.println("Error stopping server.");
