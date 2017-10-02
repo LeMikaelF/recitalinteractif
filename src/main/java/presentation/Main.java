@@ -2,6 +2,7 @@ package presentation;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import guice.ServletGuiceModule;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,7 +15,7 @@ import guice.FxGuiceModule;
 import java.io.IOException;
 
 public class Main extends Application {
-    Injector guice = Guice.createInjector(new FxGuiceModule());
+    Injector guice = Guice.createInjector(new FxGuiceModule(), new ServletGuiceModule());
 
     public static void main(String[] args) {
         launch(args);
