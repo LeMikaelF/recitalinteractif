@@ -8,12 +8,15 @@ package presentation;/*
 ;import com.google.inject.Inject;
 import com.google.inject.Provider;
 import server.Server;
+import server.VoteController;
 
 public class CommsManagerImplProvider implements Provider<CommsManagerImpl> {
     @Inject
-    Provider<Server> provider;
+    Provider<Server> serverProvider;
+    @Inject
+    Provider<VoteController> voteControllerProvider;
 
     public CommsManagerImpl get() {
-        return new CommsManagerImpl(provider);
+        return new CommsManagerImpl(serverProvider, voteControllerProvider);
     }
 }

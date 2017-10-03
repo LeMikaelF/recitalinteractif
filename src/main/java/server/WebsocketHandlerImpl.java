@@ -10,10 +10,15 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by Mikaël on 2017-09-29.
@@ -70,9 +75,11 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
 
     private void updateProperties() {
         //Calling this method each time to rebuild the complete properties is very wasteful, but economical.
-        Arrays.stream(WebsocketHandlerImpl.propNames).forEach(
-                s -> WebsocketHandlerImpl.properties.get(s).set(Math.toIntExact(WebsocketHandlerImpl.getClientsVotesMap().values().stream().filter(vote -> s.equals(vote.toString())).count()))
-        );
+        List<Integer> voteList = Stream.of(Vote.values())
+                .mapToInt(vote -> (int)clientsVotesMap.values().stream().filter(vote1 -> !vote1.equals(Vote.NULL))
+                        .filter(vote::equals).count()).boxed().collect(Collectors.toList());
+
+        eventBus.post(new VoteChangeEvent(properties.get("Enr").get(), voteList, this));
     }
 
     @Override

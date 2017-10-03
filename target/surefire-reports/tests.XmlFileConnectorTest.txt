@@ -1,0 +1,12 @@
+-------------------------------------------------------------------------------
+Test set: tests.XmlFileConnectorTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 1, Time elapsed: 1.191 sec <<< FAILURE!
+testSamePropertyValuesAs(tests.XmlFileConnectorTest)  Time elapsed: 0.537 sec  <<< ERROR!
+java.lang.ThreadDeath
+	at java.lang.Thread.stop(Thread.java:853)
+	at org.loadui.testfx.utils.UserInputDetector.userInputDetected(UserInputDetector.java:58)
+	at org.loadui.testfx.utils.UserInputDetector.assertPointsAreEqual(UserInputDetector.java:42)
+	at org.loadui.testfx.utils.UserInputDetector.run(UserInputDetector.java:27)
+	at java.lang.Thread.run(Thread.java:748)
+

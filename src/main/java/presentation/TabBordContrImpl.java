@@ -22,6 +22,7 @@ import textonclasses.Texton;
 import util.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class TabBordContrImpl implements TabBordContr {
     private CommsManager commsManager;
 
     @Inject
-    public TabBordContrImpl() throws IOException {
+    public TabBordContrImpl() throws IOException, URISyntaxException {
         System.out.println("-------------------------------tabbordcontr constructeur--------------");
     }
 

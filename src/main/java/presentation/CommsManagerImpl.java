@@ -8,6 +8,7 @@ import events.ControlEvent;
 import events.TextonChangeEvent;
 import javafx.beans.property.*;
 import server.Server;
+import server.VoteController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,21 +28,19 @@ public class CommsManagerImpl implements CommsManager {
     private TabBordContr tabBordContr;
     @Inject
     private EventBus eventBus;
-    @Inject
     private Server server;
+    private VoteController voteController;
 
     private List<IntegerProperty> propVote = Stream.generate(SimpleIntegerProperty::new).limit(5).collect(Collectors.toList());
     private IntegerProperty propNumEnr = new SimpleIntegerProperty();
 
-    {
-    }
 
     @Inject
-    //TODO Comment obtenir le serveur ici?
-    public CommsManagerImpl(Provider<Server> provider) {
-        this.server = provider.get();
-        System.out.println("CommsManagerImpl constructor");
-        System.out.println("server = " + server);
+    public CommsManagerImpl(Provider<Server> serverProvider, Provider<VoteController> voteControllerProvider) {
+        this.server = serverProvider.get();
+        this.voteController = voteControllerProvider.get();
+        System.out.println("VoteController = " + voteController);
+        voteController.init();
         server.startServer();
     }
 

@@ -3,7 +3,7 @@
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlSchema(namespace="http://www.example.com",
+@XmlSchema(namespace="http://www.mikaelfrancoeur.com/texton",
         elementFormDefault= XmlNsForm.QUALIFIED)
 package textonclasses;
 

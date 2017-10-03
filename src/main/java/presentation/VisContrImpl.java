@@ -15,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import textonclasses.Texton;
 import util.CompositeTextonCanvas;
 import util.Graph;
+import util.ResizableDraggableNodeManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,24 +43,21 @@ public class VisContrImpl implements VisContr {
     private CommsManager commsManager;
 
     private Map<String, ReadOnlyIntegerProperty> properties = new HashMap<>();
-    private CompositeTextonCanvas tcVis = new CompositeTextonCanvas();
     private CompositeTextonCanvas textonCanvas = new CompositeTextonCanvas();
     @Inject
     private EventBus eventBus;
 
-    {
-    }
 
-    //TODO Make resizable & draggable
     @Inject
     public VisContrImpl(Provider<CommsManager> provider) {
+        ResizableDraggableNodeManager.makeNodeDraggable(textonCanvas);
+        ResizableDraggableNodeManager.makeNodeResizableCtrl(textonCanvas);
         commsManager = provider.get();
         properties = commsManager.getProperties();
         System.out.println("----------------------------VisContr constructeur------------------------");
     }
 
     private void changeTexton(Texton texton, Graph graph) {
-        //TODO Écrire la méthode changeTexton();
         textonCanvas.setTexton(texton);
         textonCanvas.setGraph(graph);
     }

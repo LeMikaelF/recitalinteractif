@@ -21,6 +21,7 @@ import util.Graph;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +75,7 @@ public class BuilderContr {
             (observable, oldValue, newValue) -> ((TextInputControl) ((StringProperty) observable).getBean())
                     .setText(newValue.replaceAll("[^\\d]", ""));
 
-    public BuilderContr() throws IOException {
+    public BuilderContr() throws IOException, URISyntaxException {
     }
 
     @FXML
@@ -132,7 +133,7 @@ public class BuilderContr {
         List<TextonLien> textonLiens = new ArrayList<>();
         Integer numTexton = Integer.valueOf(textFieldNum.getText());
 
-        Texton save = Texton.createTexton(numTexton, textFieldSource.getText(), textFieldNom.getText(), textAreaDesc.getText(), "", getImage());
+        Texton save = new Texton(numTexton, textFieldSource.getText(), textFieldNom.getText(), textAreaDesc.getText(), "", getImage());
 
         try {
             textonIo.writeTexton(save, true);

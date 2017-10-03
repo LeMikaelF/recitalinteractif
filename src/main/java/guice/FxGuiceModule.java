@@ -2,6 +2,8 @@ package guice;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
+import com.google.inject.multibindings.MultibinderBinding;
 import presentation.*;
 import server.*;
 
@@ -22,21 +24,10 @@ public final class FxGuiceModule extends AbstractModule {
         bind(Server.class).toProvider(ServerImplProvider.class).asEagerSingleton();
         bind(WebsocketHandler.class).toProvider(WebsocketHandlerImplProvider.class);
 
-        /*try {
-            EventBus eventBus = new EventBus();
-            bind(EventBus.class).toProvider(() -> eventBus);
+        //Declare Vote Collectors
+        Multibinder<VoteCollector> multibinder = Multibinder.newSetBinder(binder(), VoteCollector.class);
+        multibinder.addBinding().toProvider(WebsocketHandlerImplProvider.class);
 
-            CommsManagerImpl commsManager = new CommsManagerImpl();
-
-            TabBordContr tabBordContr = new TabBordContrImpl();
-            VisContr visContr = new VisContrImpl(() -> commsManager);
-
-            bind(CommsManager.class).toInstance(commsManager);
-            bind(TabBordContr.class).toInstance(tabBordContr);
-            bind(VisContr.class).toInstance(visContr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 
 }

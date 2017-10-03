@@ -9,12 +9,13 @@ import java.io.IOException;
 import com.google.inject.Provider;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class TabBordContrImplProvider implements Provider<TabBordContrImpl> {
     public TabBordContrImpl get() {
         try {
             return new TabBordContrImpl();
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
         return null;
