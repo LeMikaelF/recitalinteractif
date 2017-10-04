@@ -14,7 +14,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import textonclasses.Texton;
 import util.CompositeTextonCanvas;
-import util.Graph;
+import textonclasses.Graph;
 import util.ResizableDraggableNodeManager;
 
 import java.util.HashMap;
@@ -91,12 +91,12 @@ public class VisContrImpl implements VisContr {
                 restaurer();
                 break;
             case TERMINE:
-                over();
+                conclusion();
                 break;
         }
     }
 
-    private void over() {
+    private void conclusion() {
         //TODO Passer à la conclusion.
     }
 

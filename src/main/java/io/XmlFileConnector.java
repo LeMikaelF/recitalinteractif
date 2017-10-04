@@ -1,6 +1,7 @@
 package io;
 
 import javafx.embed.swing.SwingFXUtils;
+import textonclasses.Graph;
 import textonclasses.Texton;
 import util.Util;
 
@@ -92,15 +93,8 @@ public class XmlFileConnector extends TextonIo {
     }
 
     @Override
-    public String getTextonName(int numTexton) throws IOException {
-        //TODO Écrire cette méthode
-        return null;
-    }
-
-    @Override
-    public String getGraphXml() throws IOException {
-        //TODO Écrire cette méthode
-        return "";
+    public Graph getGraph() throws IOException {
+        return GraphConnector.getGraph(path);
     }
 
     public static void main(String[] args) {

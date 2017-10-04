@@ -17,7 +17,7 @@ import javafx.stage.Window;
 import textonclasses.Texton;
 import textonclasses.TextonLien;
 import util.FXCustomDialogs;
-import util.Graph;
+import textonclasses.Graph;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class BuilderContr {
 
     private Stage stage;
     private TextonIo textonIo = new XmlFileConnector(new String[]{"C:\\Textons\\"});
-    private Graph graph = new Graph(textonIo.getGraphXml());
+    private Graph graph = textonIo.getGraph();
     private List<TextInputControl> textContainers;
     private Image image;
 

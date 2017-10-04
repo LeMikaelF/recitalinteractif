@@ -1,6 +1,7 @@
 package util;
 
 import javafx.scene.layout.AnchorPane;
+import textonclasses.Graph;
 import textonclasses.Texton;
 
 /**

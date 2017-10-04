@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import textonclasses.Graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
         AnchorPane parent = (AnchorPane) getParent();
         parent.getChildren().removeAll(texts);
 
-       texts = Arrays.stream(graph.getChildren(getTexton().getNumTexton())).mapToObj(i -> {
+       texts = graph.getChildren(getTexton().getNumTexton()).stream().map(i -> {
            String name = graph.getName(i);
            Text text = new Text(name);
 

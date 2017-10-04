@@ -3,6 +3,7 @@ package util;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
+import textonclasses.Graph;
 import textonclasses.Texton;
 
 /**

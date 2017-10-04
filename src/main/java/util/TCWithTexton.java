@@ -1,5 +1,6 @@
 package util;
 
+import textonclasses.Graph;
 import textonclasses.Texton;
 
 /**

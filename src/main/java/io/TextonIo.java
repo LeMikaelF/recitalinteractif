@@ -1,5 +1,6 @@
 package io;
 
+import textonclasses.Graph;
 import textonclasses.Texton;
 
 import java.io.IOException;
@@ -15,6 +16,5 @@ public abstract class TextonIo {
     };
     abstract public Texton readTexton(int numTexton) throws IOException;
     abstract public void writeTexton(Texton texton, boolean overwrite) throws IOException;
-    abstract public String getTextonName(int numTexton) throws IOException;
-    abstract public String getGraphXml() throws IOException;
+    abstract public Graph getGraph() throws IOException;
 }

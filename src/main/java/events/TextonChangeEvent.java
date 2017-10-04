@@ -1,7 +1,7 @@
 package events;
 
 import textonclasses.Texton;
-import util.Graph;
+import textonclasses.Graph;
 
 /**
  * Created by Mikaël on 2017-09-29.

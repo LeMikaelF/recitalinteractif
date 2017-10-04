@@ -1,6 +1,7 @@
 package presentation;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import events.TextonChangeEvent;
 import io.TextonIo;
@@ -8,7 +9,8 @@ import io.XmlFileConnector;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,21 +19,28 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import org.apache.commons.lang3.EnumUtils;
 import server.Vote;
+import server.VoteChangeEvent;
+import textonclasses.Graph;
 import textonclasses.Texton;
-import util.*;
+import util.CanvasUtil;
+import util.CompositeTextonCanvas;
+import util.FXCustomDialogs;
+import util.PropLoader;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TabBordContrImpl implements TabBordContr {
 
-    private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
     @FXML
     private Menu menuFichier;
     @FXML
@@ -82,15 +91,18 @@ public class TabBordContrImpl implements TabBordContr {
     @FXML
     private Label lblHorlRecital;
     @FXML
+    private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
     private Label lblHorloge;
     private long recitalClock;
     private long textonClock;
+    private Texton texton = null;
     private Texton textonPrecedent = null;
     private TextonIo textonIo = new XmlFileConnector(new String[]{PropLoader.getMap().get("location")});
-    private Graph graph = new Graph(textonIo.getGraphXml());
+    private Graph graph = textonIo.getGraph();
+    private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
+    private IntegerProperty numEnr = new SimpleIntegerProperty();
     @Inject
     private EventBus eventBus;
-
     @Inject
     private CommsManager commsManager;
 
@@ -102,27 +114,31 @@ public class TabBordContrImpl implements TabBordContr {
     @FXML
     private void menuHandler(ActionEvent event) {
         //TODO Compléter le menu handler
-        if (event.getSource().equals(menuFermer)) {
+        try {
+            if (event.getSource().equals(menuFermer)) {
 
-        } else if (event.getSource().equals(menuLienA)) {
-            changeTexton(Vote.A);
-        } else if (event.getSource().equals(menuLienB)) {
-            changeTexton(Vote.B);
-        } else if (event.getSource().equals(menuLienC)) {
-            changeTexton(Vote.C);
-        } else if (event.getSource().equals(menuLienD)) {
-            changeTexton(Vote.D);
-        } else if (event.getSource().equals(menuNaviguerAuTexton)) {
-            naviguerAuTexton();
-        } else if (event.getSource().equals(menuOuvrirRecital)) {
-            changeTexton(1);
-            startRecitalTimer();
-        } else if (event.getSource().equals(menuPrecedent)) {
-            precedent();
-        } else if (event.getSource().equals(menuRestaurer)) {
-            restaurerPres();
-        } else if (event.getSource().equals(menuInstaller)) {
-            installerPres();
+            } else if (event.getSource().equals(menuLienA)) {
+                changeTexton(Vote.A);
+            } else if (event.getSource().equals(menuLienB)) {
+                changeTexton(Vote.B);
+            } else if (event.getSource().equals(menuLienC)) {
+                changeTexton(Vote.C);
+            } else if (event.getSource().equals(menuLienD)) {
+                changeTexton(Vote.D);
+            } else if (event.getSource().equals(menuNaviguerAuTexton)) {
+                naviguerAuTexton();
+            } else if (event.getSource().equals(menuOuvrirRecital)) {
+                changeTexton(1);
+                startRecitalTimer();
+            } else if (event.getSource().equals(menuPrecedent)) {
+                precedent();
+            } else if (event.getSource().equals(menuRestaurer)) {
+                restaurerPres();
+            } else if (event.getSource().equals(menuInstaller)) {
+                installerPres();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -135,20 +151,52 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void changeTexton() {
-        //TODO Adapter de ContrPres
+        //If no votes have been registered
+        if (votes.stream().allMatch(integerProperty -> integerProperty.get() == 0)) {
+            String input = FXCustomDialogs.showInput("Aucun vote n'a été enregistré. Choisissez le lien que vous voulez suivre (A, B, C, D) :");
+            if (EnumUtils.isValidEnum(Vote.class, input)) {
+                Vote vote = Vote.valueOf(input);
+                try {
+                    changeTexton(vote);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    changeTexton();
+                }
+            }
+        }
+
+        //Determine which link has the most votes
+        int max = 0;
+        Vote vote = Vote.A;
+        for (int i = 0; i < votes.size() - 1; i++) {
+            if (max < votes.get(i).get()) vote = Vote.values()[i];
+        }
+        try {
+            changeTexton(vote);
+        } catch (IOException e) {
+            FXCustomDialogs.showException(e);
+            e.printStackTrace();
+        }
     }
 
-    private void changeTexton(int numTexton) {
-        //TODO Adapter de ContrPres
+    private void changeTexton(Vote vote) throws IOException {
+        int numTexton = graph.getChildren(texton.getNumTexton()).get(Arrays.asList(Vote.values()).indexOf(vote));
+        changeTexton(numTexton);
     }
 
-    private void changeTexton(Vote vote) {
-        //TODO Adapter de ContrPres
+    private void changeTexton(int numTexton) throws IOException {
+        Texton texton = textonIo.readTexton(numTexton);
+        changeTexton(texton);
     }
 
     private void changeTexton(Texton texton) {
         eventBus.post(new TextonChangeEvent(texton, graph));
-        //TODO Écrire la méthode changeTexton(texton);
+
+        //Set all fields
+        tcTabBord.setTexton(texton);
+        lblNumTexton.textProperty().set(texton.getName());
+        textAreaSource.textProperty().set(texton.getSource());
+        textAreaTexte.textProperty().set(texton.getDescription());
     }
 
     private void installerPres() {
@@ -159,7 +207,7 @@ public class TabBordContrImpl implements TabBordContr {
         eventBus.post("restaurer");
     }
 
-    private void naviguerAuTexton() {
+    private void naviguerAuTexton() throws IOException {
         String choix = FXCustomDialogs.showInput("Naviguer vers le texton…");
         if (choix != null) {
             int numChoisi = Integer.parseInt(choix);
@@ -173,24 +221,34 @@ public class TabBordContrImpl implements TabBordContr {
         }
     }
 
+    private void conclusion() {
+        //TODO écrire la conclusion
+    }
+
     @FXML
     void initialize() {
-        Map<String, ReadOnlyIntegerProperty> properties = commsManager.getProperties();
 
-        System.out.println(properties);
-        System.out.println(lblNumA);
-        lblNumA.textProperty().bind(properties.get("A").asString());
-        lblNumB.textProperty().bind(properties.get("B").asString());
-        lblNumC.textProperty().bind(properties.get("C").asString());
-        lblNumD.textProperty().bind(properties.get("D").asString());
-        lblNumEnr.textProperty().bind(properties.get("Enr").asString());
+        eventBus.register(this);
         Stream.of(textAreaSource, textAreaTexte).forEach(textArea -> textArea.setWrapText(true));
+
+        lblNumA.textProperty().bind(votes.get(0).asString());
+        lblNumB.textProperty().bind(votes.get(1).asString());
+        lblNumC.textProperty().bind(votes.get(2).asString());
+        lblNumD.textProperty().bind(votes.get(3).asString());
+        lblNumEnr.textProperty().bind(numEnr.asString());
 
         CanvasUtil.setNodeAnchorToAnchorPane(tcTabBord, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(tcTabBord);
 
         setupClocks();
-        System.out.println("------------tabbourdinitialization complete-------------");
+    }
+
+    @Subscribe
+    public void onVoteChangeEvent(VoteChangeEvent vce) {
+
+        for (int i = 0; i < vce.getVotes().size(); i++) {
+            votes.get(i).set(vce.getVotes().get(i));
+        }
     }
 
     private void setupClocks() {

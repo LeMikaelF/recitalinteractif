@@ -9,7 +9,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import server.Server;
 import guice.FxGuiceModule;
 
 import java.io.IOException;
@@ -26,15 +25,13 @@ public class Main extends Application {
 
         Parent root;
         FXMLLoader loader = new FXMLLoader();
-        System.out.println("BBBBBBBBBBBBBBBBB");
         loader.setControllerFactory(param -> guice.getInstance(TabBordContrImpl.class));
-        loader.setLocation(getClass().getResource("/fxml/TableauBord nouveau.fxml"));
+        loader.setLocation(getClass().getResource("/fxml/TableauBord.fxml"));
         root = loader.load();
 
         primaryStage.setTitle("Tableau de bord de récital");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
-        System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXX");
 
         Parent root2;
         Stage stage2 = new Stage();
