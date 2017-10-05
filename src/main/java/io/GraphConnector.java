@@ -1,21 +1,21 @@
 package io;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentLinkedQueue;
+import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import textonclasses.Graph;
 import textonclasses.Texton;
 import textonclasses.TextonLien;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 /**
  * Created by Mikaël on 2017-10-03.
@@ -27,15 +27,30 @@ public class GraphConnector {
     }
 
     public static Graph getGraph(Path path) throws IOException {
-        byte[] bytes = Files.readAllBytes(path);
-        String json = new String(bytes, StandardCharsets.UTF_8);
+        //If file is empty
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(path.resolve("graph.json").toFile()));
+        if (bufferedReader.readLine() == null) {
+            //File is empty, build empty graph json.
+            bufferedReader.close();
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.resolve("graph.json").toFile()));
+            bufferedWriter.write("{nodes:{}, edges{}}");
+            bufferedWriter.close();
+        }
+
+        String json = getJsonGraph(path);
         return getGraphFromJson(json);
+    }
+
+    public static String getJsonGraph(Path path) throws IOException {
+        byte[] bytes = Files.readAllBytes(path.resolve("graph.json"));
+        String json = new String(bytes, StandardCharsets.UTF_8);
+        return json;
     }
 
     public static String getJsonGraph(List<Texton> nodes, List<TextonLien> edges) {
         JSONArray nodeArray = new JSONArray();
         for (Texton texton : nodes) {
-        nodeArray.put(new JSONObject().put("id", texton.getNumTexton()).put("label", texton.getName()));
+            nodeArray.put(new JSONObject().put("id", texton.getNumTexton()).put("label", texton.getName()));
         }
         JSONArray edgeArray = new JSONArray();
         for (TextonLien lien : edges) {
@@ -44,7 +59,7 @@ public class GraphConnector {
         return new JSONObject().put("nodes", nodeArray).put("edges", edgeArray).toString(4);
     }
 
-    public static Graph getGraphFromJson(String jsonGraph){
+    public static Graph getGraphFromJson(String jsonGraph) {
         JSONObject jsonObject = new JSONObject(jsonGraph);
 
         JSONArray jsonNodes = jsonObject.getJSONArray("nodes");
@@ -53,7 +68,7 @@ public class GraphConnector {
         Map<Integer, String> nodes = new HashMap<>();
         for (int i = 0; i < jsonNodes.length(); i++) {
             JSONObject jsonObjectInner = jsonNodes.getJSONObject(i);
-            nodes.put(jsonObjectInner.getInt("id"), jsonObjectInner.getString("name"));
+            nodes.put(jsonObjectInner.getInt("id"), jsonObjectInner.getString("label"));
         }
 
         JSONArray jsonEdges = jsonObject.getJSONArray("edges");

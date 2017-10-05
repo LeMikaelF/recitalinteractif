@@ -1,5 +1,6 @@
 package textonclasses;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,4 +27,7 @@ public class Graph {
                 mapToInt(TextonLien::getTo).boxed().collect(Collectors.toList());
     }
 
+    public List<TextonLien> getEdges() {
+        return Collections.unmodifiableList(edges);
+    }
 }

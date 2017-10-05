@@ -5,19 +5,21 @@ package presentation;/*
  * Time: 00:02
  */
 
-import java.io.IOException;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class TabBordContrImplProvider implements Provider<TabBordContrImpl> {
+
+    @Inject
+    private TabBordContrImpl tabBordContrImpl;
+
+    private static TabBordContrImpl instance = null;
+
     public TabBordContrImpl get() {
-        try {
-            return new TabBordContrImpl();
-        } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-        return null;
+        System.out.println("Ceci est TabBordContrImplProvider");
+        return tabBordContrImpl;
     }
 }

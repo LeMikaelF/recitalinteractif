@@ -85,7 +85,7 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     @Override
     @Subscribe
     public void onTextonChangeEvent(TextonChangeEvent tce) {
-        setNumberOfLinks(tce.getGraph().getChildren(tce.getTexton().getNumTexton()).length);
+        setNumberOfLinks(tce.getGraph().getChildren(tce.getTexton().getNumTexton()).size());
         setNumTextonCourant(tce.getTexton().getNumTexton());
         resetVotes();
     }

@@ -3,6 +3,7 @@ package presentation;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import events.PresenterImageUpdateEvent;
 import events.TextonChangeEvent;
 import io.TextonIo;
 import io.XmlFileConnector;
@@ -11,13 +12,18 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import org.apache.commons.lang3.EnumUtils;
 import server.Vote;
@@ -63,7 +69,6 @@ public class TabBordContrImpl implements TabBordContr {
     private MenuItem menuRestaurer;
     @FXML
     private MenuItem menuFermer;
-    //TODO Ajouter menuConclusion au handler.
     @FXML
     private MenuItem menuConclusion;
     @FXML
@@ -91,8 +96,9 @@ public class TabBordContrImpl implements TabBordContr {
     @FXML
     private Label lblHorlRecital;
     @FXML
-    private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
     private Label lblHorloge;
+
+    private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
     private long recitalClock;
     private long textonClock;
     private Texton texton = null;
@@ -106,6 +112,12 @@ public class TabBordContrImpl implements TabBordContr {
     @Inject
     private CommsManager commsManager;
 
+    //TODO Ajouter la citation, provient de https://stackoverflow.com/questions/28581639/javafx8-presentation-view-duplicate-pane-and-content
+    private ChangeListener<Boolean> needsLayoutListener = (observable, oldValue, newValue) -> {
+        if (!newValue)
+            eventBus.post(new PresenterImageUpdateEvent(anchorPaneTabBord.snapshot(new SnapshotParameters(), null)));
+    };
+
     @Inject
     public TabBordContrImpl() throws IOException, URISyntaxException {
         System.out.println("-------------------------------tabbordcontr constructeur--------------");
@@ -113,7 +125,6 @@ public class TabBordContrImpl implements TabBordContr {
 
     @FXML
     private void menuHandler(ActionEvent event) {
-        //TODO Compléter le menu handler
         try {
             if (event.getSource().equals(menuFermer)) {
 
@@ -136,6 +147,8 @@ public class TabBordContrImpl implements TabBordContr {
                 restaurerPres();
             } else if (event.getSource().equals(menuInstaller)) {
                 installerPres();
+            } else if (event.getSource().equals(menuConclusion)) {
+                conclusion();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -223,6 +236,53 @@ public class TabBordContrImpl implements TabBordContr {
 
     private void conclusion() {
         //TODO écrire la conclusion
+        anchorPaneTabBord.getChildren().clear();
+        WebView webView = new WebView();
+        CanvasUtil.setNodeAnchorToAnchorPane(webView, 0, 0, 0, 0);
+        anchorPaneTabBord.getChildren().add(webView);
+        WebEngine webEngine = webView.getEngine();
+        webEngine.load(getClass().getResource("/conclusion/conclusion.html").toExternalForm());
+
+
+        //Add listeners to copy image to VisContr
+        Runnable copyImage = () -> eventBus.post(new PresenterImageUpdateEvent(webView.snapshot(new SnapshotParameters(), null)));
+
+        Timeline screencast = new Timeline();
+        screencast.setCycleCount(Timeline.INDEFINITE);
+        screencast.getKeyFrames().add(new KeyFrame(Duration.millis(30), "screenshot", event -> copyImage.run()));
+
+        Timeline stopScreenCast = new Timeline();
+        stopScreenCast.setCycleCount(1);
+        stopScreenCast.getKeyFrames().add(new KeyFrame(Duration.seconds(3), event -> screencast.stop()));
+
+        Runnable updateForAWhile = ()-> {
+            screencast.playFromStart();
+            stopScreenCast.playFromStart();
+        };
+
+        webView.setOnMouseEntered(event -> {
+            updateForAWhile.run();
+        });
+        webView.setOnMouseReleased(event -> stopScreenCast.playFromStart());
+
+        //Fit graph on double-click
+        webView.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
+                webEngine.executeScript("fitGraph()");
+            }
+        });
+
+        //This runs right right away
+        updateForAWhile.run();
+        /*try {
+            webEngine.executeScript("receiveJson('" + GraphConnector.getJsonGraph(textonIo.dumpTextons(), graph.getEdges()) + "')");
+        } catch (IOException e) {
+            e.printStackTrace();
+            if (FXCustomDialogs.showConfirmationAction("Erreur: il n'a pas été possible de reconstituer le graphe de textons. Voulez-vous essayer?")) {
+            conclusion();
+            }
+        }
+        webEngine.executeScript("initGraph()");*/
     }
 
     @FXML
@@ -240,12 +300,14 @@ public class TabBordContrImpl implements TabBordContr {
         CanvasUtil.setNodeAnchorToAnchorPane(tcTabBord, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(tcTabBord);
 
+        //Update EventBus with changes to anchorPanePres
+        anchorPaneTabBord.needsLayoutProperty().addListener(needsLayoutListener);
+
         setupClocks();
     }
 
     @Subscribe
     public void onVoteChangeEvent(VoteChangeEvent vce) {
-
         for (int i = 0; i < vce.getVotes().size(); i++) {
             votes.get(i).set(vce.getVotes().get(i));
         }

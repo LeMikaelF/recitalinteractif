@@ -9,9 +9,15 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class VisContrImplProvider implements Provider<VisContr> {
+
+    @Inject
+    private VisContrImpl visContrImpl;
+
     @Inject
     Provider<CommsManager> provider;
+
     public VisContr get() {
-        return new VisContrImpl(provider);
+        System.out.println("Ceci est VisContrImplProvider");
+        return visContrImpl;
     }
 }

@@ -16,15 +16,13 @@ final public class ResizableDraggableNodeManager {
         nodeToCoord = new HashMap<>();
     }
 
-    private ResizableDraggableNodeManager() {
-    }
+    private ResizableDraggableNodeManager() {}
 
     static public void makeNodeResizableCtrl(Node node) {
         node.setOnScroll(event -> {
             final double scrConst = 1.05;
             double scroll = event.getDeltaY();
             if (scroll == 0) return;
-            System.out.println(scroll);
             node.getScene().getWindow().setWidth(node.getScene().getWindow().getWidth() * ((scroll > 0) ? scrConst : 1 / scrConst));
             node.getScene().getWindow().setHeight(node.getScene().getWindow().getHeight() * ((scroll > 0) ? scrConst : 1 / scrConst));
         });

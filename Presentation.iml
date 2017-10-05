@@ -114,5 +114,7 @@
     <orderEntry type="library" name="Maven: javax.json:javax.json-api:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20170516" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:19.0" level="project" />
+    <orderEntry type="library" name="vis" level="application" />
+    <orderEntry type="library" name="bootstrap" level="application" />
   </component>
 </module>

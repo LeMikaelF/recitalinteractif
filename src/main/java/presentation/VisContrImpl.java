@@ -4,21 +4,31 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import events.ControlEvent;
+import events.PresenterImageUpdateEvent;
 import events.TextonChangeEvent;
+import events.VoteChangeEvent;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import textonclasses.Texton;
+import util.CanvasUtil;
 import util.CompositeTextonCanvas;
 import textonclasses.Graph;
+import util.ResizableCanvasImpl;
 import util.ResizableDraggableNodeManager;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class VisContrImpl implements VisContr {
 
@@ -41,44 +51,47 @@ public class VisContrImpl implements VisContr {
 
     @Inject
     private CommsManager commsManager;
-
-    private Map<String, ReadOnlyIntegerProperty> properties = new HashMap<>();
-    private CompositeTextonCanvas textonCanvas = new CompositeTextonCanvas();
     @Inject
     private EventBus eventBus;
 
+    private ResizableCanvasImpl canvas = new ResizableCanvasImpl();
+    private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
+    private IntegerProperty numEnr = new SimpleIntegerProperty();
 
     @Inject
     public VisContrImpl(Provider<CommsManager> provider) {
-        ResizableDraggableNodeManager.makeNodeDraggable(textonCanvas);
-        ResizableDraggableNodeManager.makeNodeResizableCtrl(textonCanvas);
-        commsManager = provider.get();
-        properties = commsManager.getProperties();
         System.out.println("----------------------------VisContr constructeur------------------------");
-    }
-
-    private void changeTexton(Texton texton, Graph graph) {
-        textonCanvas.setTexton(texton);
-        textonCanvas.setGraph(graph);
+        commsManager = provider.get();
     }
 
     @FXML
     void initialize() {
-        lblNumA.textProperty().bind(properties.get("A").asString());
-        lblNumB.textProperty().bind(properties.get("B").asString());
-        lblNumC.textProperty().bind(properties.get("C").asString());
-        lblNumD.textProperty().bind(properties.get("D").asString());
-        lblTotalVotes.textProperty().bind(properties.get("Enr").asString());
-        lblVotesEnr.textProperty().bind(Bindings.add(properties.get("A"),
-                Bindings.add(properties.get("B"),
-                        Bindings.add(properties.get("C"),
-                                properties.get("D")))).asString());
-
+        eventBus.register(this);
+        anchorPane.getChildren().add(canvas);
+        CanvasUtil.setNodeAnchorToAnchorPane(canvas, 0, 27, 0, 0);
+        ResizableDraggableNodeManager.makeNodeDraggable(canvas);
+        ResizableDraggableNodeManager.makeNodeResizableCtrl(canvas);
+        lblNumA.textProperty().bind(votes.get(0).asString());
+        lblNumB.textProperty().bind(votes.get(1).asString());
+        lblNumC.textProperty().bind(votes.get(2).asString());
+        lblNumD.textProperty().bind(votes.get(3).asString());
     }
 
     @Subscribe
-    private void onTextonChangeEvent(TextonChangeEvent tce) {
-        changeTexton(tce.getTexton(), tce.getGraph());
+    private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent presenterImageUpdateEvent) {
+        System.out.println("Je suis VisContr et je mets à jour mon image.");
+        System.out.println("Les dimensions de l'image sont: " +
+                presenterImageUpdateEvent.getImage().getWidth()
+         + ", " + presenterImageUpdateEvent.getImage().getHeight());
+        canvas.setImage(presenterImageUpdateEvent.getImage());
+    }
+
+    @Subscribe
+    private void onVoteChangeEvent(VoteChangeEvent voteChangeEvent) {
+        for (int i = 0; i < voteChangeEvent.getVotes().length; i++) {
+            votes.get(i).set(voteChangeEvent.getVotes()[i]);
+            numEnr.set(voteChangeEvent.getNumEnr());
+        }
     }
 
     @Subscribe
@@ -89,9 +102,6 @@ public class VisContrImpl implements VisContr {
                 break;
             case RESTAURER:
                 restaurer();
-                break;
-            case TERMINE:
-                conclusion();
                 break;
         }
     }

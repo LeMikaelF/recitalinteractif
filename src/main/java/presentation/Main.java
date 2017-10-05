@@ -25,7 +25,7 @@ public class Main extends Application {
 
         Parent root;
         FXMLLoader loader = new FXMLLoader();
-        loader.setControllerFactory(param -> guice.getInstance(TabBordContrImpl.class));
+        loader.setControllerFactory(param -> guice.getInstance(TabBordContr.class));
         loader.setLocation(getClass().getResource("/fxml/TableauBord.fxml"));
         root = loader.load();
 
@@ -36,7 +36,7 @@ public class Main extends Application {
         Parent root2;
         Stage stage2 = new Stage();
         FXMLLoader loader2 = new FXMLLoader();
-        loader2.setControllerFactory(param -> guice.getInstance(VisContrImpl.class));
+        loader2.setControllerFactory(param -> guice.getInstance(VisContr.class));
         loader2.setLocation(getClass().getResource("/fxml/Visualisation.fxml"));
         root2 = loader2.load();
 

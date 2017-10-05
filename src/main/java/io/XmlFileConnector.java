@@ -3,6 +3,7 @@ package io;
 import javafx.embed.swing.SwingFXUtils;
 import textonclasses.Graph;
 import textonclasses.Texton;
+import textonclasses.TextonLien;
 import util.Util;
 
 import javax.imageio.ImageIO;
@@ -10,17 +11,15 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,6 +40,32 @@ public class XmlFileConnector extends TextonIo {
         masterProperties.load(is);
         is.close();
         path = masterFile.getParent();
+    }
+
+    public static void main(String[] args) {
+
+    }
+
+    @Override
+    public List<Texton> dumpTextons() throws IOException {
+        ConcurrentLinkedQueue<Texton> queue = new ConcurrentLinkedQueue<>();
+        Files.newDirectoryStream(path, "[0-9][0-9][0-9].json").forEach(file -> {
+            try {
+                queue.add(readTexton(Integer.parseInt(file.getFileName().toString().substring(0, 3))));
+            } catch (IOException e) {
+                System.err.println("Error walking directory while dumping textons.");
+                e.printStackTrace();
+            }
+        });
+        Texton[] textonArray = queue.toArray(new Texton[0]);
+
+        return Arrays.asList(textonArray);
+    }
+
+    @Override
+    public List<TextonLien> dumpEdges() throws IOException {
+        return GraphConnector.getGraph(path.resolve("graph.json")).getEdges();
+        //TODO Extraire la partie qui récupère les liens dans
     }
 
     @Override
@@ -66,7 +91,7 @@ public class XmlFileConnector extends TextonIo {
             Texton texton = (Texton) unmarshaller.unmarshal(reader);
             unmarshaller = jaxbContext.createUnmarshaller();
             return texton;
-        } catch(JAXBException e){
+        } catch (JAXBException e) {
             throw new IOException(e);
         }
     }
@@ -95,9 +120,5 @@ public class XmlFileConnector extends TextonIo {
     @Override
     public Graph getGraph() throws IOException {
         return GraphConnector.getGraph(path);
-    }
-
-    public static void main(String[] args) {
-
     }
 }

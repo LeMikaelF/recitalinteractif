@@ -1,6 +1,12 @@
 package util;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import server.Vote;
 
 import java.text.DecimalFormat;
@@ -14,6 +20,21 @@ import java.util.Map;
  * Created by Mikaël on 2016-10-31.
  */
 public class Util {
+
+    public static Image getScaledView(Node node, int scale) {
+        //TODO Compléter la citation
+        //Cette méthode est adaptée de http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
+        final Bounds bounds = node.getLayoutBounds();
+
+        final WritableImage image = new WritableImage(
+                (int) Math.round(bounds.getWidth() * scale),
+                (int) Math.round(bounds.getHeight() * scale));
+
+        final SnapshotParameters spa = new SnapshotParameters();
+        spa.setTransform(javafx.scene.transform.Transform.scale(scale, scale));
+
+        return node.snapshot(spa, image);
+    }
 
     public static String[] getNames(Class<? extends Enum<?>> e) {
         /*Cette méthode est tirée de Bohemian (nom d'utilisateur). 2015. Réponse à « Getting all names in an enum as
