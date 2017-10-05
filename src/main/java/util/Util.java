@@ -1,40 +1,42 @@
 package util;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.geometry.Bounds;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import server.Vote;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Mikaël on 2016-10-31.
  */
 public class Util {
 
-    public static Image getScaledView(Node node, int scale) {
-        //TODO Compléter la citation
-        //Cette méthode est adaptée de http://news.kynosarges.org/2017/02/01/javafx-snapshot-scaling/
-        final Bounds bounds = node.getLayoutBounds();
-
-        final WritableImage image = new WritableImage(
-                (int) Math.round(bounds.getWidth() * scale),
-                (int) Math.round(bounds.getHeight() * scale));
-
-        final SnapshotParameters spa = new SnapshotParameters();
-        spa.setTransform(javafx.scene.transform.Transform.scale(scale, scale));
-
-        return node.snapshot(spa, image);
+    public static void initializeStageRetriever(Node node, List<Stage> stageToGet) {
+        //get Stage as soon as it's initialized
+        node.sceneProperty().addListener(new ChangeListener<Scene>() {
+            @Override
+            public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
+                if (newValue == null) return;
+                newValue.windowProperty().addListener(new ChangeListener<javafx.stage.Window>() {
+                    @Override
+                    public void changed(ObservableValue<? extends javafx.stage.Window> observable1, javafx.stage.Window oldValue1, javafx.stage.Window newValue1) {
+                        if (newValue1 == null) return;
+                        stageToGet.set(0, (Stage) newValue1);
+                        newValue.windowProperty().removeListener(this);
+                    }
+                });
+                node.sceneProperty().removeListener(this);
+            }
+        });
     }
+
+
 
     public static String[] getNames(Class<? extends Enum<?>> e) {
         /*Cette méthode est tirée de Bohemian (nom d'utilisateur). 2015. Réponse à « Getting all names in an enum as

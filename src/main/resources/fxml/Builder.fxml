@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="546.0" prefWidth="434.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="builder.BuilderContr">
+   <children>
+      <MenuBar layoutX="278.0" layoutY="158.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Fichier">
+            <items>
+                  <MenuItem fx:id="menuNouveau" mnemonicParsing="false" onAction="#menuHandler" text="Nouveau" />
+                  <MenuItem fx:id="menuOuvrir" mnemonicParsing="false" onAction="#menuHandler" text="Ouvrir…" />
+                  <MenuItem fx:id="menuOuvrirImage" mnemonicParsing="false" onAction="#menuHandler" text="Ouvrir image…" />
+                  <MenuItem fx:id="menuEnregistrer" mnemonicParsing="false" onAction="#menuHandler" text="Enregistrer" />
+              <MenuItem fx:id="menuEnregistrerSous" mnemonicParsing="false" onAction="#menuHandler" text="Enregistrer sous…" />
+                  <MenuItem fx:id="menuFermer" mnemonicParsing="false" onAction="#menuHandler" text="Fermer" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Affichage">
+            <items>
+                  <CheckMenuItem fx:id="menuCheckVisualisation" mnemonicParsing="false" onAction="#menuHandler" text="Visualisation" />
+                  <CheckMenuItem fx:id="menuCheckPreview" mnemonicParsing="false" onAction="#menuHandler" text="Aperçu" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+         <children>
+            <HBox fillHeight="false">
+               <children>
+                  <Label minWidth="-Infinity" text="Numéro" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="textFieldNum" prefHeight="25.0" prefWidth="55.0" />
+                  <Region prefWidth="15.0" />
+                  <Label minWidth="-Infinity" text="Nom">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="textFieldName" prefHeight="25.0" prefWidth="55.0" HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </TextField>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+               <children>
+                  <Label text="Source">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+                  <TextField fx:id="textFieldSource" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <Label text="Commentaire">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextField fx:id="textAreaComment" prefHeight="62.0" prefWidth="434.0">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TextField>
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Texte du présentateur">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TextField fx:id="textAreaDescription" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </TextField>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

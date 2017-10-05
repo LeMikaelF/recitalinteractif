@@ -34,12 +34,12 @@ public class Main extends Application {
         primaryStage.show();
 
         Parent root2;
-        Stage stage2 = new Stage();
         FXMLLoader loader2 = new FXMLLoader();
         loader2.setControllerFactory(param -> guice.getInstance(VisContr.class));
         loader2.setLocation(getClass().getResource("/fxml/Visualisation.fxml"));
         root2 = loader2.load();
 
+        Stage stage2 = new Stage();
         stage2.setTitle("Visualisation");
         stage2.setScene(new Scene(root2, 800, 480));
         stage2.initStyle(StageStyle.UNDECORATED);
