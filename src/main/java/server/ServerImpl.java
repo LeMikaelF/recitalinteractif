@@ -9,6 +9,8 @@ import com.google.inject.Provider;
 public class ServerImpl implements Server {
 
     ServerRunnable serverRunnable;
+    private Thread threadServer;
+
     public ServerImpl(Provider<ServerRunnable> provider) {
         serverRunnable = provider.get();
     }
@@ -16,16 +18,16 @@ public class ServerImpl implements Server {
     private final static String STATIC_FILES_LOCATION = "/";
 
     @Override
-    public void stopServer() {
-        //TODO Est-ce qu'il faut arrêter le serveur Jetty?
+    public void stopServer() throws Exception {
+        serverRunnable.getServer().stop();
     }
 
     @Override
     public void startServer() {
         System.out.println("ServerRunnable = " + serverRunnable);
-        Thread t = new Thread(serverRunnable);
-        t.setDaemon(true);
-        t.start();
+        threadServer = new Thread(serverRunnable);
+        threadServer.setDaemon(true);
+        threadServer.start();
     }
 
 }

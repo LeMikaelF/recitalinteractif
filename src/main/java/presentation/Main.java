@@ -1,7 +1,10 @@
 package presentation;
 
+import builder.BuilderMain;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import events.ControlEvent;
 import guice.ServletGuiceModule;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +20,7 @@ public class Main extends Application {
     Injector guice = Guice.createInjector(new FxGuiceModule(), new ServletGuiceModule());
 
     public static void main(String[] args) {
-        launch(args);
+        dispatchFromArgs(args);
     }
 
     @Override
@@ -51,10 +54,15 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
         try {
-            System.out.println("Sent stop request to server.");
+            guice.getInstance(EventBus.class).post(ControlEvent.SHUTDOWN);
         } catch (Exception e) {
             System.out.println("Error stopping server.");
             e.printStackTrace();
         }
+    }
+
+    private static void dispatchFromArgs(String[] args){
+        if(args.length == 0) launch(args);
+        else if (args[0].equals("-b") || args[0].equals("--builder")) BuilderMain.main(new String[]{});
     }
 }

@@ -3,77 +3,299 @@
  */
 package builder;
 
+import builder.plugins.StatisticsPlugin;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import io.TextonIo;
+import io.TextonIoFactory;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuItem;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+import netscape.javascript.JSObject;
+import org.apache.commons.text.StringEscapeUtils;
+import textonclasses.Graph;
+import textonclasses.TextonHeader;
+import util.FXCustomDialogs;
 import util.Util;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BuilderVisContr {
 
+    WebEngine webEngine = null;
+    @FXML
+    private Menu menuPlugins;
     @FXML
     private MenuItem menuOuvrir;
-
     @FXML
     private MenuItem menuRecharger;
-
+    @FXML
+    private MenuItem menuReconstruire;
     @FXML
     private MenuItem menuEnregistrer;
-
     @FXML
     private MenuItem menuEnregistrerSous;
-
     @FXML
     private MenuItem menuAjuster;
-
-    @FXML
-    private MenuItem menuFermer;
-
     @FXML
     private WebView webView;
-
     @Inject
     private EventBus eventBus;
+    @Inject
+    private TextonIoFactory textonIoFactory;
+    @Inject
+    private Set<StatisticsPlugin> statPlugins;
 
     private Path path;
-    private Stage stage;
-    List<Stage> stageList = Stream.generate(Stage::new).limit(1).collect(Collectors.toList());
+    private List<Stage> stageList = Stream.generate(Stage::new).limit(1).collect(Collectors.toList());
+    private StringProperty jsonFromJavascript = new SimpleStringProperty();
 
-    public Stage getStage() {
+    //TODO set listener on graph and not on string.
+    private BooleanProperty askForSaveOnJavascriptUpdate = new SimpleBooleanProperty(false);
+    private ChangeListener<String> jsonUpdateCallback = (observable, oldValue, newValue) -> {
+        //This check is necessary to prevent stack overflows.
+        if (newValue.equals("")) return;
+        try {
+            Graph graph = Graph.createGraph(newValue);
+        } catch (IOException e) {
+            FXCustomDialogs.showError("La visualisation a envoyé un format invalide de json. Ceci est une erreur interne du programme.");
+            e.printStackTrace();
+        }
+        jsonFromJavascript.set("");
+        if (!askForSaveOnJavascriptUpdate.get()) return;
+        try {
+            askForSaveOnJavascriptUpdate.set(false);
+            TextonIo textonIo = textonIoFactory.create(path);
+            Graph graph = textonIo.getGraph();
+            textonIo.saveGraph(graph);
+        } catch (IOException e) {
+            showBuilderVisError(e);
+        }
+
+    };
+    public JavaApplication javaApplication = new JavaApplication();
+
+    Stage getStage() {
         return stageList.get(0);
     }
 
     @FXML
     void menuHandler(ActionEvent event) {
         if (event.getSource().equals(menuOuvrir)) {
-
+            ouvrir();
         } else if (event.getSource().equals(menuRecharger)) {
-
-        } else if (event.getSource().equals(menuEnregistrer)) {
-
-        } else if (event.getSource().equals(menuEnregistrerSous)) {
-
-        } else if (event.getSource().equals(menuAjuster)) {
-
-        } else if (event.getSource().equals(menuFermer)) {
-
+            recharger();
+        } else if (event.getSource().equals(menuReconstruire)) {
+            reconstruire();
+        } else {
+            if (event.getSource().equals(menuEnregistrer)) {
+                enregistrer();
+            } else if (event.getSource().equals(menuEnregistrerSous)) {
+                enregistrerSous();
+            } else if (event.getSource().equals(menuAjuster)) {
+                menuAjuster();
+            }
         }
+    }
+
+    private void reconstruire() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Reconstruire le graphe");
+        fileChooser.setInitialFileName("graph.json");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichier graphe .json", "*.json");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
+        File file = fileChooser.showOpenDialog(getStage());
+        TextonIo textonIo = textonIoFactory.create(file.toPath());
+        try {
+            textonIo.validateGraph();
+        } catch (IOException e) {
+            FXCustomDialogs.showError("Impossible de reconstruire le graphe.");
+            e.printStackTrace();
+        }
+
+    }
+
+    private void ouvrir() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Ouvrir le graphe");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichier json", "*.json");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
+        File file = fileChooser.showOpenDialog(getStage());
+        if (file == null) return;
+        TextonIo textonIo = textonIoFactory.create(file.toPath());
+        Graph graph;
+        try {
+            graph = textonIo.getGraph();
+        path = file.toPath();
+        webEngine.load(getClass().getResource("/webview/builder/builder.html").toExternalForm());
+        webEngine.getLoadWorker().stateProperty().addListener(
+                (ov, oldState, newState) -> {
+                    if (newState == Worker.State.SUCCEEDED) {
+                        System.out.println("La page a été chargée avec succès.");
+                        try {
+                            loadGraphIntoWebView(graph);
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                        JSObject window = (JSObject) webEngine.executeScript("window");
+                        window.setMember("javaFX", javaApplication);
+                        webEngine.executeScript("console.log = function(msg) {\n" +
+                                "        javaFX.log(msg);\n" +
+                                "    };");
+                    }
+                });
+        menuEnregistrer.disableProperty().set(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void recharger() {
+        try {
+            TextonIo textonIo = textonIoFactory.create(path);
+            Graph graph = textonIo.getGraph();
+            loadGraphIntoWebView(graph);
+        } catch (IOException e) {
+            showBuilderVisError(e);
+        }
+    }
+
+    private void loadGraphIntoWebView(Graph graph) throws JsonProcessingException {
+        webEngine.executeScript("initGraphWithJson('" + StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(graph)) + "')");
+    };
+
+    private void enregistrer() {
+        getGraphFromJsonDelayed(true);
+    }
+
+    //TODO faire des null-check après tous les FileChooser.
+    private void enregistrerSous() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Enregistrer le graphe");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichier .json", "*.json");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
+        fileChooser.setInitialDirectory(path.toFile());
+        File file = fileChooser.showSaveDialog(getStage());
+        path = file.toPath();
+        getGraphFromJsonDelayed(true);
+    }
+
+    private void menuAjuster() {
+        webEngine.executeScript("fitGraph()");
+    }
+
+    private void getGraphFromJsonDelayed(boolean andThenSaveToPath) {
+        askForSaveOnJavascriptUpdate.set(andThenSaveToPath);
+        webEngine.executeScript("sendGraphToJavaFX()");
+    }
+
+    private void showBuilderVisError(Exception e) {
+        FXCustomDialogs.showError("Échec de l'opération.");
+        e.printStackTrace();
     }
 
     @FXML
     void initialize() {
         eventBus.register(this);
         Util.initializeStageRetriever(webView, stageList);
+        webEngine = webView.getEngine();
+        jsonFromJavascript.addListener(jsonUpdateCallback);
+        menuEnregistrer.disableProperty().set(true);
+
+        //Populate plugins menu
+        menuPlugins.getItems().addAll(statPlugins.stream().map(statisticsPlugin -> {
+            MenuItem menuItem = new MenuItem(statisticsPlugin.getName());
+            menuItem.onActionProperty().set(event -> getPluginResultTable(statisticsPlugin));
+            return menuItem;
+        }).collect(Collectors.toList()));
+    }
+
+    private Node getPluginResultTable(StatisticsPlugin plugin) {
+
+        //If any of the prompts fails, return an empty node.
+        if (plugin.getPrompts().stream().anyMatch((Pair<Function<String, Boolean>, String> functionStringPair) -> {
+            String input = FXCustomDialogs.showInput(functionStringPair.getValue());
+
+            //If there has been an error processing input
+            if (!functionStringPair.getKey().apply(input)) {
+                FXCustomDialogs.showError("Impossible d'initialiser le plugin " + plugin.getName());
+
+                return true;
+            }
+            return false;
+        })) return new AnchorPane();
+
+        Graph graph = null;
+        try {
+            graph = textonIoFactory.create(path).getGraph();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Map<TextonHeader, Double> pluginResults = plugin.apply(graph);
+        ObservableList<Map.Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
+
+        TableColumn<Map.Entry<TextonHeader, Double>, Integer> columnNum = new TableColumn<>("Numéro");
+        columnNum.setCellValueFactory(param -> new SimpleObjectProperty<Integer>(param.getValue().getKey().getNumTexton()));
+
+        TableColumn<Map.Entry<TextonHeader, Double>, String> columnName = new TableColumn<>("Nom");
+        columnName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getKey().getName()));
+
+        TableColumn<Map.Entry<TextonHeader, Double>, Double> columnStat = new TableColumn<>(plugin.getResultName());
+        columnStat.setCellValueFactory(param -> new SimpleObjectProperty<Double>(param.getValue().getValue()));
+
+        TableView<Map.Entry<TextonHeader, Double>> table = new TableView<>();
+        table.setEditable(false);
+        table.getColumns().add(columnNum);
+        table.getColumns().add(columnName);
+        table.getColumns().add(columnStat);
+
+        Label labelIntro = new Label("Résultats du plugin " + plugin.getName());
+        labelIntro.setStyle("-fx-font-weight: bold");
+        Label labelDesc = new Label(plugin.getResultDescription());
+        Stream.of(labelIntro, labelDesc).forEach(label -> label.setWrapText(true));
+
+        final VBox vBox = new VBox(5);
+        vBox.setPadding(new Insets(10, 0, 0, 10));
+        vBox.getChildren().addAll(labelIntro, labelDesc, table);
+        return vBox;
+    }
+
+    public class JavaApplication {
+        public void receiveGraphJavaFX(String jsonGraph) {
+            jsonFromJavascript.set(jsonGraph);
+        }
+
+        public void log(String log) {
+            System.out.println("---De javascript: " + log);
+        }
     }
 }

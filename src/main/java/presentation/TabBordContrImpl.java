@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import events.PresenterImageUpdateEvent;
 import events.TextonChangeEvent;
 import io.TextonIo;
-import io.XmlFileConnector;
+import io.TextonIoFactory;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -37,6 +37,8 @@ import util.PropLoader;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -98,19 +100,24 @@ public class TabBordContrImpl implements TabBordContr {
     @FXML
     private Label lblHorloge;
 
+    private Path path = Paths.get(PropLoader.getMap().get("location"));
+
     private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
     private long recitalClock;
     private long textonClock;
     private Texton texton = null;
     private Texton textonPrecedent = null;
-    private TextonIo textonIo = new XmlFileConnector(new String[]{PropLoader.getMap().get("location")});
-    private Graph graph = textonIo.getGraph();
+
+    //TODO Vérifieer l'initialisation du Graph.
+    private Graph graph;
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();
     @Inject
     private EventBus eventBus;
     @Inject
     private CommsManager commsManager;
+    @Inject
+    private TextonIoFactory textonIoFactory;
 
     //TODO Ajouter la citation, provient de https://stackoverflow.com/questions/28581639/javafx8-presentation-view-duplicate-pane-and-content
     private ChangeListener<Boolean> needsLayoutListener = (observable, oldValue, newValue) -> {
@@ -198,7 +205,7 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void changeTexton(int numTexton) throws IOException {
-        Texton texton = textonIo.readTexton(numTexton);
+        Texton texton = textonIoFactory.create(path).readTexton(numTexton);
         changeTexton(texton);
     }
 
@@ -235,14 +242,12 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void conclusion() {
-        //TODO écrire la conclusion
         anchorPaneTabBord.getChildren().clear();
         WebView webView = new WebView();
         CanvasUtil.setNodeAnchorToAnchorPane(webView, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(webView);
         WebEngine webEngine = webView.getEngine();
-        webEngine.load(getClass().getResource("/conclusion/conclusion.html").toExternalForm());
-
+        webEngine.load(getClass().getResource("/webview/conclusion/conclusion.html").toExternalForm());
 
         //Add listeners to copy image to VisContr
         Runnable copyImage = () -> eventBus.post(new PresenterImageUpdateEvent(webView.snapshot(new SnapshotParameters(), null)));
@@ -255,7 +260,7 @@ public class TabBordContrImpl implements TabBordContr {
         stopScreenCast.setCycleCount(1);
         stopScreenCast.getKeyFrames().add(new KeyFrame(Duration.seconds(3), event -> screencast.stop()));
 
-        Runnable updateForAWhile = ()-> {
+        Runnable updateForAWhile = () -> {
             screencast.playFromStart();
             stopScreenCast.playFromStart();
         };
@@ -274,15 +279,6 @@ public class TabBordContrImpl implements TabBordContr {
 
         //This runs right right away
         updateForAWhile.run();
-        /*try {
-            webEngine.executeScript("receiveJson('" + GraphConnector.getJsonGraph(textonIo.dumpTextons(), graph.getEdges()) + "')");
-        } catch (IOException e) {
-            e.printStackTrace();
-            if (FXCustomDialogs.showConfirmationAction("Erreur: il n'a pas été possible de reconstituer le graphe de textons. Voulez-vous essayer?")) {
-            conclusion();
-            }
-        }
-        webEngine.executeScript("initGraph()");*/
     }
 
     @FXML

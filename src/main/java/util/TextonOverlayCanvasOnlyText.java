@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 /**
  * Created by Mikaël on 2017-09-24.
  */
+
+//TODO Afficher le texton "Lien A" (B, C, D…) avec la couleur appropriée.
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
     private Graph graph;

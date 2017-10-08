@@ -3,7 +3,7 @@ package io;
 import javafx.embed.swing.SwingFXUtils;
 import textonclasses.Graph;
 import textonclasses.Texton;
-import textonclasses.TextonLien;
+import textonclasses.TextonHeader;
 import util.Util;
 
 import javax.imageio.ImageIO;
@@ -16,68 +16,29 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Created by Mikaël on 2017-09-28.
  */
-public class XmlFileConnector extends TextonIo {
+public class XmlFileConnector extends TextonFileIo {
 
-    private Path path;
-
-    public XmlFileConnector(String[] properties) throws IOException, URISyntaxException {
-        super(properties);
-
-        Path masterFile = Paths.get(properties[0]);
-        masterFile.normalize();
-        Properties masterProperties = new Properties();
-        InputStream is = Files.newInputStream(masterFile);
-        masterProperties.load(is);
-        is.close();
-        path = masterFile.getParent();
-    }
-
-    public static void main(String[] args) {
-
-    }
-
-    @Override
-    public List<Texton> dumpTextons() throws IOException {
-        ConcurrentLinkedQueue<Texton> queue = new ConcurrentLinkedQueue<>();
-        Files.newDirectoryStream(path, "[0-9][0-9][0-9].json").forEach(file -> {
-            try {
-                queue.add(readTexton(Integer.parseInt(file.getFileName().toString().substring(0, 3))));
-            } catch (IOException e) {
-                System.err.println("Error walking directory while dumping textons.");
-                e.printStackTrace();
-            }
-        });
-        Texton[] textonArray = queue.toArray(new Texton[0]);
-
-        return Arrays.asList(textonArray);
-    }
-
-    @Override
-    public List<TextonLien> dumpEdges() throws IOException {
-        return GraphConnector.getGraph(path.resolve("graph.json")).getEdges();
-        //TODO Extraire la partie qui récupère les liens dans
+    public XmlFileConnector(Path path) throws IOException, URISyntaxException {
+        super(path);
     }
 
     @Override
     public Texton readTexton(int numTexton) throws IOException {
         String formattedNum = Util.getFormattedNumSerie(numTexton);
-        Path textonPath = path.resolve(formattedNum + ".xml");
+        Path textonPath = getPath().resolve(formattedNum + ".xml");
         Path imagePath = null;
 
         //Vérifier tous les types d'image supportés par Java et créer un Path par image trouvée.
         List<Path> collect = Stream.of("jpg", "jpeg", "bmp", "wbmp", "png", "gif")
-                .filter(s -> Files.exists(Paths.get(path.toString() + formattedNum + "." + s))).limit(1)
-                .map(s -> Paths.get(path.toString() + formattedNum + "." + s)).collect(Collectors.toList());
+                .filter(s -> Files.exists(Paths.get(getPath().toString() + formattedNum + "." + s))).limit(1)
+                .map(s -> Paths.get(getPath().toString() + formattedNum + "." + s)).collect(Collectors.toList());
 
         if (collect.size() > 1) {
             System.out.println("Attention: plus d'une image a été trouvée pour le texton " + numTexton);
@@ -99,7 +60,7 @@ public class XmlFileConnector extends TextonIo {
     @Override
     public void writeTexton(Texton texton, boolean overwrite) throws IOException {
         try {
-            try (FileOutputStream fout = new FileOutputStream(Paths.get(path.toString(),
+            try (FileOutputStream fout = new FileOutputStream(Paths.get(getPath().toString(),
                     Util.getFormattedNumSerie(texton.getNumTexton()) + ".xml").toFile())) {
 
                 JAXBContext jc = JAXBContext.newInstance(Texton.class);
@@ -108,7 +69,7 @@ public class XmlFileConnector extends TextonIo {
                 marshaller.marshal(texton, fout);
 
                 //Save image
-                File file = new File(path.toString(), Util.getFormattedNumSerie(texton.getNumTexton()) + ".png");
+                File file = new File(getPath().toString(), Util.getFormattedNumSerie(texton.getNumTexton()) + ".png");
                 String format = "png";
                 ImageIO.write(SwingFXUtils.fromFXImage(texton.getImage(), null), format, file);
             }
@@ -119,6 +80,13 @@ public class XmlFileConnector extends TextonIo {
 
     @Override
     public Graph getGraph() throws IOException {
-        return GraphConnector.getGraph(path);
+        return GraphConnector.getGraph(getPath());
     }
+
+    @Override
+    public TextonHeader readTextonHeader(int numTexton) throws IOException {
+        //TODO Cette méthode ne fait rien.
+        return null;
+    }
+
 }

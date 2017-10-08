@@ -18,6 +18,9 @@ var changeTexton = function (numTexton, numLiens) {
     }, 2000);
 };
 
+//TODO Ajouter des liens vers les webjar dans les sources des scripts.
+//Il faut que les liens internet marchent pour tester sans compiler, mais que les liens webjar marchent dans la distribution.
+
 window.onload = function () {
     id('abutton').onclick = function () {
         this.blur();

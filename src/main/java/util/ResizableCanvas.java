@@ -23,7 +23,7 @@ abstract class ResizableCanvas extends Canvas {
     private double lastWidth = 0;
     private double lastHeight = 0;
     private ObservableList<Double> observableList = FXCollections.observableArrayList(new ArrayList<Double>());
-    SimpleListProperty<Double> boundsProperty = new SimpleListProperty<>(observableList);
+    private SimpleListProperty<Double> boundsProperty = new SimpleListProperty<>(observableList);
 
     @Override
     public boolean isResizable() {
@@ -58,8 +58,6 @@ abstract class ResizableCanvas extends Canvas {
     }
 
     Rectangle2D getFittedCoords(BufferedImage image) {
-        if (image == null)
-            throw new IllegalArgumentException("Image passed to ResizableCanvas.getFittedCoords(BufferedImage image) cannot be null.");
         /* Cette section est adaptée de Ali, Sadique. « Fitting an Image in to [sic] a Canvas Object ». Code that Works.
          * 3 octobre 2013. <https://sdqali.in/blog/2013/10/03/fitting-an-image-in-to-a-canvas-object/>. Consulté le
          * 2 décembre 2016.

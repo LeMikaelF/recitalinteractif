@@ -1,2 +1,4 @@
+tests\Util$1.class
+tests\Util.class
+tests\MiscTests.class
 tests\XmlFileConnectorTest.class
-tests\XmlFileConnectorTest$1.class

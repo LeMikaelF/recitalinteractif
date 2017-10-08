@@ -106,10 +106,6 @@ public class VisContrImpl implements VisContr {
         }
     }
 
-    private void conclusion() {
-        //TODO Passer à la conclusion.
-    }
-
     private void restaurer() {
         //TODO Restaurer la présenttion. Le code est dans Contrpres.
     }

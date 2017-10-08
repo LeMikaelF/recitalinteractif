@@ -7,7 +7,7 @@ package builder;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import io.TextonIo;
-import io.XmlFileConnector;
+import io.TextonIoFactory;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -15,15 +15,13 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import textonclasses.Texton;
+import util.CanvasUtil;
 import util.FXCustomDialogs;
 import util.ResizableCanvasImpl;
 import util.Util;
@@ -32,12 +30,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//TODO L'image dépasse un peu des côtés des fois (quand on change la fenêtre de taille, l'algorithme réagit mal?).
+//TODO tester le builder
 public class BuilderContr {
 
     Path projectPath = null;
@@ -64,11 +63,13 @@ public class BuilderContr {
     @FXML
     private TextField textFieldSource;
     @FXML
-    private TextField textAreaComment;
+    private TextArea textAreaComment;
     @FXML
-    private TextField textAreaDescription;
+    private TextArea textAreaDescription;
     @Inject
     private EventBus eventBus;
+    @Inject
+    private TextonIoFactory textonIoFactory;
 
     @Inject
     private BuilderVisContr builderVisContr;
@@ -77,8 +78,7 @@ public class BuilderContr {
     private File currentFile = null;
     private Image image = null;
 
-    private List<TextInputControl> textInputControls = Stream.of(textFieldNum, textFieldName, textFieldSource, textAreaComment, textAreaDescription)
-            .collect(Collectors.toList());
+    private List<TextInputControl> textInputControls;
 
     private boolean updatedButNotSaved;
     private ChangeListener<String> numEnforcer =
@@ -102,9 +102,9 @@ public class BuilderContr {
         } else if (event.getSource().equals(menuOuvrirImage)) {
             ouvrirImage();
         } else if (event.getSource().equals(menuEnregistrer)) {
-            //TODO Remettre updatedButNotSaved à false;
+            menuEnregistrer();
         } else if (event.getSource().equals(menuEnregistrerSous)) {
-            //TODO Remettre updatedButNotSaved à false;
+            menuEnregistrerSous();
         } else if (event.getSource().equals(menuFermer)) {
             getStage().hide();
             hideChildrenStages();
@@ -114,16 +114,20 @@ public class BuilderContr {
     private void nouveau() {
         if (updatedButNotSaved)
             if (!checkWantsToAbandonChanges()) return;
-        textInputControls.clear();
+        textInputControls.forEach(textInputControl -> textInputControl.textProperty().set(""));
+        //TODO Mettre une image par défaut au lieu de cacher la prévisualisation.
         menuCheckPreview.selectedProperty().set(false);
     }
 
     private void ouvrirImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Ajouter l'image du texton");
-        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Fichiers image supportés",
-                "*.jpg", "*.jpeg", "*.bmp", "*.wbmp", "*.png", "*.gif"));
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichiers image supportés",
+                "*.jpg", "*.jpeg", "*.bmp", "*.wbmp", "*.png", "*.gif");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
         File imageFile = fileChooser.showOpenDialog(getStage());
+        if (imageFile == null) return;
         try {
             BufferedImage bufferedImage = ImageIO.read(imageFile);
             image = SwingFXUtils.toFXImage(bufferedImage, null);
@@ -139,25 +143,43 @@ public class BuilderContr {
         if (image == null) {
             FXCustomDialogs.showError("Vous devez sélectionné une image pour le texton.");
         }
-        Texton save = new Texton(Integer.parseInt(textFieldNum.textProperty().get()), textFieldSource.textProperty().get(),
-                textFieldName.textProperty().get(), textAreaDescription.textProperty().get(), textAreaComment.textProperty().get(), image);
-        //TODO Ajouter une méthode de sélection d'image.
+        Texton save = buildTextonFromFields();
 
         try {
-            new XmlFileConnector(new String[]{currentFile.toString()}).writeTexton(save, true);
-        } catch (IOException | URISyntaxException e) {
+            if(currentFile == null) throw new IOException();
+            textonIoFactory.create(currentFile.toPath()).writeTexton(save, true);
+        } catch (IOException e) {
             FXCustomDialogs.showException(e);
             e.printStackTrace();
         }
         deactivateUpdatedListener();
     }
 
+    //TODO Mettre un nom de ficiher initial aux autres FileChooser s.
     private void menuEnregistrerSous() {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(Util.getFormattedNumSerie(Integer.parseInt(textFieldNum.textProperty().get())) + ".json");
         fileChooser.setTitle("Enregistrer le texton");
-        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Texton au format json", "*.json"));
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Texton au format json", "*.json");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
         currentFile = fileChooser.showSaveDialog(getStage());
-        deactivateUpdatedListener();
+        try {
+        if(currentFile == null) throw new IOException();
+        buildTextonFromFields();
+            textonIoFactory.create(currentFile.toPath()).writeTexton(buildTextonFromFields(), true);
+            deactivateUpdatedListener();
+        } catch (IOException e) {
+            FXCustomDialogs.showError("Échec de l'enregistrement.");
+            e.printStackTrace();
+        }
+    }
+
+    private Texton buildTextonFromFields() {
+        texton = new Texton(Integer.parseInt(textFieldNum.textProperty().get()), textFieldSource.textProperty().get(),
+                textFieldName.textProperty().get(), textAreaDescription.textProperty().get(),
+                textAreaComment.textProperty().get(), image);
+        return texton;
     }
 
     private void menuOuvrir() {
@@ -170,7 +192,9 @@ public class BuilderContr {
         menuEnregistrer.disableProperty().set(false);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Ouvrir le texton");
-        fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Texton au format json", "*.json"));
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Texton au format json", "*.json");
+        fileChooser.getExtensionFilters().add(filter);
+        fileChooser.setSelectedExtensionFilter(filter);
         File file = fileChooser.showOpenDialog(getStage());
 
         //Check that filename is well-formed.
@@ -182,16 +206,12 @@ public class BuilderContr {
 
         projectPath = file.toPath().getParent();
         try {
-            TextonIo textonIo = new XmlFileConnector(new String[]{file.toString()});
+            TextonIo textonIo = textonIoFactory.create(file.toPath());
             texton = textonIo.readTexton(Integer.parseInt(file.toPath().getFileName().toString().substring(0, 3)));
             chargerTexton();
             activateUpdatedListener();
             currentFile = file;
         } catch (IOException e) {
-            FXCustomDialogs.showException(e);
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            System.err.println("Il y a eu une erreur en construisant le TextonIo. Ceci est un problème interne au programme.");
             FXCustomDialogs.showException(e);
             e.printStackTrace();
         }
@@ -208,6 +228,7 @@ public class BuilderContr {
         textFieldSource.textProperty().set(texton.getSource());
         textAreaComment.textProperty().set(texton.getComment());
         textAreaDescription.textProperty().set(texton.getDescription());
+        canvasPreview.setImage(texton.getImage());
     }
 
     private void activateUpdatedListener() {
@@ -223,8 +244,11 @@ public class BuilderContr {
         stageImagePreview.setTitle("Visualisation de l'image");
         canvasPreview = new ResizableCanvasImpl();
         Scene scene = new Scene(new AnchorPane(canvasPreview), 370, 208);
+        CanvasUtil.setNodeAnchorToAnchorPane(canvasPreview, 0, 0, 0, 0);
         stageImagePreview.setScene(scene);
         BuilderMain.preventCloseRequest(stageImagePreview);
+        stageImagePreview.setResizable(false);
+        stageImagePreview.show();
     }
 
     @FXML
@@ -240,6 +264,10 @@ public class BuilderContr {
         menuCheckPreview.selectedProperty().set(true);
         addShowHideCapability(menuCheckVisualisation.selectedProperty(), builderVisContr.getStage());
         addShowHideCapability(menuCheckPreview.selectedProperty(), stageImagePreview);
+
+        textInputControls = Stream.of(textFieldNum, textFieldName, textFieldSource, textAreaComment, textAreaDescription)
+                .collect(Collectors.toList());
+        activateUpdatedListener();
     }
 
     private void addShowHideCapability(BooleanProperty controller, Stage stage) {
@@ -253,7 +281,7 @@ public class BuilderContr {
         return stageList.get(0);
     }
 
-    public void hideChildrenStages(){
+    public void hideChildrenStages() {
         stageImagePreview.hide();
         builderVisContr.getStage().hide();
     }

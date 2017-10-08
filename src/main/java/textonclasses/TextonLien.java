@@ -1,11 +1,19 @@
 package textonclasses;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
-
 public class TextonLien implements Serializable {
-private int from;
-private int to;
+    private int from;
+    private int to;
+
+    @JsonCreator
+    public TextonLien(@JsonProperty("from") int from, @JsonProperty("to") int to) {
+        this.from = from;
+        this.to = to;
+    }
 
     public int getFrom() {
         return from;
@@ -13,11 +21,5 @@ private int to;
 
     public int getTo() {
         return to;
-    }
-
-    public TextonLien(int from, int to) {
-
-        this.from = from;
-        this.to = to;
     }
 }

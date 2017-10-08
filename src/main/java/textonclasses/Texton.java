@@ -1,46 +1,40 @@
 package textonclasses;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javafx.scene.image.Image;
+import textonclasses.persistence.ImageDeserializer;
+import textonclasses.persistence.ImageSerializer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-@XmlRootElement
-@XmlJavaTypeAdapter(TextonAdapter.class)
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Texton {
 
-    @XmlAttribute
-    final private Integer numTexton;
+    final private TextonHeader textonHeader;
     final private String source;
-    final private String name;
     final private String description;
     final private String comment;
-    @XmlJavaTypeAdapter(Base64Adapter.class)
+    @JsonSerialize(using = ImageSerializer.class)
+    @JsonDeserialize(using = ImageDeserializer.class)
     final private Image image;
 
-    public Texton(Integer numTexton, String source, String name, String description, String comment, Image image) {
-
-        this.numTexton = numTexton;
+    @JsonCreator
+    public Texton(@JsonProperty("numTexton") Integer numTexton, @JsonProperty("source") String source,
+                  @JsonProperty("name") String name, @JsonProperty("description") String description,
+                  @JsonProperty("comment") String comment, @JsonProperty("image") Image image) {
+        textonHeader = new TextonHeader(numTexton, name);
         this.source = source;
-        this.name = name;
         this.description = description;
         this.comment = comment;
         this.image = image;
     }
-
-    private Texton(){
-        this(null, null, null, null, null, null);}
 
     public Image getImage() {
         return image;
     }
 
     public Integer getNumTexton() {
-        return numTexton;
+        return textonHeader.getNumTexton();
     }
 
     public String getSource() {
@@ -48,7 +42,7 @@ public class Texton {
     }
 
     public String getName() {
-        return name;
+        return textonHeader.getName();
     }
 
     public String getDescription() {
@@ -62,12 +56,13 @@ public class Texton {
     @Override
     public String toString() {
         return "Texton{" +
-                "numTexton=" + numTexton +
+                "numTexton=" + getNumTexton() +
                 ", source='" + source + '\'' +
-                ", name='" + name + '\'' +
+                ", name='" + getName() + '\'' +
                 ", description='" + description + '\'' +
                 ", comment='" + comment + '\'' +
                 ", image=" + image +
                 '}';
     }
+
 }

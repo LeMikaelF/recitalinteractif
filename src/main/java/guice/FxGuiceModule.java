@@ -2,8 +2,12 @@ package guice;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
-import com.google.inject.multibindings.MultibinderBinding;
+import io.JsonFileConnector;
+import io.TextonFileIo;
+import io.TextonIo;
+import io.TextonIoFactory;
 import presentation.*;
 import server.*;
 
@@ -24,10 +28,10 @@ public final class FxGuiceModule extends AbstractModule {
         bind(Server.class).toProvider(ServerImplProvider.class).asEagerSingleton();
         bind(WebsocketHandler.class).toProvider(WebsocketHandlerImplProvider.class);
 
-        //Declare Vote Collectors
         Multibinder<VoteCollector> multibinder = Multibinder.newSetBinder(binder(), VoteCollector.class);
-        multibinder.addBinding().toProvider(WebsocketHandlerImplProvider.class);
+        multibinder.addBinding().to(WebsocketHandlerImpl.class);
 
+        install(new CommonModule());
     }
 
 }

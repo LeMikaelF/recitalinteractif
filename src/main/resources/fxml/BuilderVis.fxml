@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.web.WebView?>
 
-
 <AnchorPane prefHeight="585.0" prefWidth="784.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="builder.BuilderVisContr">
    <children>
       <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -16,14 +15,14 @@
             <items>
               <MenuItem fx:id="menuOuvrir" mnemonicParsing="false" onAction="#menuHandler" text="Ouvrir le graphe…" />
                   <MenuItem fx:id="menuRecharger" mnemonicParsing="false" onAction="#menuHandler" text="Recharger le graphe" />
+                  <MenuItem fx:id="menuReconstruire" mnemonicParsing="false" onAction="#menuHandler" text="Reconstruire le graphe…" />
                   <MenuItem fx:id="menuEnregistrer" mnemonicParsing="false" onAction="#menuHandler" text="Enregistrer le graphe" />
                   <MenuItem fx:id="menuEnregistrerSous" mnemonicParsing="false" onAction="#menuHandler" text="Enregistrer le graphe sous…" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuAjuster" mnemonicParsing="false" onAction="#menuHandler" text="Ajuster à la fenêtre" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="menuFermer" mnemonicParsing="false" onAction="#menuHandler" text="Fermer" />
             </items>
           </Menu>
+            <Menu fx:id="menuPlugins" mnemonicParsing="false" text="Plugins" />
         </menus>
       </MenuBar>
       <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
