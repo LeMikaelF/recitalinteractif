@@ -1,0 +1,13 @@
+{
+  "nodes" : [ {
+    "id" : 1,
+    "label" : "texton d'accueil"
+  }, {
+    "id" : 7,
+    "label" : "\\"
+  } ],
+  "edges" : [ {
+    "from" : 1,
+    "to" : 7
+  } ]
+}

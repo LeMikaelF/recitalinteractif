@@ -12,11 +12,11 @@ import io.TextonIo;
 import io.TextonIoFactory;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -24,9 +24,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Pair;
 import netscape.javascript.JSObject;
 import org.apache.commons.text.StringEscapeUtils;
@@ -47,6 +49,7 @@ import java.util.stream.Stream;
 
 public class BuilderVisContr {
 
+    public JavaApplication javaApplication = new JavaApplication();
     WebEngine webEngine = null;
     @FXML
     private Menu menuPlugins;
@@ -70,35 +73,48 @@ public class BuilderVisContr {
     private TextonIoFactory textonIoFactory;
     @Inject
     private Set<StatisticsPlugin> statPlugins;
-
     private Path path;
     private List<Stage> stageList = Stream.generate(Stage::new).limit(1).collect(Collectors.toList());
     private StringProperty jsonFromJavascript = new SimpleStringProperty();
-
     //TODO set listener on graph and not on string.
     private BooleanProperty askForSaveOnJavascriptUpdate = new SimpleBooleanProperty(false);
+    private EventHandler<WebEvent<String>> webAlertHandler = event -> {
+        //Remplacer la fonction javascript alert() par un dialogue JavaFX.
+        FXCustomDialogs.showError(event.getData());
+        requestFocusAfterAlert();
+    };
+    private Callback<String, Boolean> webConfirmHandler = (Callback<String, Boolean>) param -> {
+        //Remplacer la fonction javascript confirm() par un dialogue JavaFX.
+        boolean b = FXCustomDialogs.showConfirmationAction(param);
+        requestFocusAfterAlert();
+        return b;
+    };
+    private Graph graph;
     private ChangeListener<String> jsonUpdateCallback = (observable, oldValue, newValue) -> {
         //This check is necessary to prevent stack overflows.
         if (newValue.equals("")) return;
         try {
-            Graph graph = Graph.createGraph(newValue);
+            graph = Graph.createGraph(newValue);
         } catch (IOException e) {
             FXCustomDialogs.showError("La visualisation a envoyé un format invalide de json. Ceci est une erreur interne du programme.");
             e.printStackTrace();
+            return;
         }
         jsonFromJavascript.set("");
         if (!askForSaveOnJavascriptUpdate.get()) return;
         try {
             askForSaveOnJavascriptUpdate.set(false);
             TextonIo textonIo = textonIoFactory.create(path);
-            Graph graph = textonIo.getGraph();
             textonIo.saveGraph(graph);
         } catch (IOException e) {
             showBuilderVisError(e);
         }
 
     };
-    public JavaApplication javaApplication = new JavaApplication();
+
+    private void requestFocusAfterAlert() {
+        getStage().requestFocus();
+    }
 
     Stage getStage() {
         return stageList.get(0);
@@ -151,28 +167,27 @@ public class BuilderVisContr {
         File file = fileChooser.showOpenDialog(getStage());
         if (file == null) return;
         TextonIo textonIo = textonIoFactory.create(file.toPath());
-        Graph graph;
         try {
             graph = textonIo.getGraph();
-        path = file.toPath();
-        webEngine.load(getClass().getResource("/webview/builder/builder.html").toExternalForm());
-        webEngine.getLoadWorker().stateProperty().addListener(
-                (ov, oldState, newState) -> {
-                    if (newState == Worker.State.SUCCEEDED) {
-                        System.out.println("La page a été chargée avec succès.");
-                        try {
-                            loadGraphIntoWebView(graph);
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
+            path = file.toPath();
+            webEngine.load(getClass().getResource("/webview/builder/builder.html").toExternalForm());
+            webEngine.getLoadWorker().stateProperty().addListener(
+                    (ov, oldState, newState) -> {
+                        if (newState == Worker.State.SUCCEEDED) {
+                            System.out.println("La page a été chargée avec succès.");
+                            try {
+                                loadGraphIntoWebView(graph);
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                            JSObject window = (JSObject) webEngine.executeScript("window");
+                            window.setMember("javaFX", javaApplication);
+                            webEngine.executeScript("console.log = function(msg) {\n" +
+                                    "        javaFX.log(msg);\n" +
+                                    "    };");
                         }
-                        JSObject window = (JSObject) webEngine.executeScript("window");
-                        window.setMember("javaFX", javaApplication);
-                        webEngine.executeScript("console.log = function(msg) {\n" +
-                                "        javaFX.log(msg);\n" +
-                                "    };");
-                    }
-                });
-        menuEnregistrer.disableProperty().set(false);
+                    });
+            menuEnregistrer.disableProperty().set(false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -181,7 +196,7 @@ public class BuilderVisContr {
     private void recharger() {
         try {
             TextonIo textonIo = textonIoFactory.create(path);
-            Graph graph = textonIo.getGraph();
+             graph = textonIo.getGraph();
             loadGraphIntoWebView(graph);
         } catch (IOException e) {
             showBuilderVisError(e);
@@ -190,7 +205,9 @@ public class BuilderVisContr {
 
     private void loadGraphIntoWebView(Graph graph) throws JsonProcessingException {
         webEngine.executeScript("initGraphWithJson('" + StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(graph)) + "')");
-    };
+    }
+
+    ;
 
     private void enregistrer() {
         getGraphFromJsonDelayed(true);
@@ -215,7 +232,7 @@ public class BuilderVisContr {
 
     private void getGraphFromJsonDelayed(boolean andThenSaveToPath) {
         askForSaveOnJavascriptUpdate.set(andThenSaveToPath);
-        webEngine.executeScript("sendGraphToJavaFX()");
+        webEngine.executeScript("pushChanges()");
     }
 
     private void showBuilderVisError(Exception e) {
@@ -237,13 +254,18 @@ public class BuilderVisContr {
             menuItem.onActionProperty().set(event -> getPluginResultTable(statisticsPlugin));
             return menuItem;
         }).collect(Collectors.toList()));
+
+        //Add confirm and alert listeners to WebEngine
+        webEngine.onAlertProperty().set(webAlertHandler);
+        webEngine.confirmHandlerProperty().set(webConfirmHandler);
     }
 
     private Node getPluginResultTable(StatisticsPlugin plugin) {
-
+        plugin.init(graph);
         //If any of the prompts fails, return an empty node.
         if (plugin.getPrompts().stream().anyMatch((Pair<Function<String, Boolean>, String> functionStringPair) -> {
-            String input = FXCustomDialogs.showInput(functionStringPair.getValue());
+            String intro = "Le plugin " + plugin.getName() + " demande l'information suivante :\n";
+            String input = FXCustomDialogs.showInput(intro + functionStringPair.getValue());
 
             //If there has been an error processing input
             if (!functionStringPair.getKey().apply(input)) {
@@ -254,12 +276,6 @@ public class BuilderVisContr {
             return false;
         })) return new AnchorPane();
 
-        Graph graph = null;
-        try {
-            graph = textonIoFactory.create(path).getGraph();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         Map<TextonHeader, Double> pluginResults = plugin.apply(graph);
         ObservableList<Map.Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
 
@@ -272,7 +288,7 @@ public class BuilderVisContr {
         TableColumn<Map.Entry<TextonHeader, Double>, Double> columnStat = new TableColumn<>(plugin.getResultName());
         columnStat.setCellValueFactory(param -> new SimpleObjectProperty<Double>(param.getValue().getValue()));
 
-        TableView<Map.Entry<TextonHeader, Double>> table = new TableView<>();
+        TableView<Map.Entry<TextonHeader, Double>> table = new TableView<>(pluginResultsAsList);
         table.setEditable(false);
         table.getColumns().add(columnNum);
         table.getColumns().add(columnName);
@@ -291,6 +307,7 @@ public class BuilderVisContr {
 
     public class JavaApplication {
         public void receiveGraphJavaFX(String jsonGraph) {
+            System.out.println("Valeur reçue de javascript:" + jsonGraph);
             jsonFromJavascript.set(jsonGraph);
         }
 

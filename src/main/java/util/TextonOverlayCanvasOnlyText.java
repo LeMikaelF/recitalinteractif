@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  */
 
 //TODO Afficher le texton "Lien A" (B, C, D…) avec la couleur appropriée.
+//TODO Le texte est beaucoup trop gros.
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
     private Graph graph;
@@ -40,10 +41,8 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
            Text text = new Text(name);
 
            //TODO Vérifier les deux lignes suivantes et ajouter une citation.
-           ObjectExpression<Font> fontTracking = Bindings.createObjectBinding(() -> Font.font(getWidth() / 4), widthProperty());
+           ObjectExpression<Font> fontTracking = Bindings.createObjectBinding(() -> Font.font(getWidth() / 20), widthProperty());
            text.fontProperty().bind(fontTracking);
-           text.setFont(new Font(20));
-           //text.setWrappingWidth(getWidth() - 40);
            return text;
        }).collect(Collectors.toList());
 
@@ -59,6 +58,7 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
     };
 
+    //TODO Les textes apparaissent dans la moitié du bas, mais trois un par-dessus l'autre en haut et un autre en bas complètement.
     private void setBottomAnchorsOnTexts(double height) {
         for (int i = texts.size() - 1; i >= 0; i--) {
             double computed = height - ((i + 1)/texts.size()) * height;

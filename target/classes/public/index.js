@@ -4,8 +4,9 @@ var instructionsarea;
 var votedisplay;
 var connecterror = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Erreur de connexion. Rafraîchissez la page.";
 var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté.";
-var ws = null;
-var address = '1.2.3.4:80/ws';
+var ws;
+//TODO changer ceci pour 1.2.3.4
+var address = 'ws://192.168.2.34:80/ws';
 var id = function (id) {
     return document.getElementById(id);
 };
@@ -18,6 +19,7 @@ var changeTexton = function (numTexton, numLiens) {
     }, 2000);
 };
 
+//TODO semble se connecter, mais les contrôles sont encore désactivés.
 //TODO Ajouter des liens vers les webjar dans les sources des scripts.
 //Il faut que les liens internet marchent pour tester sans compiler, mais que les liens webjar marchent dans la distribution.
 
@@ -57,7 +59,9 @@ window.onload = function () {
     };
 
     ws.onmessage = function (msg) {
-        var msgobj = JSON.parse(msg);
+        //TODO Le problème: la variable msg n'est pas une string, il faut aller voir dans msg.data
+        console.log('message reçu du serveur: ' + msg.data);
+        var msgobj = JSON.parse(msg.data);
         enableControls(msgobj.numLiens);
         if (currentTexton !== msgobj.textonCourant && msgObj.textonCourant !== 0) {
             changeTexton(msgobj.textonCourant);

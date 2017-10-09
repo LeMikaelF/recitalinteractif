@@ -23,6 +23,7 @@ public class Graph {
     @JsonCreator
     public Graph(@JsonProperty("nodes") List<TextonHeader> nodes, @JsonProperty("edges") List<TextonLien> edges) {
         this.nodes = nodes;
+        nodes.add(0, new TextonHeader(0, "Texton 0"));
         this.edges = edges;
     }
 

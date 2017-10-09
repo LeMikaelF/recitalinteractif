@@ -5,7 +5,6 @@ import textonclasses.Graph;
 import textonclasses.TextonHeader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -15,6 +14,9 @@ import java.util.stream.Stream;
 /**
  * Created by Mikaël on 2017-10-07.
  */
+
+//TODO This plugin is broken.
+    //Use code at: C:\Programmation\Plugin Gephi LTO\modules\LtoPlugin\src\main\java
 public class LtoPlugin implements StatisticsPlugin {
 
     final private String NAME = "Fréqence d'occurence (limité)";
@@ -63,29 +65,36 @@ public class LtoPlugin implements StatisticsPlugin {
     private Pair<Function<String, Boolean>, String> pair2 = new Pair<>(requireLimit, requireLimitString);
     private List<Pair<Function<String, Boolean>, String>> prompts = Stream.of(pair1, pair2).collect(Collectors.toList());
 
+    //For testing only
+    private int numPaths = 0;
+    private List<TextonHeader> resultList = new ArrayList<>();
 
-    private void setLTO(int limit, TextonHeader start, List<TextonHeader> path) {
-        path = new ArrayList<TextonHeader>(path);
-        if (limit == 0) {
-            for (TextonHeader textonHeader : path) {
-                statMap.put(textonHeader, statMap.get(textonHeader) + 1);
-                //return;
-            }
+    private List<TextonHeader> setLTO2(int limit, TextonHeader start, List<TextonHeader> path) {
+        path = new ArrayList<>(path);
+
+        long numberOfChildrensChildren = graph.getTextonHeaderChildren(start.getNumTexton())
+                .stream().flatMap(textonHeader -> graph.getTextonHeaderChildren(textonHeader.getNumTexton()).stream()).count();
+
+        if (limit == 0 || numberOfChildrensChildren == 0) {
+            numPaths++;
+            return path;
+        } else path.add(start);
+
+        for (TextonHeader textonHeader : graph.getTextonHeaderChildren(start.getNumTexton())) {
+            path.addAll(setLTO2(limit - 1, textonHeader, path));
         }
-
-        path.add(start);
-
-        for (TextonHeader child : graph.getTextonHeaderChildren(start.getNumTexton())) {
-            setLTO(limit--, child, path);
-        }
+        return path;
     }
 
     @Override
     public Map<TextonHeader, Double> apply(Graph graph) {
         this.graph = graph;
-        statMap = new HashMap<>();
-        setLTO(limit, graph.getTextonHeader(start), new ArrayList<>());
-        return statMap;
+        List<TextonHeader> occurences = setLTO2(limit, graph.getTextonHeader(start), new ArrayList<>());
+        System.out.println(numPaths);
+        System.out.println(occurences);
+        Map<TextonHeader, Double> map = occurences.stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingDouble(value -> 1)));
+        return map;
     }
 
     @Override
@@ -101,6 +110,11 @@ public class LtoPlugin implements StatisticsPlugin {
     @Override
     public String getResultDescription() {
         return null;
+    }
+
+    @Override
+    public void init(Graph graph) {
+        this.graph = graph;
     }
 
     @Override

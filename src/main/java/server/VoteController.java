@@ -3,6 +3,7 @@ package server;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import events.TextonChangeEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -20,22 +21,32 @@ public class VoteController {
 
     Map<VoteCollector, List<Integer>> voteMap;
     private boolean initialized = false;
+    private boolean wasAskedToBroadcast = false;
 
-    public void init(){
+    public void init() {
+        eventBus.register(this);
         for (VoteCollector voteCollector : voteCollectors) {
             eventBus.register(voteCollector);
             initialized = true;
         }
     }
 
-    public void startBroadcasting(){
-        if(!initialized) throw new IllegalStateException("VoteController is not initialized");
+    public void startBroadcasting() {
+        if (!initialized) throw new IllegalStateException("VoteController is not initialized");
         voteCollectors.forEach(VoteCollector::startBroadcasting);
     }
 
     @Subscribe
     public void onVoteChangeEvent(VoteChangeEvent voteChangeEvent) {
         voteMap.put(voteChangeEvent.getVoteCollector(), voteChangeEvent.getVotes());
+    }
+
+    @Subscribe
+    public void onTextonChangeEvent(TextonChangeEvent textonChangeEvent) {
+        if (!wasAskedToBroadcast) {
+            wasAskedToBroadcast = true;
+            startBroadcasting();
+        } else return;
     }
 
 }

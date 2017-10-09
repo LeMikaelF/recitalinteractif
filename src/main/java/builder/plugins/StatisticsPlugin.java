@@ -19,6 +19,7 @@ public interface StatisticsPlugin extends Function<Graph, Map<TextonHeader, Doub
     String getName();
     String getResultName();
     String getResultDescription();
+    void init(Graph graph);
     //Function returns false on failure.
     List<Pair<Function<String, Boolean>, String>> getPrompts();
 

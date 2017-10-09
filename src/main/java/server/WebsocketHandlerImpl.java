@@ -3,6 +3,7 @@ package server;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import events.TextonChangeEvent;
 import javafx.beans.property.IntegerProperty;
 import org.eclipse.jetty.websocket.api.Session;
@@ -10,51 +11,54 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Created by Mikaël on 2017-09-29.
  */
+@Singleton
 @WebSocket
 public class WebsocketHandlerImpl implements WebsocketHandler {
 
     private final static String[] propNames = new String[]{"A", "B", "C", "D", "Enr"};
-    protected static ConcurrentMap<String, IntegerProperty> properties = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, IntegerProperty> properties = new ConcurrentHashMap<>();
     private static ConcurrentMap<Session, Vote> clientsVotesMap = new ConcurrentHashMap<>();
     private static AtomicInteger numberOfLinks = new AtomicInteger();
     private static AtomicInteger numTextonCourant = new AtomicInteger();
     private static Runnable broadcast = () -> {
         while (!Thread.interrupted()) {
+            System.out.println("We're broadcasting…");
             WebsocketHandlerImpl.getClientsVotesMap().keySet().forEach(session -> {
                 try {
+                    //TODO Builder json with Jackson rather than org.json
                     session.getRemote().sendString(new JSONObject().put("numLiens", WebsocketHandlerImpl.getNumberOfLinks()).put("textonCourant", WebsocketHandlerImpl.numTextonCourant.get()).toString());
-                    Thread.sleep(1000);
-                } catch (IOException | InterruptedException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                return;
+            }
         }
     };
 
     @Inject
-    EventBus eventBus;
+    private EventBus eventBus;
 
     public WebsocketHandlerImpl() {
-        System.out.println(eventBus);
     }
 
     private static void startBroadcastingImpl() {
         Thread t = new Thread(WebsocketHandlerImpl.broadcast);
         t.setDaemon(true);
-        t.run();
+        t.start();
     }
 
     private static void setNumTextonCourantImpl(int numTextonCourant) {
@@ -76,7 +80,7 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     private void updateProperties() {
         //Calling this method each time to rebuild the complete properties is very wasteful, but economical.
         List<Integer> voteList = Stream.of(Vote.values())
-                .mapToInt(vote -> (int)clientsVotesMap.values().stream().filter(vote1 -> !vote1.equals(Vote.NULL))
+                .mapToInt(vote -> (int) clientsVotesMap.values().stream().filter(vote1 -> !vote1.equals(Vote.NULL))
                         .filter(vote::equals).count()).boxed().collect(Collectors.toList());
 
         eventBus.post(new VoteChangeEvent(properties.get("Enr").get(), voteList, this));
@@ -93,9 +97,10 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     @Override
     @OnWebSocketMessage
     public void onMessage(Session session, String str) {
+        System.out.println("Message reçu d'un client websocket : " + str);
         Vote vote = Vote.valueOf(str);
         getClientsVotesMap().put(session, vote);
-        updateProperties();
+        //TODO Send new VoteChangeEvent via eventBus
     }
 
     @Override

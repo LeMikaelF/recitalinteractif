@@ -44,15 +44,6 @@ public class CommsManagerImpl implements CommsManager {
         server.startServer();
     }
 
-    private void over() {
-        eventBus.post(ControlEvent.TERMINE);
-    }
-
-    @Subscribe
-    public void onTextonChangeEvent(TextonChangeEvent Texton) {
-        over();
-    }
-
     @Subscribe
     public void onControlEvent(ControlEvent controlEvent) {
         if(controlEvent.equals(ControlEvent.SHUTDOWN)) try {

@@ -36,7 +36,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //TODO L'image dépasse un peu des côtés des fois (quand on change la fenêtre de taille, l'algorithme réagit mal?).
-//TODO tester le builder
+//TODO Le builder dit toujours que des champs ont été modifiés depuis le dernier enregistrement.
+//TODO Changer le lieu initial du FileChooser quand on l'a déjà utilisé.
+//TODO Prévoir que si on clique sur «annuler» lors de l'enregistrement, il ne faut pas donner d'erreur (if null return).
+//TODO Reconstruire le graphe: ne doit pas demander l'emplacement du graphe s'il est déjà chargé.
+
 public class BuilderContr {
 
     Path projectPath = null;

@@ -1,7 +1,5 @@
-io\XmlFileConnector.class
 server\VoteControllerProvider.class
 textonclasses\persistence\ImageSerializer.class
-builder\BuilderVisContr$1.class
 textonclasses\TextonLien.class
 util\Util$1$1.class
 presentation\TabBordContrImplProvider.class
@@ -9,7 +7,6 @@ server\ServerRunnable.class
 textonclasses\persistence\ImageDeserializer.class
 util\ResizableCanvas.class
 presentation\VisContrImpl.class
-builder\BuilderGuiceModule.class
 io\TextonIo.class
 util\TextonOverlayCanvas.class
 builder\BuilderVisContr$JavaApplication.class
@@ -57,7 +54,6 @@ presentation\TabBordContrImpl.class
 util\Util.class
 server\ServerImplProvider.class
 util\PropLoader.class
-io\GraphConnector.class
 server\Vote.class
 util\CanvasUtil.class
 util\TextonOverlayCanvasOnlyText.class

@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//TODO le label «D» dit 0 au lieu de D, et 999 au lieu de 0 par défaut.
 public class TabBordContrImpl implements TabBordContr {
 
     @FXML
@@ -282,7 +283,7 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     @FXML
-    void initialize() {
+    void initialize() throws IOException {
 
         eventBus.register(this);
         Stream.of(textAreaSource, textAreaTexte).forEach(textArea -> textArea.setWrapText(true));
@@ -292,6 +293,9 @@ public class TabBordContrImpl implements TabBordContr {
         lblNumC.textProperty().bind(votes.get(2).asString());
         lblNumD.textProperty().bind(votes.get(3).asString());
         lblNumEnr.textProperty().bind(numEnr.asString());
+
+        graph = textonIoFactory.create(path).getGraph();
+        tcTabBord.setGraph(graph);
 
         CanvasUtil.setNodeAnchorToAnchorPane(tcTabBord, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(tcTabBord);
