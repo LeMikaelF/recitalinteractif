@@ -19,8 +19,8 @@ var changeTexton = function (numTexton, numLiens) {
     }, 2000);
 };
 
-//TODO semble se connecter, mais les contrôles sont encore désactivés.
-//TODO Ajouter des liens vers les webjar dans les sources des scripts.
+var networktest = new vis.Network(document.getElementById('abutton'), {}, {});
+
 //Il faut que les liens internet marchent pour tester sans compiler, mais que les liens webjar marchent dans la distribution.
 
 window.onload = function () {
@@ -59,7 +59,6 @@ window.onload = function () {
     };
 
     ws.onmessage = function (msg) {
-        //TODO Le problème: la variable msg n'est pas une string, il faut aller voir dans msg.data
         console.log('message reçu du serveur: ' + msg.data);
         var msgobj = JSON.parse(msg.data);
         enableControls(msgobj.numLiens);

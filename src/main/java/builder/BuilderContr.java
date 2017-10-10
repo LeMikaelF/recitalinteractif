@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import textonclasses.Texton;
 import util.CanvasUtil;
@@ -43,7 +44,7 @@ import java.util.stream.Stream;
 
 public class BuilderContr {
 
-    Path projectPath = null;
+    Path projectPath;
     @FXML
     private MenuItem menuNouveau;
     @FXML
@@ -79,8 +80,8 @@ public class BuilderContr {
     private BuilderVisContr builderVisContr;
     private List<Stage> stageList = Stream.generate(Stage::new).limit(1).collect(Collectors.toList());
     private Texton texton;
-    private File currentFile = null;
-    private Image image = null;
+    private File currentFile;
+    private Image image;
 
     private List<TextInputControl> textInputControls;
 
@@ -126,7 +127,7 @@ public class BuilderContr {
     private void ouvrirImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Ajouter l'image du texton");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichiers image supportés",
+        ExtensionFilter filter = new ExtensionFilter("Fichiers image supportés",
                 "*.jpg", "*.jpeg", "*.bmp", "*.wbmp", "*.png", "*.gif");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
@@ -164,7 +165,7 @@ public class BuilderContr {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName(Util.getFormattedNumSerie(Integer.parseInt(textFieldNum.textProperty().get())) + ".json");
         fileChooser.setTitle("Enregistrer le texton");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Texton au format json", "*.json");
+        ExtensionFilter filter = new ExtensionFilter("Texton au format json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         currentFile = fileChooser.showSaveDialog(getStage());
@@ -196,7 +197,7 @@ public class BuilderContr {
         menuEnregistrer.disableProperty().set(false);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Ouvrir le texton");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Texton au format json", "*.json");
+        ExtensionFilter filter = new ExtensionFilter("Texton au format json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File file = fileChooser.showOpenDialog(getStage());

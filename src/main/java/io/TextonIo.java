@@ -15,10 +15,10 @@ public abstract class TextonIo {
     public abstract List<Texton> dumpTextons() throws IOException;
     public abstract List<TextonHeader> dumpTextonHeaders() throws IOException;
     public abstract List<TextonLien> dumpEdges() throws IOException;
-    abstract public Texton readTexton(int numTexton) throws IOException;
-    abstract public void writeTexton(Texton texton, boolean overwrite) throws IOException;
-    abstract public Graph getGraph() throws IOException;
-    abstract public TextonHeader readTextonHeader(int numTexton) throws IOException;
-    abstract public void saveGraph(Graph graph) throws IOException;
-    abstract public boolean validateGraph() throws IOException;
+    public abstract Texton readTexton(int numTexton) throws IOException;
+    public abstract void writeTexton(Texton texton, boolean overwrite) throws IOException;
+    public abstract Graph getGraph() throws IOException;
+    public abstract TextonHeader readTextonHeader(int numTexton) throws IOException;
+    public abstract void saveGraph(Graph graph) throws IOException;
+    public abstract boolean validateGraph() throws IOException;
 }

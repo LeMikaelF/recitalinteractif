@@ -1,6 +1,7 @@
 package builder;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import guice.BuilderGuiceModule;
 import javafx.application.Application;
@@ -8,6 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
+import server.Server;
+import server.ServerRunnable;
 import util.FXCustomDialogs;
 
 import java.io.IOException;
@@ -15,12 +20,27 @@ import java.io.IOException;
 /**
  * Created by Mikaël on 2017-10-04.
  */
-public class BuilderMain extends Application {
+public class BuilderMain extends Application implements Server {
 
-    private Injector guice = Guice.createInjector(new BuilderGuiceModule());
+    private final Injector guice;
+
+    @Inject
+    ServerRunnable serverRunnable;
+
+    public BuilderMain() {
+        guice = Guice.createInjector(new BuilderGuiceModule());
+        guice.injectMembers(this);
+    }
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    static void preventCloseRequest(Stage stage) {
+        stage.setOnCloseRequest(event -> {
+            event.consume();
+            FXCustomDialogs.showError("Utilisez le menu « Affichage » de la fenêtre principale pour fermer cette fenêtre.");
+        });
     }
 
     @Override
@@ -53,12 +73,32 @@ public class BuilderMain extends Application {
             builderContr.hideChildrenStages();
         });
         preventCloseRequest(stage2);
+
+        startServer();
     }
 
-    static void preventCloseRequest(Stage stage){
-        stage.setOnCloseRequest(event -> {
-            event.consume();
-            FXCustomDialogs.showError("Utilisez le menu « Affichage » de la fenêtre principale pour fermer cette fenêtre.");
-        });
+    @Override
+    public void stop() {
+        try {
+            stopServer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void stopServer() throws Exception {
+        serverRunnable.getServer().stop();
+    }
+
+    @Override
+    public void startServer() {
+        Thread t = new Thread(serverRunnable);
+        t.setDaemon(true);
+        t.start();
+        ServerConnector connector = new ServerConnector(serverRunnable.getServer());
+        connector.setPort(80);
+        connector.setHost("localhost");
+        serverRunnable.getServer().setConnectors(new Connector[]{connector});
     }
 }

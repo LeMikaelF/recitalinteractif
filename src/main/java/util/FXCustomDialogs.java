@@ -2,6 +2,7 @@ package util;
 
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -21,7 +22,7 @@ public class FXCustomDialogs {
     //28 octobre. Consulté le 24 décembre 2016. <http://code.makery.ch/blog/javafx-dialogs-official/>.
 
     public static void showException(Exception passedException) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Exception");
         alert.setHeaderText("Une exception est survenue.");
         alert.setContentText(passedException.getMessage());
@@ -55,7 +56,7 @@ public class FXCustomDialogs {
     }
 
     public static boolean showConfirmationAction(String str) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setHeaderText("");
         alert.setContentText(str);
@@ -64,7 +65,7 @@ public class FXCustomDialogs {
     }
 
     public static void showError(String str) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Erreur");
         alert.setHeaderText(null);
         alert.setContentText(str);
@@ -82,7 +83,7 @@ public class FXCustomDialogs {
     }
 
     public static void showInfoSimple(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Information");
         alert.setHeaderText(null);
         alert.setContentText(message);
@@ -90,7 +91,7 @@ public class FXCustomDialogs {
     }
 
     public static void displayInDialog(Node display, String title) {
-        Dialog alert = new Alert(Alert.AlertType.INFORMATION);
+        Dialog alert = new Alert(AlertType.INFORMATION);
         alert.setHeaderText(title);
         alert.getDialogPane().setContent(new VBox(display));
         alert.setResizable(true);

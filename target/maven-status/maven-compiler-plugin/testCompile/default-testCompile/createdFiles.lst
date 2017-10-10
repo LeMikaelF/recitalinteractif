@@ -1,3 +1,5 @@
 tests\Util$1.class
 tests\Util.class
 tests\MiscTests.class
+tests\TestGuiceModule.class
+tests\TestPlugins.class

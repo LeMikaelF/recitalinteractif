@@ -6,6 +6,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.resource.Resource;
 import server.Vote;
 
 import java.text.DecimalFormat;
@@ -17,9 +19,9 @@ import java.util.*;
  */
 public class Util {
 
-    public static void initializeStageRetriever(Node node, List<Stage> stageToGet) {
+    public static void initializeStageRetriever(Node anyNodeOnStage, List<Stage> stageToGet) {
         //get Stage as soon as it's initialized
-        node.sceneProperty().addListener(new ChangeListener<Scene>() {
+        anyNodeOnStage.sceneProperty().addListener(new ChangeListener<Scene>() {
             @Override
             public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
                 if (newValue == null) return;
@@ -31,7 +33,7 @@ public class Util {
                         newValue.windowProperty().removeListener(this);
                     }
                 });
-                node.sceneProperty().removeListener(this);
+                anyNodeOnStage.sceneProperty().removeListener(this);
             }
         });
     }

@@ -26,7 +26,6 @@ public class GraphConnector {
             getGraphFromJson(jsonGraph);
         } catch (Exception e) {
             //Impossible to convert json to graph, therefore it is invalid.
-            //TODO Utiliser un ORM pour lire/sauvegarder le graphe.
             throw new IllegalArgumentException(e);
         }
         try (FileWriter fileWriter = new FileWriter(path.toFile());

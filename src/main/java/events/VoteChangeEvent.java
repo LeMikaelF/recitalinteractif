@@ -7,9 +7,9 @@ import server.VoteController;
  */
 public class VoteChangeEvent {
 
-    final private int[] votes;
-    final private int numEnr;
-    final private VoteController source;
+    private final int[] votes;
+    private final int numEnr;
+    private final VoteController source;
 
     public int[] getVotes() {
         return votes;

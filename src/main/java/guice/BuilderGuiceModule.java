@@ -7,6 +7,8 @@ import builder.plugins.StatisticsPlugin;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
+import server.ServerRunnable;
+import server.ServerRunnableImpl;
 
 /**
  * Created by Mikaël on 2017-10-04.
@@ -17,6 +19,7 @@ public class BuilderGuiceModule extends AbstractModule {
         bind(BuilderVisContr.class).toInstance(new BuilderVisContr());
         bind(BuilderContr.class).toInstance(new BuilderContr());
         bind(EventBus.class).toInstance(new EventBus());
+        bind(ServerRunnable.class).to(ServerRunnableImpl.class);
 
         //Declare statistics plugins for builder
         Multibinder<StatisticsPlugin> statisticsPluginMultibinder = Multibinder.newSetBinder(binder(), StatisticsPlugin.class);

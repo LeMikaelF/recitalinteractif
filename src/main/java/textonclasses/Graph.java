@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 public class Graph {
 
-    final private List<TextonHeader> nodes;
-    final private List<TextonLien> edges;
+    private final List<TextonHeader> nodes;
+    private final List<TextonLien> edges;
 
     @JsonCreator
     public Graph(@JsonProperty("nodes") List<TextonHeader> nodes, @JsonProperty("edges") List<TextonLien> edges) {

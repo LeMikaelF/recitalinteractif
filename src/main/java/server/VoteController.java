@@ -20,8 +20,8 @@ public class VoteController {
     Set<VoteCollector> voteCollectors;
 
     Map<VoteCollector, List<Integer>> voteMap;
-    private boolean initialized = false;
-    private boolean wasAskedToBroadcast = false;
+    private boolean initialized;
+    private boolean wasAskedToBroadcast;
 
     public void init() {
         eventBus.register(this);

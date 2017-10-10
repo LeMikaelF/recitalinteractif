@@ -15,7 +15,7 @@ public class ServerImpl implements Server {
         serverRunnable = provider.get();
     }
 
-    private final static String STATIC_FILES_LOCATION = "/";
+    private static final String STATIC_FILES_LOCATION = "/";
 
     @Override
     public void stopServer() throws Exception {

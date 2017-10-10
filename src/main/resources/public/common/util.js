@@ -61,9 +61,6 @@ var commonOptions = {
 };
 
 var getAndInitGraph = function (container, data) {
-    //TODO Set node 1 as 'chosen'
-    //Ex: {id: 1, label: 'one', chosen:true}
-
     network = new vis.Network(container, data, commonOptions);
     return network;
 };

@@ -85,7 +85,6 @@ public class XmlFileConnector extends TextonFileIo {
 
     @Override
     public TextonHeader readTextonHeader(int numTexton) throws IOException {
-        //TODO Cette méthode ne fait rien.
         return null;
     }
 

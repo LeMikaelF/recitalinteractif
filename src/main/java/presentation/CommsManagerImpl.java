@@ -35,9 +35,9 @@ public class CommsManagerImpl implements CommsManager {
 
     @Inject
     public CommsManagerImpl(Provider<Server> serverProvider, Provider<VoteController> voteControllerProvider, Provider<EventBus> eventBusProvider) {
-        this.server = serverProvider.get();
-        this.voteController = voteControllerProvider.get();
-        this.eventBus = eventBusProvider.get();
+        server = serverProvider.get();
+        voteController = voteControllerProvider.get();
+        eventBus = eventBusProvider.get();
         eventBus.register(this);
         System.out.println("VoteController = " + voteController);
         voteController.init();

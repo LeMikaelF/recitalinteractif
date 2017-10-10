@@ -22,7 +22,7 @@ import java.util.function.Function;
  */
 public class TestPlugins {
 
-    private static Graph graph = null;
+    private static Graph graph;
 
     @Inject
     StatisticsPlugin plugin;
@@ -39,7 +39,7 @@ public class TestPlugins {
         guice.injectMembers(this);
         plugin.init(graph);
         System.out.println(new ObjectMapper().writeValueAsString(graph));
-        int[] promptValues = new int[]{1, 3};
+        int[] promptValues = {1, 3};
         for (int i = 0; i < plugin.getPrompts().size(); i++) {
             plugin.getPrompts().get(i).getKey().apply(String.valueOf(promptValues[i]));
         }

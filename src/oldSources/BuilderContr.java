@@ -35,7 +35,6 @@ import java.util.ResourceBundle;
  * Created by Mikaël on 2017-01-07.
  */
 public class BuilderContr {
-    //TODO Accéder à la base de donnée de manière concurrente, en affichant un dialogue de chargement, pour ne pas geler l'interface graphique.
     private static BooleanProperty writeToNextAvailProperty = new SimpleBooleanProperty(false);
     @FXML
     private ResourceBundle resources;

@@ -3,9 +3,10 @@ package presentation;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import events.PresenterImageUpdateEvent;
+import events.ScreenDispatchEvent;
 import events.TextonChangeEvent;
-import io.TextonIo;
 import io.TextonIoFactory;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -24,16 +25,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.EnumUtils;
 import server.Vote;
 import server.VoteChangeEvent;
 import textonclasses.Graph;
 import textonclasses.Texton;
-import util.CanvasUtil;
-import util.CompositeTextonCanvas;
-import util.FXCustomDialogs;
-import util.PropLoader;
+import util.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -47,7 +46,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO le label «D» dit 0 au lieu de D, et 999 au lieu de 0 par défaut.
 public class TabBordContrImpl implements TabBordContr {
 
     @FXML
@@ -106,10 +104,15 @@ public class TabBordContrImpl implements TabBordContr {
     private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
     private long recitalClock;
     private long textonClock;
-    private Texton texton = null;
-    private Texton textonPrecedent = null;
+    private Texton texton;
+    private Texton textonPrecedent;
 
-    //TODO Vérifieer l'initialisation du Graph.
+    public Stage getStage() {
+        return stageList.get(0);
+    }
+
+    private List<Stage> stageList;
+
     private Graph graph;
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();
@@ -119,6 +122,8 @@ public class TabBordContrImpl implements TabBordContr {
     private CommsManager commsManager;
     @Inject
     private TextonIoFactory textonIoFactory;
+    @Inject
+    private Provider<ScreenDispatcher> screenDispatcherProvider;
 
     //TODO Ajouter la citation, provient de https://stackoverflow.com/questions/28581639/javafx8-presentation-view-duplicate-pane-and-content
     private ChangeListener<Boolean> needsLayoutListener = (observable, oldValue, newValue) -> {
@@ -127,7 +132,7 @@ public class TabBordContrImpl implements TabBordContr {
     };
 
     @Inject
-    public TabBordContrImpl() throws IOException, URISyntaxException {
+    public TabBordContrImpl() {
         System.out.println("-------------------------------tabbordcontr constructeur--------------");
     }
 
@@ -220,8 +225,14 @@ public class TabBordContrImpl implements TabBordContr {
         textAreaTexte.textProperty().set(texton.getDescription());
     }
 
+    //TODO Tester installer/restaurer la présentation
     private void installerPres() {
-        eventBus.post("installer");
+        screenDispatcherProvider.get().sendMaximizeEvent(getStage());
+    }
+
+    @Subscribe
+    private void onScreenDispatchEvent(ScreenDispatchEvent screenDispatchEvent) {
+        screenDispatchEvent.ifYouAreTabBordRunThis().accept(getStage());
     }
 
     private void restaurerPres() {
@@ -248,7 +259,7 @@ public class TabBordContrImpl implements TabBordContr {
         CanvasUtil.setNodeAnchorToAnchorPane(webView, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(webView);
         WebEngine webEngine = webView.getEngine();
-        webEngine.load(getClass().getResource("/webview/conclusion/conclusion.html").toExternalForm());
+        webEngine.load(getClass().getResource("/public/conclusion/conclusion.html").toExternalForm());
 
         //Add listeners to copy image to VisContr
         Runnable copyImage = () -> eventBus.post(new PresenterImageUpdateEvent(webView.snapshot(new SnapshotParameters(), null)));
@@ -286,6 +297,10 @@ public class TabBordContrImpl implements TabBordContr {
     void initialize() throws IOException {
 
         eventBus.register(this);
+        Util.initializeStageRetriever(textAreaSource, stageList);
+        graph = textonIoFactory.create(path).getGraph();
+        tcTabBord.setGraph(graph);
+
         Stream.of(textAreaSource, textAreaTexte).forEach(textArea -> textArea.setWrapText(true));
 
         lblNumA.textProperty().bind(votes.get(0).asString());
@@ -294,8 +309,6 @@ public class TabBordContrImpl implements TabBordContr {
         lblNumD.textProperty().bind(votes.get(3).asString());
         lblNumEnr.textProperty().bind(numEnr.asString());
 
-        graph = textonIoFactory.create(path).getGraph();
-        tcTabBord.setGraph(graph);
 
         CanvasUtil.setNodeAnchorToAnchorPane(tcTabBord, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(tcTabBord);

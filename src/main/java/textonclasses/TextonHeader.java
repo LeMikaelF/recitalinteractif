@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 
 public class TextonHeader {
-    final private int numTexton;
-    final private String name;
+    private final int numTexton;
+    private final String name;
 
     @JsonCreator
     public TextonHeader(@JsonProperty("id") int numTexton, @JsonProperty("label") String name) {

@@ -19,9 +19,9 @@ import java.util.stream.Stream;
     //Use code at: C:\Programmation\Plugin Gephi LTO\modules\LtoPlugin\src\main\java
 public class LtoPlugin implements StatisticsPlugin {
 
-    final private String NAME = "Fréqence d'occurence (limité)";
-    final private String RESULT_NAME = "Occurence (%)";
-    final private String DESCRIPTION = "Ce plugin calcule le pourcentage d'occurence d'un texton par rapport à un chemin limité (en nombre de textons), en commençant par un texton spécifié.";
+    private final String NAME = "Fréqence d'occurence (limité)";
+    private final String RESULT_NAME = "Occurence (%)";
+    private final String DESCRIPTION = "Ce plugin calcule le pourcentage d'occurence d'un texton par rapport à un chemin limité (en nombre de textons), en commençant par un texton spécifié.";
 
     private int start;
     private int limit;
@@ -66,7 +66,7 @@ public class LtoPlugin implements StatisticsPlugin {
     private List<Pair<Function<String, Boolean>, String>> prompts = Stream.of(pair1, pair2).collect(Collectors.toList());
 
     //For testing only
-    private int numPaths = 0;
+    private int numPaths;
     private List<TextonHeader> resultList = new ArrayList<>();
 
     private List<TextonHeader> setLTO2(int limit, TextonHeader start, List<TextonHeader> path) {

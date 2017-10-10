@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
     private Graph graph;
-    private boolean isTextonSet = false;
+    private boolean isTextonSet;
     private List<Text> texts = new ArrayList<>(4);
 
     private ChangeListener<Number> listener = (observable, oldValue, newValue) ->

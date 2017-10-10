@@ -21,7 +21,7 @@ public final class FxGuiceModule extends AbstractModule {
         EventBus eventBus = new EventBus();
         bind(EventBus.class).toProvider(() -> eventBus);
 
-        bind(ServerRunnable.class).toProvider(ServerRunnableImplProvider.class);
+        bind(ServerRunnable.class).to(ServerRunnableImpl.class);
         bind(CommsManager.class).toProvider(CommsManagerImplProvider.class).asEagerSingleton();
         bind(VisContr.class).toProvider(VisContrImplProvider.class).asEagerSingleton();
         bind(TabBordContr.class).toProvider(TabBordContrImplProvider.class).asEagerSingleton();

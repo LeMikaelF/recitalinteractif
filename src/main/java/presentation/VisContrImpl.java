@@ -4,29 +4,17 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import events.ControlEvent;
-import events.PresenterImageUpdateEvent;
-import events.TextonChangeEvent;
-import events.VoteChangeEvent;
-import javafx.beans.binding.Bindings;
+import events.*;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
-import textonclasses.Texton;
-import util.CanvasUtil;
-import util.CompositeTextonCanvas;
-import textonclasses.Graph;
-import util.ResizableCanvasImpl;
-import util.ResizableDraggableNodeManager;
+import javafx.stage.Stage;
+import util.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,6 +45,7 @@ public class VisContrImpl implements VisContr {
     private ResizableCanvasImpl canvas = new ResizableCanvasImpl();
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();
+    private List<Stage> stageList;
 
     @Inject
     public VisContrImpl(Provider<CommsManager> provider) {
@@ -75,6 +64,7 @@ public class VisContrImpl implements VisContr {
         lblNumB.textProperty().bind(votes.get(1).asString());
         lblNumC.textProperty().bind(votes.get(2).asString());
         lblNumD.textProperty().bind(votes.get(3).asString());
+        Util.initializeStageRetriever(lblNumA, stageList);
     }
 
     @Subscribe
@@ -95,22 +85,11 @@ public class VisContrImpl implements VisContr {
     }
 
     @Subscribe
-    private void onEventCode(ControlEvent code) {
-        switch (code) {
-            case INSTALLER:
-                installer();
-                break;
-            case RESTAURER:
-                restaurer();
-                break;
-        }
+    private void onScreenDispatchEvent(ScreenDispatchEvent screenDispatchEvent) {
+        screenDispatchEvent.ifYouAreVisRunThis().accept(getStage());
     }
 
-    private void restaurer() {
-        //TODO Restaurer la présenttion. Le code est dans Contrpres.
-    }
-
-    private void installer() {
-        //TODO Installer la présentation. Le code est dans ContrPres.
+    private Stage getStage(){
+        return stageList.get(0);
     }
 }

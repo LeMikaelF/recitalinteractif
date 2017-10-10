@@ -16,7 +16,7 @@ public class TabBordContrImplProvider implements Provider<TabBordContrImpl> {
     @Inject
     private TabBordContrImpl tabBordContrImpl;
 
-    private static TabBordContrImpl instance = null;
+    private static TabBordContrImpl instance;
 
     public TabBordContrImpl get() {
         System.out.println("Ceci est TabBordContrImplProvider");

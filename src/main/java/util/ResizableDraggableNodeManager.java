@@ -8,9 +8,9 @@ import java.util.HashMap;
 /**
  * Created by Mikaël on 2017-01-01.
  */
-final public class ResizableDraggableNodeManager {
+public final class ResizableDraggableNodeManager {
 
-    static private final HashMap<Node, Double[]> nodeToCoord;
+    private static final HashMap<Node, Double[]> nodeToCoord;
 
     static {
         nodeToCoord = new HashMap<>();
@@ -18,7 +18,7 @@ final public class ResizableDraggableNodeManager {
 
     private ResizableDraggableNodeManager() {}
 
-    static public void makeNodeResizableCtrl(Node node) {
+    public static void makeNodeResizableCtrl(Node node) {
         node.setOnScroll(event -> {
             final double scrConst = 1.05;
             double scroll = event.getDeltaY();
@@ -28,7 +28,7 @@ final public class ResizableDraggableNodeManager {
         });
     }
 
-    static public void makeNodeDraggable(Node node) {
+    public static void makeNodeDraggable(Node node) {
         node.setOnMousePressed(event ->
                 nodeToCoord.put(node, new Double[]{event.getScreenX(), event.getScreenY()}));
 

@@ -7,8 +7,8 @@ import textonclasses.Graph;
  * Created by Mikaël on 2017-09-29.
  */
 public class TextonChangeEvent{
-    final private Texton texton;
-    final private Graph graph;
+    private final Texton texton;
+    private final Graph graph;
 
     public Texton getTexton() {
         return texton;

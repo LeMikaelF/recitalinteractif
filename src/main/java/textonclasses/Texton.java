@@ -10,13 +10,13 @@ import textonclasses.persistence.ImageSerializer;
 
 public class Texton {
 
-    final private TextonHeader textonHeader;
-    final private String source;
-    final private String description;
-    final private String comment;
-    @JsonSerialize(using = ImageSerializer.class)
+    private final TextonHeader textonHeader;
+    private final String source;
+    private final String description;
+    private final String comment;
     @JsonDeserialize(using = ImageDeserializer.class)
-    final private Image image;
+    @JsonSerialize(using = ImageSerializer.class)
+    private final Image image;
 
     @JsonCreator
     public Texton(@JsonProperty("numTexton") Integer numTexton, @JsonProperty("source") String source,

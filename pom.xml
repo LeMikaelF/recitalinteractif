@@ -12,10 +12,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -68,7 +66,6 @@
                 <version>1.0.0</version>
                 <executions>
                     <execution>
-
                         <goals>
                             <goal>set-system-properties</goal>
                         </goals>
@@ -88,8 +85,12 @@
     </build>
     <packaging>jar</packaging>
 
-
     <dependencies>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>3.3.7-1</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
@@ -199,9 +200,5 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>RELEASE</version>
         </dependency>
-
-
     </dependencies>
-
-
 </project>

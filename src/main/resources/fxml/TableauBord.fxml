@@ -116,13 +116,13 @@
                   </HBox>
                   <HBox>
                      <children>
-                        <Label fx:id="lblNumD" text="D :">
+                        <Label text="D :">
                            <padding>
                               <Insets left="5.0" right="5.0" />
                            </padding>
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label text="999">
+                        <Label fx:id="lblNumD" text="999">
                            <padding>
                               <Insets left="5.0" right="5.0" />
                            </padding>

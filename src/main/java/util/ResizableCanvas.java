@@ -20,8 +20,8 @@ Dirk Lemmerman Software & Consulting. 10 avril 2014.
 
 abstract class ResizableCanvas extends Canvas {
 
-    private double lastWidth = 0;
-    private double lastHeight = 0;
+    private double lastWidth;
+    private double lastHeight;
     private ObservableList<Double> observableList = FXCollections.observableArrayList(new ArrayList<Double>());
     private SimpleListProperty<Double> boundsProperty = new SimpleListProperty<>(observableList);
 

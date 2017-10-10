@@ -23,7 +23,7 @@ public abstract class TextonFileIo extends TextonIo {
 
     final Path path;
 
-    TextonFileIo(Path path) throws JsonProcessingException {
+    TextonFileIo(Path path) {
         if (Files.isDirectory(path))
             this.path = path;
         else
@@ -51,7 +51,7 @@ public abstract class TextonFileIo extends TextonIo {
         ConcurrentLinkedQueue<TextonHeader> queue = new ConcurrentLinkedQueue<>();
         Files.newDirectoryStream(path, "[0-9][0-9][0-9].json").forEach(path -> {
             try {
-                System.out.println("lecture du texton " + path.toString());
+                System.out.println("lecture du texton " + path);
                 TextonHeader textonHeader = readTextonHeader(Integer.parseInt(path.getFileName().toString().substring(0, 3)));
                 System.out.println("Ceci a été récupéré: " + textonHeader + ", avec les informations: " + textonHeader.getNumTexton() + ", " + textonHeader.getName());
                 queue.add(textonHeader);
@@ -71,7 +71,7 @@ public abstract class TextonFileIo extends TextonIo {
 
 
 
-    final protected Path getPath() {
+    protected final Path getPath() {
         return path;
     }
 

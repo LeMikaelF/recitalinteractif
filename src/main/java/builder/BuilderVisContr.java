@@ -15,6 +15,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
+import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,6 +28,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Pair;
@@ -42,6 +44,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -50,7 +53,7 @@ import java.util.stream.Stream;
 public class BuilderVisContr {
 
     public JavaApplication javaApplication = new JavaApplication();
-    WebEngine webEngine = null;
+    WebEngine webEngine;
     @FXML
     private Menu menuPlugins;
     @FXML
@@ -143,7 +146,7 @@ public class BuilderVisContr {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Reconstruire le graphe");
         fileChooser.setInitialFileName("graph.json");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichier graphe .json", "*.json");
+        ExtensionFilter filter = new ExtensionFilter("Fichier graphe .json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         fileChooser.setSelectedExtensionFilter(filter);
@@ -161,7 +164,7 @@ public class BuilderVisContr {
     private void ouvrir() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Ouvrir le graphe");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichier json", "*.json");
+        ExtensionFilter filter = new ExtensionFilter("Fichier json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File file = fileChooser.showOpenDialog(getStage());
@@ -170,10 +173,11 @@ public class BuilderVisContr {
         try {
             graph = textonIo.getGraph();
             path = file.toPath();
-            webEngine.load(getClass().getResource("/webview/builder/builder.html").toExternalForm());
+            //webEngine.load(getClass().getResource("/public/builder/builder.html").toExternalForm());
+            webEngine.load("http://localhost/builder/builder.html");
             webEngine.getLoadWorker().stateProperty().addListener(
                     (ov, oldState, newState) -> {
-                        if (newState == Worker.State.SUCCEEDED) {
+                        if (newState == State.SUCCEEDED) {
                             System.out.println("La page a été chargée avec succès.");
                             try {
                                 loadGraphIntoWebView(graph);
@@ -207,8 +211,6 @@ public class BuilderVisContr {
         webEngine.executeScript("initGraphWithJson('" + StringEscapeUtils.escapeEcmaScript(new ObjectMapper().writeValueAsString(graph)) + "')");
     }
 
-    ;
-
     private void enregistrer() {
         getGraphFromJsonDelayed(true);
     }
@@ -217,7 +219,7 @@ public class BuilderVisContr {
     private void enregistrerSous() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Enregistrer le graphe");
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fichier .json", "*.json");
+        ExtensionFilter filter = new ExtensionFilter("Fichier .json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         fileChooser.setInitialDirectory(path.toFile());
@@ -277,18 +279,18 @@ public class BuilderVisContr {
         })) return new AnchorPane();
 
         Map<TextonHeader, Double> pluginResults = plugin.apply(graph);
-        ObservableList<Map.Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
+        ObservableList<Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
 
-        TableColumn<Map.Entry<TextonHeader, Double>, Integer> columnNum = new TableColumn<>("Numéro");
+        TableColumn<Entry<TextonHeader, Double>, Integer> columnNum = new TableColumn<>("Numéro");
         columnNum.setCellValueFactory(param -> new SimpleObjectProperty<Integer>(param.getValue().getKey().getNumTexton()));
 
-        TableColumn<Map.Entry<TextonHeader, Double>, String> columnName = new TableColumn<>("Nom");
+        TableColumn<Entry<TextonHeader, Double>, String> columnName = new TableColumn<>("Nom");
         columnName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getKey().getName()));
 
-        TableColumn<Map.Entry<TextonHeader, Double>, Double> columnStat = new TableColumn<>(plugin.getResultName());
+        TableColumn<Entry<TextonHeader, Double>, Double> columnStat = new TableColumn<>(plugin.getResultName());
         columnStat.setCellValueFactory(param -> new SimpleObjectProperty<Double>(param.getValue().getValue()));
 
-        TableView<Map.Entry<TextonHeader, Double>> table = new TableView<>(pluginResultsAsList);
+        TableView<Entry<TextonHeader, Double>> table = new TableView<>(pluginResultsAsList);
         table.setEditable(false);
         table.getColumns().add(columnNum);
         table.getColumns().add(columnName);

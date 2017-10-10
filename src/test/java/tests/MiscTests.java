@@ -30,7 +30,7 @@ public class MiscTests {
         TextonHeader textonHeader = new TextonHeader(15, "nom du texton");
         String serialized = objectMapper.writeValueAsString(textonHeader);
         TextonHeader newTextonHeader = objectMapper.readValue(serialized, TextonHeader.class);
-        Assert.assertThat(textonHeader, samePropertyValuesAs(newTextonHeader));
+        assertThat(textonHeader, samePropertyValuesAs(newTextonHeader));
         System.out.println(serialized);
     }
 
@@ -44,7 +44,7 @@ public class MiscTests {
         String serialized = objectMapper.writeValueAsString(texton);
         System.out.println(serialized);
         Texton newTexton = objectMapper.readValue(serialized, Texton.class);
-        Assert.assertThat(texton, sameBeanAs(newTexton).ignoring(Image.class).with("image", imageEquality(texton.getImage())));
+        assertThat(texton, sameBeanAs(newTexton).ignoring(Image.class).with("image", imageEquality(texton.getImage())));
     }
 
 

@@ -6,7 +6,8 @@
  var edges;*/
 var network;
 
-
+//TODO recevoir le trajet parcouru par le récital et permettre de surligner les noeuds, un par un, en déroulant le parcours.
+//Changer le label du bouton «terminé» du tableau de bord et l'utiliser pour passer au prochain noeud surligné.
 
 
 var receiveJson = function (json) {

@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
  * Created by Mikaël on 2017-10-04.
  */
 public class ResizableCanvasImpl extends ResizableCanvas {
-    private Image image = null;
+    private Image image;
 
     public void setImage(Image image) {
         this.image = image;
