@@ -1,11 +1,14 @@
 package util;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import server.Vote;
@@ -19,25 +22,27 @@ import java.util.*;
  */
 public class Util {
 
-    public static void initializeStageRetriever(Node anyNodeOnStage, List<Stage> stageToGet) {
-        //get Stage as soon as it's initialized
+    public static void initializeStageRetriever(Node anyNodeOnStage, ObjectProperty<Stage> stageProperty) {
         anyNodeOnStage.sceneProperty().addListener(new ChangeListener<Scene>() {
             @Override
             public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
-                if (newValue == null) return;
-                newValue.windowProperty().addListener(new ChangeListener<javafx.stage.Window>() {
+                //This is because if window is already initialized, the second listener won't run.
+                if(newValue != null && newValue.getWindow() != null) {
+                    stageProperty.set((Stage) newValue.getWindow());
+                    anyNodeOnStage.sceneProperty().removeListener(this);
+                    return;
+                }
+                newValue.windowProperty().addListener(new ChangeListener<Window>() {
                     @Override
-                    public void changed(ObservableValue<? extends javafx.stage.Window> observable1, javafx.stage.Window oldValue1, javafx.stage.Window newValue1) {
-                        if (newValue1 == null) return;
-                        stageToGet.set(0, (Stage) newValue1);
-                        newValue.windowProperty().removeListener(this);
+                    public void changed(ObservableValue<? extends Window> observable1, Window oldValue1, Window newValue1) {
+                            stageProperty.set((Stage) newValue1);
+                            newValue.windowProperty().removeListener(this);
                     }
                 });
                 anyNodeOnStage.sceneProperty().removeListener(this);
             }
         });
     }
-
 
 
     public static String[] getNames(Class<? extends Enum<?>> e) {

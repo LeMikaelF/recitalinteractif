@@ -18,7 +18,7 @@ import java.util.ArrayList;
 Dirk Lemmerman Software & Consulting. 10 avril 2014.
 <http://dlsc.com/2014/04/10/javafx-tip-1-resizable-canvas/>. Consulté le 2 décembre 2016.*/
 
-abstract class ResizableCanvas extends Canvas {
+abstract public class ResizableCanvas extends Canvas {
 
     private double lastWidth;
     private double lastHeight;

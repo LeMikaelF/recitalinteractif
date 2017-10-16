@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import events.TextonChangeEvent;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,9 +20,9 @@ public class VoteController {
     @Inject
     Set<VoteCollector> voteCollectors;
 
-    Map<VoteCollector, List<Integer>> voteMap;
-    private boolean initialized;
-    private boolean wasAskedToBroadcast;
+    Map<VoteCollector, List<Integer>> voteMap = new HashMap<>();
+    private boolean initialized = false;
+    private boolean wasAskedToBroadcast = false;
 
     public void init() {
         eventBus.register(this);

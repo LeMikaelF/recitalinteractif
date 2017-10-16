@@ -13,7 +13,6 @@ public class ScreenDispatchEvent {
     Consumer<Stage> ifYouAreVisRunThis;
 
     public ScreenDispatchEvent(Consumer<Stage> ifYouAreTabBordRunThis, Consumer<Stage> ifYouAreVisRunThis) {
-
         this.ifYouAreTabBordRunThis = ifYouAreTabBordRunThis;
         this.ifYouAreVisRunThis = ifYouAreVisRunThis;
     }

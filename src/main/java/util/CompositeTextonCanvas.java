@@ -1,5 +1,7 @@
 package util;
 
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import javafx.scene.layout.AnchorPane;
 import textonclasses.Graph;
 import textonclasses.Texton;
@@ -20,6 +22,7 @@ public class CompositeTextonCanvas extends AnchorPane implements TCWithTexton {
         getChildren().forEach(node -> CanvasUtil.setNodeAnchorToAnchorPane(node, 0, 0, 0, 0));
     }
 
+
     @Override
     public Texton getTexton() {
         return textonImageCanvas.getTexton();
@@ -33,7 +36,6 @@ public class CompositeTextonCanvas extends AnchorPane implements TCWithTexton {
 
     @Override
     public void setTexton(Texton texton) {
-
         textonImageCanvas.setTexton(texton);
         textonOverlayCanvas.setTexton(texton);
     }

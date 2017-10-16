@@ -1,16 +1,13 @@
 package util;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.ObjectExpression;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import server.Vote;
 import textonclasses.Graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,55 +15,82 @@ import java.util.stream.Collectors;
  * Created by Mikaël on 2017-09-24.
  */
 
-//TODO Afficher le texton "Lien A" (B, C, D…) avec la couleur appropriée.
-//TODO Le texte est beaucoup trop gros.
+//J'ai choisi de diminuer la grosseur du texte parce que je n'étais capable de gérer le word-wrap avec des TextFlow.
+//TODO Centrer le texte sur le texton (avec un décalage qui tient compte du word-wrap)
+//TODO Il y a un NPE quelque part par ici quand on change de lien.
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
     private Graph graph;
     private boolean isTextonSet;
     private List<Text> texts = new ArrayList<>(4);
-
-    private ChangeListener<Number> listener = (observable, oldValue, newValue) ->
-            setBottomAnchorsOnTexts(newValue.doubleValue());
-
+    private List<TextFlow> textFlows = new ArrayList<>();
+    private List<Text> descriptors = new ArrayList<>();
     private Runnable onSetTextonAction = () -> {
-        //Remove old texts
-        if(!(getParent() instanceof AnchorPane))
+        if (!(getParent() instanceof AnchorPane)) {
             throw new RuntimeException("The parent of a TextonOverlayCanvasOnlyText must be an instance of AnchorPane.");
+        }
         AnchorPane parent = (AnchorPane) getParent();
-        parent.getChildren().removeAll(texts);
+        parent.getChildren().removeAll(textFlows);
+        textFlows.clear();
+        texts.clear();
 
-       texts = graph.getChildren(getTexton().getNumTexton()).stream().map(i -> {
-           String name = graph.getName(i);
-           Text text = new Text(name);
+        //Construire les Text des titres des liens
+        texts = graph.getChildren(getTexton().getNumTexton()).stream().map(i -> {
+            String name = graph.getName(i);
+            Text text = new Text(name);
+            return text;
+        }).limit(4).collect(Collectors.toList());
 
-           //TODO Vérifier les deux lignes suivantes et ajouter une citation.
-           ObjectExpression<Font> fontTracking = Bindings.createObjectBinding(() -> Font.font(getWidth() / 20), widthProperty());
-           text.fontProperty().bind(fontTracking);
-           return text;
-       }).collect(Collectors.toList());
-
-        setBottomAnchorsOnTexts(getHeight());
-        if (!isTextonSet) {
-            isTextonSet = true;
-            System.out.println("listener added-----------------------");
-            heightProperty().addListener(listener);
+        //Generate TextFlow list to put descriptors and texts together.
+        for (int i = 0; i < texts.size(); i++) {
+            textFlows.add(new TextFlow(descriptors.get(i), texts.get(i)));
         }
 
-        parent.getChildren().addAll(texts);
-        texts.forEach(Node::toFront);
+        textFlows.forEach(textFlow -> {
+            textFlow.getChildren().forEach(node -> ((Text) node).setFont(Font.font(20)));
+            textFlow.prefWidthProperty().bind(widthProperty().subtract(getWidth() / 15).subtract(getWidth() / 15));
+            AnchorPane.setLeftAnchor(textFlow, getWidth() / 15);
+            AnchorPane.setRightAnchor(textFlow, getWidth() / 15);
+            textFlow.toFront();
+        });
 
+        /*//Change font size dynamically
+        ChangeListener<Number> widthTextFontListener = (observable, oldValue, newValue) ->
+                textFlows.forEach(textFlow -> textFlow.getChildren().forEach(node -> {
+                    ((Text) node).setFont(Font.font(getWidth() / 30));
+                }));
+        widthProperty().addListener(widthTextFontListener);
+        widthTextFontListener.changed(null, null, getWidth());*/
+
+        //Recalculate bottom offsets whenever height is changed.
+        heightProperty().addListener((observable, oldValue, newValue) -> setBottomAnchorsOnTextFlows(newValue.doubleValue()));
+        //Run the height listener on initialization.
+        parent.getChildren().addAll(textFlows);
+        setBottomAnchorsOnTextFlows(getHeight());
+
+        if (!isTextonSet) {
+            isTextonSet = true;
+        }
     };
 
-    //TODO Les textes apparaissent dans la moitié du bas, mais trois un par-dessus l'autre en haut et un autre en bas complètement.
-    private void setBottomAnchorsOnTexts(double height) {
-        for (int i = texts.size() - 1; i >= 0; i--) {
-            double computed = height - ((i + 1)/texts.size()) * height;
-            AnchorPane.setBottomAnchor(texts.get(i), computed * 0.4);
-            System.out.println("///////////////////height = " + computed);
+    public TextonOverlayCanvasOnlyText() {
+        //Generate colored link descriptors
+        Vote[] voteArray = Vote.values();
+        //We need to exclude last Vote because its value is NULL.
+        for (int i = 0; i < voteArray.length - 1; i++) {
+            Text descriptor = new Text("Lien " + voteArray[i] + " : ");
+            descriptor.setFill(CanvasUtil.getLinkToColorMap().get(i));
+            descriptors.add(descriptor);
         }
     }
 
+    private void setBottomAnchorsOnTextFlows(double height) {
+        double totalLayoutHeights = height / 40;
+        for (int i = textFlows.size() - 1; i >= 0; i--) {
+            AnchorPane.setBottomAnchor(textFlows.get(i), totalLayoutHeights);
+            totalLayoutHeights += textFlows.get(i).getBoundsInParent().getHeight() + height / 60;
+        }
+    }
 
     @Override
     public void draw() {

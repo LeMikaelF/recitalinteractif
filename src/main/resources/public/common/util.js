@@ -1,28 +1,6 @@
 /**
  * Created by Mikaël on 2017-10-06.
  */
-
-
-//For testing only
-var nodes = new vis.DataSet([
-    {id: 1, label: 'Node 1'},
-    {id: 2, label: 'Node 2'},
-    {id: 3, label: 'Node 3'},
-    {id: 4, label: 'Node 4'},
-    {id: 5, label: 'Node 5'}
-]);
-
-var edges = new vis.DataSet([
-    {from: 1, to: 3},
-    {from: 1, to: 2},
-    {from: 2, to: 4},
-    {from: 2, to: 5}
-]);
-
-
-
-
-
 var commonOptions = {
     nodes: {
         borderWidth: 4,
@@ -60,7 +38,44 @@ var commonOptions = {
     }
 };
 
-var getAndInitGraph = function (container, data) {
-    network = new vis.Network(container, data, commonOptions);
-    return network;
+var options = {
+    nodes: {
+        borderWidthSelected: 1,
+        font: {
+            color: 'blue',
+            size: 16,
+            strokeColor: 'blue'
+        },
+        scaling: {
+            min: 8,
+            max: 12
+        },
+        shape: 'box',
+        size: 22
+    },
+    edges: {
+        arrows: {
+            to: {
+                enabled: true,
+                scaleFactor: 1.4
+            }
+        },
+        scaling: {
+            min: 13,
+            label: false
+        },
+        smooth: false
+    },
+    interaction: {
+        navigationButtons: true
+    },
+    physics: {
+        enabled: false,
+        forceAtlas2Based: {
+            springLength: 295,
+            avoidOverlap: 0.56
+        },
+        minVelocity: 0.75,
+        solver: 'forceAtlas2Based'
+    }
 };

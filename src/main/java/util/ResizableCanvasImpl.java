@@ -20,7 +20,6 @@ public class ResizableCanvasImpl extends ResizableCanvas {
         getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
         if (image != null)
             fitImage(SwingFXUtils.fromFXImage(image, null));
-        System.out.println("This is ResizableCanvasImpl drawing");
     }
 
 }

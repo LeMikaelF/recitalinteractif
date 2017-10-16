@@ -26,8 +26,6 @@ public interface WebsocketHandler extends VoteCollector {
     @OnWebSocketError
     void onError(Session session, Throwable throwable);
     @Override
-    void setNumTextonCourant(int numTextonCourant);
-    @Override
     void startBroadcasting();
     @Override
     void resetVotes();

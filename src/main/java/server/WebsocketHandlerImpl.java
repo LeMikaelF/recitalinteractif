@@ -1,97 +1,66 @@
 package server;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import events.TextonChangeEvent;
-import javafx.beans.property.IntegerProperty;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by Mikaël on 2017-09-29.
  */
-@Singleton
 @WebSocket
 public class WebsocketHandlerImpl implements WebsocketHandler {
 
-    private static final String[] propNames = {"A", "B", "C", "D", "Enr"};
-    private static ConcurrentMap<String, IntegerProperty> properties = new ConcurrentHashMap<>();
+    private static final AtomicBoolean broadcasting = new AtomicBoolean(false);
+    private static final AtomicReference<BroadcastInfo> broadcastInfo = new AtomicReference<>();
     private static ConcurrentMap<Session, Vote> clientsVotesMap = new ConcurrentHashMap<>();
-    private static AtomicInteger numberOfLinks = new AtomicInteger();
-    private static AtomicInteger numTextonCourant = new AtomicInteger();
-    private static Runnable broadcast = () -> {
-        while (!Thread.interrupted()) {
-            //TODO Ne pas broadcaster à toutes les secondes, pour sauver sur la bande passante.
-            WebsocketHandlerImpl.getClientsVotesMap().keySet().forEach(session -> {
-                try {
-                    //TODO Builder json with Jackson rather than org.json
-                    session.getRemote().sendString(new JSONObject().put("numLiens", WebsocketHandlerImpl.getNumberOfLinks()).put("textonCourant", WebsocketHandlerImpl.numTextonCourant.get()).toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                return;
-            }
-        }
-    };
-
     @Inject
     private EventBus eventBus;
 
     public WebsocketHandlerImpl() {
     }
 
-    private static void startBroadcastingImpl() {
-        Thread t = new Thread(WebsocketHandlerImpl.broadcast);
-        t.setDaemon(true);
-        t.start();
+    private static void broadcast(Session session) {
+        if (broadcasting.get())
+            try {
+                session.getRemote().sendString(new ObjectMapper().writeValueAsString(broadcastInfo.get()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
-    private static void setNumTextonCourantImpl(int numTextonCourant) {
-        WebsocketHandlerImpl.numTextonCourant.set(numTextonCourant);
-    }
-
-    protected static int getNumberOfLinks() {
-        return numberOfLinks.get();
-    }
-
-    private static void setNumberOfLinks(int numberOfLinks) {
-        WebsocketHandlerImpl.numberOfLinks.set(numberOfLinks);
+    private static void broadcastAll() {
+        if (broadcasting.get())
+            WebsocketHandlerImpl.getClientsVotesMap().keySet().forEach(WebsocketHandlerImpl::broadcast);
     }
 
     public static ConcurrentMap<Session, Vote> getClientsVotesMap() {
         return WebsocketHandlerImpl.clientsVotesMap;
     }
 
-    private void updateProperties() {
-        //Calling this method each time to rebuild the complete properties is very wasteful, but economical.
-        List<Integer> voteList = Stream.of(Vote.values())
-                .mapToInt(vote -> (int) clientsVotesMap.values().stream().filter(vote1 -> !vote1.equals(Vote.NULL))
-                        .filter(vote::equals).count()).boxed().collect(Collectors.toList());
-
-        eventBus.post(new VoteChangeEvent(properties.get("Enr").get(), voteList, this));
+    public void setBroadcastInfo(int textonCourant, int numLiens) {
+        broadcastInfo.set(new BroadcastInfo(numLiens, textonCourant));
     }
 
     @Override
     @Subscribe
     public void onTextonChangeEvent(TextonChangeEvent tce) {
-        setNumberOfLinks(tce.getGraph().getChildren(tce.getTexton().getNumTexton()).size());
-        setNumTextonCourant(tce.getTexton().getNumTexton());
+        setBroadcastInfo(tce.getTexton().getNumTexton(), tce.getGraph().getChildren(tce.getTexton().getNumTexton()).size());
+        broadcastAll();
         resetVotes();
     }
 
@@ -101,7 +70,10 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
         System.out.println("Message reçu d'un client websocket : " + str);
         Vote vote = Vote.valueOf(str);
         getClientsVotesMap().put(session, vote);
+        sendVoteUpdate();
+    }
 
+    private void sendVoteUpdate() {
         Vote[] voteArrayFull = Vote.values();
         Vote[] voteArrayOnlyVotes = new Vote[voteArrayFull.length - 1];
         System.arraycopy(voteArrayFull, 0, voteArrayOnlyVotes, 0, voteArrayFull.length - 1);
@@ -116,12 +88,15 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     @OnWebSocketClose
     public void onClose(Session session, int statusCode, String reason) {
         getClientsVotesMap().remove(session);
+        sendVoteUpdate();
     }
 
     @Override
     @OnWebSocketConnect
     public void onConnect(Session session) {
         getClientsVotesMap().put(session, Vote.NULL);
+        broadcast(session);
+        sendVoteUpdate();
     }
 
     @Override
@@ -131,18 +106,35 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     }
 
     @Override
-    public void setNumTextonCourant(int numTextonCourant) {
-        WebsocketHandlerImpl.setNumTextonCourantImpl(numTextonCourant);
-    }
-
-    @Override
     public void startBroadcasting() {
-        WebsocketHandlerImpl.startBroadcastingImpl();
+        broadcasting.set(true);
     }
 
     @Override
     public void resetVotes() {
         clientsVotesMap.values().clear();
+    }
+
+    private static class BroadcastInfo {
+        //Immutable class used to store broadcast info.
+        private int numLiens;
+        private int textonCourant;
+
+        @JsonCreator
+        BroadcastInfo(@JsonProperty("numLiens") int numLiens,@JsonProperty("textonCourant") int textonCourant) {
+            this.numLiens = numLiens;
+            this.textonCourant = textonCourant;
+        }
+
+        @JsonProperty("numLiens")
+        public int getNumLiens() {
+            return numLiens;
+        }
+
+        @JsonProperty("textonCourant")
+        public int getTextonCourant() {
+            return textonCourant;
+        }
     }
 
 }

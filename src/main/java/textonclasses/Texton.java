@@ -17,7 +17,6 @@ public class Texton {
     @JsonDeserialize(using = ImageDeserializer.class)
     @JsonSerialize(using = ImageSerializer.class)
     private final Image image;
-
     @JsonCreator
     public Texton(@JsonProperty("numTexton") Integer numTexton, @JsonProperty("source") String source,
                   @JsonProperty("name") String name, @JsonProperty("description") String description,
@@ -27,6 +26,10 @@ public class Texton {
         this.description = description;
         this.comment = comment;
         this.image = image;
+    }
+
+    public TextonHeader getTextonHeader() {
+        return textonHeader;
     }
 
     public Image getImage() {

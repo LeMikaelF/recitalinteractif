@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import events.ScreenDispatchEvent;
 import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -15,7 +16,15 @@ import java.util.function.Consumer;
  */
 public class ScreenDispatcher {
 
-    private static BiConsumer<Stage, Integer> setupToScreen = (stage, value) -> {
+    private Rectangle2D initialVisPosition;
+    private Rectangle2D initialTabBordPosition;
+    private boolean installed = false;
+
+    private BiConsumer<Stage, Integer> setupToScreen = (stage, value) -> {
+        if(value == 0)
+            initialTabBordPosition = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
+        if(value == 1)
+            initialVisPosition = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
         ObservableList<Screen> screens = Screen.getScreens();
         stage.setX(screens.get(value) != null ? screens.get(value).getVisualBounds().getMinX() : 0);
         stage.setY(screens.get(value) != null ? screens.get(value).getVisualBounds().getMinY() : 0);
@@ -46,6 +55,7 @@ public class ScreenDispatcher {
     }
 
     public void sendMaximizeEvent(Stage stage) {
+        if(installed) return;
         if (!isEnvironmentRight(stage)) throw new IllegalStateException();
         Screen mainScreen = Screen.getScreensForRectangle(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()).get(0);
 
@@ -62,17 +72,27 @@ public class ScreenDispatcher {
         };
 
         eventBus.post(new ScreenDispatchEvent(consumerForTabBord, consumerForVis));
+        installed = true;
     }
 
     public void sendRestoreEvent(Stage stage) {
+        if(!installed) return;
         Consumer<Stage> consumerForTabBord = stage1 -> {
-            //Do nothing.
+            stage1.setMaximized(false);
+            stage1.setX(initialTabBordPosition.getMinX());
+            stage1.setY(initialTabBordPosition.getMinY());
+            stage1.setWidth(initialTabBordPosition.getWidth());
+            stage1.setHeight(initialTabBordPosition.getHeight());
         };
         Consumer<Stage> consumerForVis = stage1 -> {
-            stage1.setWidth(800);
-            stage1.setHeight(600);
+            stage1.setX(initialVisPosition.getMinX());
+            stage1.setY(initialVisPosition.getMinY());
+            stage1.setWidth(initialVisPosition.getWidth());
+            stage1.setHeight(initialVisPosition.getHeight());
+            stage1.toFront();
         };
 
         eventBus.post(new ScreenDispatchEvent(consumerForTabBord, consumerForVis));
+        installed = false;
     }
 }

@@ -3,16 +3,22 @@ package presentation;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import events.*;
+import events.PresenterImageUpdateEvent;
+import events.ScreenDispatchEvent;
+import events.VoteChangeEvent;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import util.*;
+import util.CanvasUtil;
+import util.ResizableCanvasImpl;
+import util.ResizableDraggableNodeManager;
+import util.Util;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,20 +44,17 @@ public class VisContrImpl implements VisContr {
     private Label lblTotalVotes;
 
     @Inject
-    private CommsManager commsManager;
-    @Inject
     private EventBus eventBus;
+
+    public VisContrImpl() {
+        stageProperty.addListener((observable, oldValue, newValue) -> {if(newValue != null) System.out.println(newValue);});
+    }
 
     private ResizableCanvasImpl canvas = new ResizableCanvasImpl();
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();
-    private List<Stage> stageList;
-
-    @Inject
-    public VisContrImpl(Provider<CommsManager> provider) {
-        System.out.println("----------------------------VisContr constructeur------------------------");
-        commsManager = provider.get();
-    }
+    //private List<Stage> stageProperty = Stream.generate(Stage::new).limit(1).collect(Collectors.toList());
+    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
 
     @FXML
     void initialize() {
@@ -64,15 +67,11 @@ public class VisContrImpl implements VisContr {
         lblNumB.textProperty().bind(votes.get(1).asString());
         lblNumC.textProperty().bind(votes.get(2).asString());
         lblNumD.textProperty().bind(votes.get(3).asString());
-        Util.initializeStageRetriever(lblNumA, stageList);
+        Util.initializeStageRetriever(lblNumA, stageProperty);
     }
 
     @Subscribe
     private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent presenterImageUpdateEvent) {
-        System.out.println("Je suis VisContr et je mets à jour mon image.");
-        System.out.println("Les dimensions de l'image sont: " +
-                presenterImageUpdateEvent.getImage().getWidth()
-         + ", " + presenterImageUpdateEvent.getImage().getHeight());
         canvas.setImage(presenterImageUpdateEvent.getImage());
     }
 
@@ -89,7 +88,7 @@ public class VisContrImpl implements VisContr {
         screenDispatchEvent.ifYouAreVisRunThis().accept(getStage());
     }
 
-    private Stage getStage(){
-        return stageList.get(0);
+    private Stage getStage() {
+        return stageProperty.get();
     }
 }

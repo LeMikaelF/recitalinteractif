@@ -51,8 +51,6 @@ window.onload = function () {
     ws = new WebSocket(address);
 
     ws.onopen = function () {
-        //TODO Est-ce qu'il faut activer les contrôles tout de suite, ou seulement quand un numéro de texton est reçu?
-        enableControls();
         displayConnMess();
     };
 
@@ -74,11 +72,11 @@ window.onload = function () {
         displayNotConnMess();
         displayInstructions('');
 
-        ws.onerror = function () {
-            disableControls();
-            displayNotConnMess();
-            displayInstructions('Erreur de connexion. Essayez de rafraîchir la page.');
-        }
+    };
+    ws.onerror = function () {
+        disableControls();
+        displayNotConnMess();
+        displayInstructions('Erreur de connexion. Essayez de rafraîchir la page.');
     }
 };
 
@@ -101,19 +99,17 @@ function disableControls() {
 }
 
 function enableControls(numLiens) {
-    if (numLiens > 0 && numLiens < 5) {
-        if (numLiens > 0)
-            id('abutton').disabled = false;
-        if (numLiens > 1)
-            id('bbutton').disabled = false;
-        if (numLiens > 2)
-            id('cbutton').disabled = false;
-        if (numLiens > 3)
-            id('dbutton').disabled = false;
-        id('annulerbtn').disabled = false;
-    }
+    //TODO Est-ce que cete vérification est vraiment nécessaire?
+    if (numLiens > 0)
+        id('abutton').disabled = false;
+    if (numLiens > 1)
+        id('bbutton').disabled = false;
+    if (numLiens > 2)
+        id('cbutton').disabled = false;
+    if (numLiens > 3)
+        id('dbutton').disabled = false;
+    id('annulerbtn').disabled = false;
 }
-
 function displayConnMess() {
     connectstatus.className = "alert alert-success";
     connectstatus.innerHTML = connectsuccess;

@@ -14,7 +14,6 @@ import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -42,7 +41,6 @@ import util.Util;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -50,10 +48,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//TODO Ajouter un utilitaire de validation du graphe (peut être un plugin).
+//À valider: Maximum 4 liens par texton
+//Minimum 2 liens par texton
+//Pas de lien vers soi-même (pas de boucle d'un texton vers lui-même)
+//... autres, au besoin.
 public class BuilderVisContr {
 
     public JavaApplication javaApplication = new JavaApplication();
-    WebEngine webEngine;
+    private WebEngine webEngine;
     @FXML
     private Menu menuPlugins;
     @FXML
@@ -77,9 +80,8 @@ public class BuilderVisContr {
     @Inject
     private Set<StatisticsPlugin> statPlugins;
     private Path path;
-    private List<Stage> stageList = Stream.generate(Stage::new).limit(1).collect(Collectors.toList());
+    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private StringProperty jsonFromJavascript = new SimpleStringProperty();
-    //TODO set listener on graph and not on string.
     private BooleanProperty askForSaveOnJavascriptUpdate = new SimpleBooleanProperty(false);
     private EventHandler<WebEvent<String>> webAlertHandler = event -> {
         //Remplacer la fonction javascript alert() par un dialogue JavaFX.
@@ -120,7 +122,7 @@ public class BuilderVisContr {
     }
 
     Stage getStage() {
-        return stageList.get(0);
+        return stageProperty.get();
     }
 
     @FXML
@@ -144,6 +146,7 @@ public class BuilderVisContr {
 
     private void reconstruire() {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(path.getParent().toFile());
         fileChooser.setTitle("Reconstruire le graphe");
         fileChooser.setInitialFileName("graph.json");
         ExtensionFilter filter = new ExtensionFilter("Fichier graphe .json", "*.json");
@@ -151,6 +154,7 @@ public class BuilderVisContr {
         fileChooser.setSelectedExtensionFilter(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File file = fileChooser.showOpenDialog(getStage());
+        if(file == null) return;
         TextonIo textonIo = textonIoFactory.create(file.toPath());
         try {
             textonIo.validateGraph();
@@ -164,6 +168,8 @@ public class BuilderVisContr {
     private void ouvrir() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Ouvrir le graphe");
+        fileChooser.setInitialFileName("graph.json");
+        if (path != null) fileChooser.setInitialDirectory(path.getParent().toFile());
         ExtensionFilter filter = new ExtensionFilter("Fichier json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
@@ -200,7 +206,7 @@ public class BuilderVisContr {
     private void recharger() {
         try {
             TextonIo textonIo = textonIoFactory.create(path);
-             graph = textonIo.getGraph();
+            graph = textonIo.getGraph();
             loadGraphIntoWebView(graph);
         } catch (IOException e) {
             showBuilderVisError(e);
@@ -215,15 +221,17 @@ public class BuilderVisContr {
         getGraphFromJsonDelayed(true);
     }
 
-    //TODO faire des null-check après tous les FileChooser.
     private void enregistrerSous() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Enregistrer le graphe");
+        fileChooser.setInitialFileName("graph.json");
         ExtensionFilter filter = new ExtensionFilter("Fichier .json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
-        fileChooser.setInitialDirectory(path.toFile());
+        if (path != null)
+            fileChooser.setInitialDirectory(path.toFile());
         File file = fileChooser.showSaveDialog(getStage());
+        if (file == null) return;
         path = file.toPath();
         getGraphFromJsonDelayed(true);
     }
@@ -245,7 +253,7 @@ public class BuilderVisContr {
     @FXML
     void initialize() {
         eventBus.register(this);
-        Util.initializeStageRetriever(webView, stageList);
+        Util.initializeStageRetriever(webView, stageProperty);
         webEngine = webView.getEngine();
         jsonFromJavascript.addListener(jsonUpdateCallback);
         menuEnregistrer.disableProperty().set(true);
@@ -278,7 +286,7 @@ public class BuilderVisContr {
             return false;
         })) return new AnchorPane();
 
-        Map<TextonHeader, Double> pluginResults = plugin.apply(graph);
+        Map<TextonHeader, Double> pluginResults = plugin.compute();
         ObservableList<Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
 
         TableColumn<Entry<TextonHeader, Double>, Integer> columnNum = new TableColumn<>("Numéro");

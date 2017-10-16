@@ -26,4 +26,12 @@ public class TextonHeader {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        return "TextonHeader{" +
+                "numTexton=" + numTexton +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

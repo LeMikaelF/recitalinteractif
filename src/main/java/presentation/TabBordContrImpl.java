@@ -1,5 +1,9 @@
 package presentation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -11,9 +15,13 @@ import io.TextonIoFactory;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,17 +36,19 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import server.Vote;
 import server.VoteChangeEvent;
 import textonclasses.Graph;
 import textonclasses.Texton;
+import textonclasses.TextonHeader;
 import util.*;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -89,6 +99,8 @@ public class TabBordContrImpl implements TabBordContr {
     @FXML
     private Button btnTermine;
     @FXML
+    private Label lblNomTexton;
+    @FXML
     private Label lblNumTexton;
     @FXML
     private TextArea textAreaSource;
@@ -100,30 +112,22 @@ public class TabBordContrImpl implements TabBordContr {
     private Label lblHorloge;
 
     private Path path = Paths.get(PropLoader.getMap().get("location"));
-
     private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
     private long recitalClock;
     private long textonClock;
     private Texton texton;
     private Texton textonPrecedent;
-
-    public Stage getStage() {
-        return stageList.get(0);
-    }
-
-    private List<Stage> stageList;
-
+    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private Graph graph;
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();
     @Inject
     private EventBus eventBus;
     @Inject
-    private CommsManager commsManager;
-    @Inject
     private TextonIoFactory textonIoFactory;
     @Inject
-    private Provider<ScreenDispatcher> screenDispatcherProvider;
+    private ScreenDispatcher screenDispatcher;
+
 
     //TODO Ajouter la citation, provient de https://stackoverflow.com/questions/28581639/javafx8-presentation-view-duplicate-pane-and-content
     private ChangeListener<Boolean> needsLayoutListener = (observable, oldValue, newValue) -> {
@@ -133,7 +137,10 @@ public class TabBordContrImpl implements TabBordContr {
 
     @Inject
     public TabBordContrImpl() {
-        System.out.println("-------------------------------tabbordcontr constructeur--------------");
+    }
+
+    public Stage getStage() {
+        return stageProperty.get();
     }
 
     @FXML
@@ -185,8 +192,9 @@ public class TabBordContrImpl implements TabBordContr {
                 try {
                     changeTexton(vote);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    FXCustomDialogs.showInput("Veuillez entrer un vote valide (p. ex. : A, B, C…)");
                     changeTexton();
+                    e.printStackTrace();
                 }
             }
         }
@@ -216,18 +224,24 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void changeTexton(Texton texton) {
+        //All changeTexton methods delegate to this one.
+        if (texton == null)
+            throw new IllegalArgumentException("Le texton fourni à la méthode changeTexton(Texton texton) est null.");
+        textonPrecedent = texton;
+        this.texton = texton;
         eventBus.post(new TextonChangeEvent(texton, graph));
 
         //Set all fields
         tcTabBord.setTexton(texton);
-        lblNumTexton.textProperty().set(texton.getName());
+        lblNumTexton.textProperty().set(String.valueOf(texton.getNumTexton()));
+        lblNomTexton.textProperty().set(texton.getName());
         textAreaSource.textProperty().set(texton.getSource());
         textAreaTexte.textProperty().set(texton.getDescription());
     }
 
     //TODO Tester installer/restaurer la présentation
     private void installerPres() {
-        screenDispatcherProvider.get().sendMaximizeEvent(getStage());
+        screenDispatcher.sendMaximizeEvent(getStage());
     }
 
     @Subscribe
@@ -236,7 +250,7 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void restaurerPres() {
-        eventBus.post("restaurer");
+        screenDispatcher.sendRestoreEvent(getStage());
     }
 
     private void naviguerAuTexton() throws IOException {
@@ -258,8 +272,53 @@ public class TabBordContrImpl implements TabBordContr {
         WebView webView = new WebView();
         CanvasUtil.setNodeAnchorToAnchorPane(webView, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(webView);
+
+        //For testing only
+        List<TextonHeader> textonPath = Stream.of(
+                new TextonHeader(1, "Texton d'accueil"),
+                new TextonHeader(3, "11e prélude « mystique » (prière), op. 63 n° 2"),
+                new TextonHeader(2, "Seconde ballade « Liberté! », op. 26")
+        ).collect(Collectors.toList());
+
+        //This is required to properly serialze a List<TextonHeader>
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory typeFactory = mapper.getTypeFactory();
+        JavaType javaType = typeFactory.constructParametricType(ArrayList.class, TextonHeader.class);
+
         WebEngine webEngine = webView.getEngine();
-        webEngine.load(getClass().getResource("/public/conclusion/conclusion.html").toExternalForm());
+        webEngine.load("http://localhost/conclusion/conclusion.html");
+        webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals(State.SUCCEEDED)) {
+                try {
+
+                    webEngine.executeScript("receiveJson('" + StringEscapeUtils.escapeEcmaScript(
+                            new ObjectMapper().writeValueAsString(graph)) + "')");
+                    //webEngine.executeScript("receiveTextonPath('" + new ObjectMapper().writer().forType(javaType).writeValueAsString(commsManager.getTextonPath()) + "')");
+                    //For testing only:
+                    webEngine.executeScript("receiveTextonPath('"
+                            + StringEscapeUtils.escapeEcmaScript(
+                            new ObjectMapper().writer().forType(javaType).writeValueAsString(textonPath)) + "')");
+                } catch (JsonProcessingException e) {
+                    FXCustomDialogs.showError("Impossible d'initialiser la conclusion. Veuillez réactualiser la page.");
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        //Change behavior of "over" button to control conclusion.
+        btnTermine.textProperty().set("Texton suivant");
+        btnTermine.onActionProperty().set(event -> webEngine.executeScript("moveForwardInGraph()"));
+        //TODO Ajouter une option pour activer/désactiver la simulation physique du graphe.
+        //TODO Pour l'instant, la conclusion affiche simplement le parcours hypertextuel au format json brut.
+        //Amélioration possible: passer le List<TextonHeader> dans un TableView<TextonHeader>
+        try {
+            textAreaTexte.textProperty().set(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(textonPath));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        //Display network hotkeys
+        textAreaSource.textProperty().set("Pg Haut/Bas: zoom \n flèches: déplacer le graphe\n Faites entrer la souris dans la fenêtre de prévisualisation" +
+                "pour actualiser la fenêtre de présentation publique.");
 
         //Add listeners to copy image to VisContr
         Runnable copyImage = () -> eventBus.post(new PresenterImageUpdateEvent(webView.snapshot(new SnapshotParameters(), null)));
@@ -297,7 +356,7 @@ public class TabBordContrImpl implements TabBordContr {
     void initialize() throws IOException {
 
         eventBus.register(this);
-        Util.initializeStageRetriever(textAreaSource, stageList);
+        Util.initializeStageRetriever(textAreaSource, stageProperty);
         graph = textonIoFactory.create(path).getGraph();
         tcTabBord.setGraph(graph);
 
@@ -308,7 +367,6 @@ public class TabBordContrImpl implements TabBordContr {
         lblNumC.textProperty().bind(votes.get(2).asString());
         lblNumD.textProperty().bind(votes.get(3).asString());
         lblNumEnr.textProperty().bind(numEnr.asString());
-
 
         CanvasUtil.setNodeAnchorToAnchorPane(tcTabBord, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(tcTabBord);
@@ -321,9 +379,13 @@ public class TabBordContrImpl implements TabBordContr {
 
     @Subscribe
     public void onVoteChangeEvent(VoteChangeEvent vce) {
-        for (int i = 0; i < vce.getVotes().size(); i++) {
-            votes.get(i).set(vce.getVotes().get(i));
-        }
+        Platform.runLater(() -> {
+            System.out.println("Ceci est onVoteChangeEvent dans TabBordContrImpl");
+            for (int i = 0; i < vce.getVotes().size(); i++) {
+                votes.get(i).set(vce.getVotes().get(i));
+            }
+            numEnr.set(vce.getNumEnr());
+        });
     }
 
     private void setupClocks() {

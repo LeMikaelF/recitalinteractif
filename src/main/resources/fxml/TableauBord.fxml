@@ -149,6 +149,11 @@
                   </VBox>
                   <HBox>
                      <children>
+                        <Label fx:id="lblNomTexton" text="Nom du texton" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
                         <Label text="Num. :" />
                         <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="lblNumTexton" text="999" />

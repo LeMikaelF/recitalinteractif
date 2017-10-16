@@ -87,8 +87,7 @@ public class LtoPlugin implements StatisticsPlugin {
     }
 
     @Override
-    public Map<TextonHeader, Double> apply(Graph graph) {
-        this.graph = graph;
+    public Map<TextonHeader, Double> compute() {
         List<TextonHeader> occurences = setLTO2(limit, graph.getTextonHeader(start), new ArrayList<>());
         System.out.println(numPaths);
         System.out.println(occurences);

@@ -9,6 +9,8 @@ import com.google.inject.Inject;
 import io.TextonIo;
 import io.TextonIoFactory;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingFXUtils;
@@ -37,10 +39,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //TODO L'image dépasse un peu des côtés des fois (quand on change la fenêtre de taille, l'algorithme réagit mal?).
-//TODO Le builder dit toujours que des champs ont été modifiés depuis le dernier enregistrement.
-//TODO Changer le lieu initial du FileChooser quand on l'a déjà utilisé.
-//TODO Prévoir que si on clique sur «annuler» lors de l'enregistrement, il ne faut pas donner d'erreur (if null return).
-//TODO Reconstruire le graphe: ne doit pas demander l'emplacement du graphe s'il est déjà chargé.
 
 public class BuilderContr {
 
@@ -78,7 +76,7 @@ public class BuilderContr {
 
     @Inject
     private BuilderVisContr builderVisContr;
-    private List<Stage> stageList = Stream.generate(Stage::new).limit(1).collect(Collectors.toList());
+    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private Texton texton;
     private File currentFile;
     private Image image;
@@ -86,15 +84,15 @@ public class BuilderContr {
     private List<TextInputControl> textInputControls;
 
     private boolean updatedButNotSaved;
+    private ChangeListener<String> changeListenerUpdated = (observable, oldValue, newValue) -> {
+        updatedButNotSaved = true;
+        deactivateUpdatedListener();
+    };
     private ChangeListener<String> numEnforcer =
             (observable, oldValue, newValue) -> {
                 ((TextInputControl) ((StringProperty) observable).getBean())
                         .setText(newValue.replaceAll("[^\\d]", ""));
             };
-    private ChangeListener<String> changeListenerUpdated = (observable, oldValue, newValue) -> {
-        updatedButNotSaved = true;
-        deactivateUpdatedListener();
-    };
     private Stage stageImagePreview;
     private ResizableCanvasImpl canvasPreview;
 
@@ -120,8 +118,7 @@ public class BuilderContr {
         if (updatedButNotSaved)
             if (!checkWantsToAbandonChanges()) return;
         textInputControls.forEach(textInputControl -> textInputControl.textProperty().set(""));
-        //TODO Mettre une image par défaut au lieu de cacher la prévisualisation.
-        menuCheckPreview.selectedProperty().set(false);
+        canvasPreview.setImage(null);
     }
 
     private void ouvrirImage() {
@@ -160,15 +157,16 @@ public class BuilderContr {
         deactivateUpdatedListener();
     }
 
-    //TODO Mettre un nom de ficiher initial aux autres FileChooser s.
     private void menuEnregistrerSous() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName(Util.getFormattedNumSerie(Integer.parseInt(textFieldNum.textProperty().get())) + ".json");
+        if(currentFile != null) fileChooser.setInitialDirectory(currentFile.getParentFile());
         fileChooser.setTitle("Enregistrer le texton");
         ExtensionFilter filter = new ExtensionFilter("Texton au format json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
-        currentFile = fileChooser.showSaveDialog(getStage());
+        File tempFile = fileChooser.showSaveDialog(getStage());
+        if(tempFile != null) currentFile = tempFile;
         try {
         if(currentFile == null) throw new IOException();
         buildTextonFromFields();
@@ -196,11 +194,13 @@ public class BuilderContr {
         }
         menuEnregistrer.disableProperty().set(false);
         FileChooser fileChooser = new FileChooser();
+        if(currentFile != null) fileChooser.setInitialDirectory(currentFile.getParentFile());
         fileChooser.setTitle("Ouvrir le texton");
         ExtensionFilter filter = new ExtensionFilter("Texton au format json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File file = fileChooser.showOpenDialog(getStage());
+        if(file == null) return;
 
         //Check that filename is well-formed.
         if (!file.toPath().getFileName().toString().matches("[0-9][0-9][0-9][.]json")) {
@@ -241,6 +241,7 @@ public class BuilderContr {
     }
 
     private void deactivateUpdatedListener() {
+        updatedButNotSaved = false;
         textInputControls.forEach(textInputControl -> textInputControl.textProperty().removeListener(changeListenerUpdated));
     }
 
@@ -262,7 +263,7 @@ public class BuilderContr {
         menuEnregistrer.disableProperty().set(true);
         textFieldNum.textProperty().addListener(numEnforcer);
         //someProperty.bind(menuCheckVisualisation.selectedProperty());
-        Util.initializeStageRetriever(textFieldNum, stageList);
+        Util.initializeStageRetriever(textFieldNum, stageProperty);
         createImagePreview();
 
         menuCheckVisualisation.selectedProperty().set(true);
@@ -283,7 +284,7 @@ public class BuilderContr {
     }
 
     private Stage getStage() {
-        return stageList.get(0);
+        return stageProperty.get();
     }
 
     public void hideChildrenStages() {

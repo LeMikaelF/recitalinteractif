@@ -2,11 +2,10 @@ package textonclasses;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.json.Json;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,11 +18,14 @@ public class Graph {
 
     private final List<TextonHeader> nodes;
     private final List<TextonLien> edges;
+    private TextonHeader texton0 = new TextonHeader(0, "Texton 0");
 
     @JsonCreator
     public Graph(@JsonProperty("nodes") List<TextonHeader> nodes, @JsonProperty("edges") List<TextonLien> edges) {
         this.nodes = nodes;
-        nodes.add(0, new TextonHeader(0, "Texton 0"));
+        //This is necessary in order to textons from 1.
+        //But it is not serialized to Json (see private method annotated @JsonProperty).
+        nodes.add(0, texton0);
         this.edges = edges;
     }
 
@@ -45,9 +47,7 @@ public class Graph {
     }
 
     public TextonHeader getTextonHeader(int numTexton) {
-        List<TextonHeader> list = nodes.stream().filter(textonHeader -> textonHeader.getNumTexton() == numTexton)
-                .limit(1).collect(Collectors.toList());
-        return list.get(0);
+        return nodes.stream().filter(textonHeader -> textonHeader.getNumTexton() == numTexton).findFirst().orElse(null);
     }
 
     public List<Integer> getChildren(int numTexton) {
@@ -59,6 +59,13 @@ public class Graph {
     public List<TextonHeader> getTextonHeaderChildren(int numTexton) {
         return edges.stream().filter(textonLien -> textonLien.getFrom() == numTexton)
                 .mapToInt(TextonLien::getTo).mapToObj(this::getTextonHeader).collect(Collectors.toList());
+    }
+
+    @JsonProperty("nodes")
+    private List<TextonHeader> getSimplifiedTextonHeaders(){
+        ArrayList<TextonHeader> temp = new ArrayList<>(nodes);
+        temp.remove(texton0);
+        return temp;
     }
 
 }
