@@ -99,7 +99,6 @@ function disableControls() {
 }
 
 function enableControls(numLiens) {
-    //TODO Est-ce que cete vérification est vraiment nécessaire?
     if (numLiens > 0)
         id('abutton').disabled = false;
     if (numLiens > 1)

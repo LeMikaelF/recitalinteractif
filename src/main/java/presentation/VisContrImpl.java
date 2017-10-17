@@ -11,19 +11,18 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import util.CanvasUtil;
-import util.ResizableCanvasImpl;
-import util.ResizableDraggableNodeManager;
-import util.Util;
+import util.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//FIXME Il y a un effet de letterbox assez marqué. Ajuster l'image à la fenêtre en l'agrandissant.
 public class VisContrImpl implements VisContr {
 
     @FXML
@@ -50,6 +49,7 @@ public class VisContrImpl implements VisContr {
         stageProperty.addListener((observable, oldValue, newValue) -> {if(newValue != null) System.out.println(newValue);});
     }
 
+    //private ResizableCanvasImpl canvas = new ResizableCanvasImpl();
     private ResizableCanvasImpl canvas = new ResizableCanvasImpl();
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();

@@ -31,7 +31,6 @@ import java.util.stream.Stream;
 /**
  * Created by Mikaël on 2017-10-11.
  */
-//TODO Utiliser un graphe test, puis créer un path test.
 public class ConclusionTest extends Application {
     List<TextonHeader> list = Stream.of(
             new TextonHeader(1, "Node 1"),

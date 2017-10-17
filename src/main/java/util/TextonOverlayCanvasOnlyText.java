@@ -1,5 +1,6 @@
 package util;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -16,8 +17,6 @@ import java.util.stream.Collectors;
  */
 
 //J'ai choisi de diminuer la grosseur du texte parce que je n'étais capable de gérer le word-wrap avec des TextFlow.
-//TODO Centrer le texte sur le texton (avec un décalage qui tient compte du word-wrap)
-//TODO Il y a un NPE quelque part par ici quand on change de lien.
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
     private Graph graph;
@@ -49,8 +48,15 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
         textFlows.forEach(textFlow -> {
             textFlow.getChildren().forEach(node -> ((Text) node).setFont(Font.font(20)));
             textFlow.prefWidthProperty().bind(widthProperty().subtract(getWidth() / 15).subtract(getWidth() / 15));
-            AnchorPane.setLeftAnchor(textFlow, getWidth() / 15);
-            AnchorPane.setRightAnchor(textFlow, getWidth() / 15);
+
+            ChangeListener<Number> widthChangeListener = (observable, oldValue, newValue) -> {
+                //Ceci n'est pas idéal pour centrer le texte.
+                AnchorPane.setLeftAnchor(textFlow, getWidth() / 4);
+            };
+
+            textFlow.prefWidthProperty().addListener(widthChangeListener);
+            //Run the listener for the first time.
+            widthChangeListener.changed(textFlow.prefWidthProperty(), 0, 0);
             textFlow.toFront();
         });
 

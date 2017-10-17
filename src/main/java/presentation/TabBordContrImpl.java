@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import events.PresenterImageUpdateEvent;
 import events.ScreenDispatchEvent;
 import events.TextonChangeEvent;
@@ -25,12 +24,14 @@ import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -97,7 +98,11 @@ public class TabBordContrImpl implements TabBordContr {
     @FXML
     private Label lblNumD;
     @FXML
+    private VBox vBoxButtons;
+    @FXML
     private Button btnTermine;
+    @FXML
+    private CheckBox checkBoxPhysics;
     @FXML
     private Label lblNomTexton;
     @FXML
@@ -127,12 +132,18 @@ public class TabBordContrImpl implements TabBordContr {
     private TextonIoFactory textonIoFactory;
     @Inject
     private ScreenDispatcher screenDispatcher;
-
+    //This needs to be here because the constructor runs some necessary actions.
+    @Inject
+    private CommsManager commsManager;
 
     //TODO Ajouter la citation, provient de https://stackoverflow.com/questions/28581639/javafx8-presentation-view-duplicate-pane-and-content
     private ChangeListener<Boolean> needsLayoutListener = (observable, oldValue, newValue) -> {
-        if (!newValue)
-            eventBus.post(new PresenterImageUpdateEvent(anchorPaneTabBord.snapshot(new SnapshotParameters(), null)));
+        if (!newValue) {
+            //TODO Appliquer un arrière-plan (ce serait beau style parchemin beige)
+            SnapshotParameters sp = new SnapshotParameters();
+            sp.setViewport(new Rectangle2D(0, 0, tcTabBord.getWidth(), tcTabBord.getHeight()));
+            eventBus.post(new PresenterImageUpdateEvent(anchorPaneTabBord.snapshot(sp, null)));
+        }
     };
 
     @Inject
@@ -197,23 +208,27 @@ public class TabBordContrImpl implements TabBordContr {
                     e.printStackTrace();
                 }
             }
-        }
-
-        //Determine which link has the most votes
-        int max = 0;
-        Vote vote = Vote.A;
-        for (int i = 0; i < votes.size() - 1; i++) {
-            if (max < votes.get(i).get()) vote = Vote.values()[i];
-        }
-        try {
-            changeTexton(vote);
-        } catch (IOException e) {
-            FXCustomDialogs.showException(e);
-            e.printStackTrace();
+        } else {
+            //Determine which link has the most votes
+            int max = 0;
+            Vote vote = Vote.A;
+            for (int i = 0; i < votes.size() - 1; i++) {
+                if (max < votes.get(i).get()) vote = Vote.values()[i];
+            }
+            try {
+                changeTexton(vote);
+            } catch (IOException e) {
+                FXCustomDialogs.showException(e);
+                e.printStackTrace();
+            }
         }
     }
 
     private void changeTexton(Vote vote) throws IOException {
+        if (graph.getChildren(texton.getNumTexton()).size() >= Arrays.asList(Vote.values()).indexOf(vote)) {
+            //Le lien choisi n'existe pas parce que le texton n'a pas assez de liens.
+            FXCustomDialogs.showError("Vote invalide. Le texton ne possède pas assez de liens sortants.");
+        }
         int numTexton = graph.getChildren(texton.getNumTexton()).get(Arrays.asList(Vote.values()).indexOf(vote));
         changeTexton(numTexton);
     }
@@ -273,12 +288,14 @@ public class TabBordContrImpl implements TabBordContr {
         CanvasUtil.setNodeAnchorToAnchorPane(webView, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(webView);
 
-        //For testing only
-        List<TextonHeader> textonPath = Stream.of(
+        List<TextonHeader> testPath = Stream.of(
                 new TextonHeader(1, "Texton d'accueil"),
                 new TextonHeader(3, "11e prélude « mystique » (prière), op. 63 n° 2"),
                 new TextonHeader(2, "Seconde ballade « Liberté! », op. 26")
         ).collect(Collectors.toList());
+
+        //Nécessaire parce que Jackson ne tolère pas une collection "unmodifiable".
+        List<TextonHeader> textonPath = new ArrayList<>(commsManager.getTextonPath());
 
         //This is required to properly serialze a List<TextonHeader>
         ObjectMapper mapper = new ObjectMapper();
@@ -305,10 +322,17 @@ public class TabBordContrImpl implements TabBordContr {
             }
         });
 
-        //Change behavior of "over" button to control conclusion.
+        //TODO Améliorer la fonction de mise à jour du screencast. Le public n'a pas besoin de voir le mouvement du graphe qui se stabilise. Seulement les clics, les mises à jour du "path", les drags et l'initialisation.
+        //Change behaviour of "over" button to control conclusion.
         btnTermine.textProperty().set("Texton suivant");
         btnTermine.onActionProperty().set(event -> webEngine.executeScript("moveForwardInGraph()"));
-        //TODO Ajouter une option pour activer/désactiver la simulation physique du graphe.
+        //Make physics checkbox visible and set correct behaviour.
+        if (!checkBoxPhysics.isVisible()) {
+            checkBoxPhysics.setVisible(true);
+            checkBoxPhysics.selectedProperty().set(true);
+            checkBoxPhysics.selectedProperty().addListener((observable, oldValue, newValue) -> webEngine.executeScript("setPhysics(" + newValue + ")"));
+        }
+
         //TODO Pour l'instant, la conclusion affiche simplement le parcours hypertextuel au format json brut.
         //Amélioration possible: passer le List<TextonHeader> dans un TableView<TextonHeader>
         try {

@@ -42,7 +42,6 @@ abstract public class ResizableCanvas extends Canvas {
 
     @Override
     public void resize(double width, double height) {
-        boolean setAndQuit = false;
         if (lastWidth == width && lastHeight == height) return;
         lastWidth = width;
         lastHeight = height;

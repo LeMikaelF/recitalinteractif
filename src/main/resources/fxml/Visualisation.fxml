@@ -75,9 +75,9 @@
                         <Separator orientation="VERTICAL" />
                         <Region prefWidth="20.0" HBox.hgrow="ALWAYS" />
                         <Label prefHeight="17.0" prefWidth="111.0" styleClass="lien" text="Votes enregistrés : " />
-                        <Label fx:id="lblVotesEnr" styleClass="lien" text="27" />
+                        <Label fx:id="lblVotesEnr" styleClass="lien" text="0" />
                         <Label styleClass="lien" text=" / " />
-                        <Label fx:id="lblTotalVotes" styleClass="lien" text="42" />
+                        <Label fx:id="lblTotalVotes" styleClass="lien" text="0" />
                         <Region prefWidth="20.0" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
