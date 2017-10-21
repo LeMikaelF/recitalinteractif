@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //TODO L'image dépasse un peu des côtés des fois (quand on change la fenêtre de taille, l'algorithme réagit mal?).
-
+//FIXME Mettre du wordwrap aux textArea du commentaire et de la decription.
 public class BuilderContr {
 
     Path projectPath;
@@ -274,6 +274,8 @@ public class BuilderContr {
         textInputControls = Stream.of(textFieldNum, textFieldName, textFieldSource, textAreaComment, textAreaDescription)
                 .collect(Collectors.toList());
         activateUpdatedListener();
+
+        Stream.of(textAreaComment, textAreaDescription).forEach(textArea -> textArea.setWrapText(true));
     }
 
     private void addShowHideCapability(BooleanProperty controller, Stage stage) {

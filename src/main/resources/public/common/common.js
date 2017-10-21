@@ -47,25 +47,37 @@ var optionsNastasia = {
                 "min": 13
             }
         },
-        "shadow": {
+        /*"shadow": {
             "enabled": true,
             "size": 11,
             "x": 0,
             "y": 0
-        },
+        },*/
+        "width": 1.5,
         "smooth": false
     },
     "interaction": {
         "navigationButtons": true
     },
+    /* Ceci sont les options choisies avec Nastasia, mais elle ne montrent pas bien la structure du réseau.
     "physics": {
         "enabled": true,
         "forceAtlas2Based": {
-            "springLength": 295,
+            "springLength": 500,
             "avoidOverlap": 0.56
         },
         "minVelocity": 0.75,
         "solver": "forceAtlas2Based"
+    }*/
+    "physics": {
+        "repulsion": {
+            "centralGravity": 0,
+            "springLength": 330,
+            "springConstant": 0.065,
+            "nodeDistance": 405
+        },
+        "minVelocity": 0.75,
+        "solver": "repulsion"
     }
 };
 
@@ -78,7 +90,8 @@ var pathOptions = {
     },
     "edges": {
         "color": "rgba(255,199,20,1)",
-        "width": 1.3,
+        "width": 1.8,
+        //"width": 1.3,
         "shadow": {
             "color": "rgba(255,199,20,1)",
             "x": 0,
@@ -86,3 +99,21 @@ var pathOptions = {
         }
     }
 };
+
+function setPhysics(bool) {
+    if(bool) {
+        //network.startSimulation();
+        network.setOptions({
+            "physics": {
+                "enabled": true
+            }
+        });
+    } else {
+        //network.stopSimulation();
+        network.setOptions({
+            "physics": {
+                "enabled": false
+            }
+        })
+    }
+}

@@ -14,8 +14,13 @@ var initGraphWithJson = function (json) {
     edges = new vis.DataSet(json.edges);
     nodes.on('*', dataSetChangeHandler);
     edges.on('*', dataSetChangeHandler);
-    if (typeof network === 'undefined' || network === null)
-        network = new vis.Network(container, {'nodes': nodes, 'edges': edges}, Object.assign(options, optionsNastasia));
+    if (typeof network === 'undefined' || network === null) {
+        network = new vis.Network(container, {
+            'nodes': nodes,
+            'edges': edges
+        }, Object.assign(options, optionsNastasia));
+        network.setOptions({'interaction': {'keyboard': {'enabled': true}}});
+    }
     else network.setData({'nodes': nodes, 'edges': edges});
 };
 
@@ -48,7 +53,8 @@ window.onload = function () {
 function addEdge(data, callback) {
     var children = network.getConnectedNodes(data.from, 'to');
     if (children.size <= 4) {
-        alert('Un texton ne peut pas posséder plus de quatre liens sortants.')
+        //FIXME Ceci ne s'affiche pas. Est-ce que c'est parce que je n'ai pas connecté le listener d'alertes et de confirmation de JavaFX?
+        alert('Un texton ne peut pas posséder plus de quatre liens sortants.');
         return;
     }
     if (children.some(function (p1, p2, p3) {

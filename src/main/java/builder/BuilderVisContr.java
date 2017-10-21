@@ -48,10 +48,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//TODO Ajouter un tooltip qui donne le nombre de liens entrants et sortants d'un noeud.
 //TODO Ajouter un utilitaire de validation du graphe (peut être un plugin).
 //À valider: Maximum 4 liens par texton
 //Minimum 2 liens par texton
 //Pas de lien vers soi-même (pas de boucle d'un texton vers lui-même)
+//Le numéro des fichiers des textons correspond au numéro inscrit dans le json (dans le fichier).
+//Pas deux textons musicaux qui se suivent
+//Le texton d'accueil n'a pas de lien entrant.
+//Pas de liens réciproques (commentaire: les liens réciproques ne veulent pas dire un aller-retour. Il pourra y avoir des liens réciproques 10-17.)
 //... autres, au besoin.
 public class BuilderVisContr {
 
@@ -71,6 +76,8 @@ public class BuilderVisContr {
     private MenuItem menuEnregistrerSous;
     @FXML
     private MenuItem menuAjuster;
+    @FXML
+    private CheckMenuItem checkMenuPhysics;
     @FXML
     private WebView webView;
     @Inject
@@ -133,19 +140,21 @@ public class BuilderVisContr {
             recharger();
         } else if (event.getSource().equals(menuReconstruire)) {
             reconstruire();
-        } else {
-            if (event.getSource().equals(menuEnregistrer)) {
-                enregistrer();
-            } else if (event.getSource().equals(menuEnregistrerSous)) {
-                enregistrerSous();
-            } else if (event.getSource().equals(menuAjuster)) {
-                menuAjuster();
-            }
+        } else if (event.getSource().equals(menuEnregistrer)) {
+            enregistrer();
+        } else if (event.getSource().equals(menuEnregistrerSous)) {
+            enregistrerSous();
+        } else if (event.getSource().equals(menuAjuster)) {
+            menuAjuster();
+        } else if (event.getSource().equals(checkMenuPhysics)) {
+            //Do nothing, the behaviour is set in a listener declared in the initialize() method.
         }
+
     }
 
     private void reconstruire() {
         FileChooser fileChooser = new FileChooser();
+        //FIXME Ceci ne marche pas si path est null. Pourtant, le MenuItem dit «reconstruire...», les trois points laissent entendre qu'un dialogue va suivre. Peut-être est-ce aussi la même chose avec les autres menus?
         fileChooser.setInitialDirectory(path.getParent().toFile());
         fileChooser.setTitle("Reconstruire le graphe");
         fileChooser.setInitialFileName("graph.json");
@@ -154,7 +163,7 @@ public class BuilderVisContr {
         fileChooser.setSelectedExtensionFilter(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File file = fileChooser.showOpenDialog(getStage());
-        if(file == null) return;
+        if (file == null) return;
         TextonIo textonIo = textonIoFactory.create(file.toPath());
         try {
             textonIo.validateGraph();
@@ -268,6 +277,8 @@ public class BuilderVisContr {
         //Add confirm and alert listeners to WebEngine
         webEngine.onAlertProperty().set(webAlertHandler);
         webEngine.confirmHandlerProperty().set(webConfirmHandler);
+        checkMenuPhysics.setSelected(true);
+        checkMenuPhysics.selectedProperty().addListener((observable, oldValue, newValue) -> webEngine.executeScript("setPhysics(" + newValue + ")"));
     }
 
     private Node getPluginResultTable(StatisticsPlugin plugin) {

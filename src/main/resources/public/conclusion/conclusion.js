@@ -67,6 +67,8 @@ function moveForwardInGraph() {
     lastNode = node;
 }
 
+//Moved to common/common.js
+/*
 function setPhysics(bool) {
     if(bool) {
         //network.startSimulation();
@@ -83,4 +85,4 @@ function setPhysics(bool) {
             }
         })
     }
-}
+}*/

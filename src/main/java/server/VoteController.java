@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import events.TextonChangeEvent;
+import events.VoteChangeEvent;
 
 import java.util.HashMap;
 import java.util.List;

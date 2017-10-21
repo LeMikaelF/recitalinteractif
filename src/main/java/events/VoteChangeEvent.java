@@ -1,32 +1,32 @@
 package events;
 
-import server.VoteController;
+import server.VoteCollector;
+
+import java.util.List;
 
 /**
- * Created by Mikaël on 2017-10-01.
+ * Created by Mikaël on 2017-09-30.
  */
 public class VoteChangeEvent {
-
-    private final int[] votes;
-    private final int numEnr;
-    private final VoteController source;
-
-    public int[] getVotes() {
-        return votes;
-    }
+    private int numEnr;
+    private List<Integer> votes;
+    private VoteCollector voteCollector;
 
     public int getNumEnr() {
         return numEnr;
     }
 
-    public VoteController getSource() {
-        return source;
+    public List<Integer> getVotes() {
+        return votes;
     }
 
-    public VoteChangeEvent(int[] votes, int numEnr, VoteController source) {
+    public VoteCollector getVoteCollector() {
+        return voteCollector;
+    }
 
-        this.votes = votes;
+    public VoteChangeEvent(int numEnr, List<Integer> votes, VoteCollector voteCollector) {
         this.numEnr = numEnr;
-        this.source = source;
+        this.votes = votes;
+        this.voteCollector = voteCollector;
     }
 }

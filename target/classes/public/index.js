@@ -5,8 +5,9 @@ var votedisplay;
 var connecterror = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Erreur de connexion. Rafraîchissez la page.";
 var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté.";
 var ws;
-//TODO changer ceci pour 1.2.3.4
-var address = 'ws://192.168.2.34:80/ws';
+//TODO Changer ceci pour l'adresse IP du serveur injectée en jsp
+//var address = 'ws://192.168.2.34:80/ws';
+var address = 'ws://1.2.3.45:80/ws';
 var id = function (id) {
     return document.getElementById(id);
 };
@@ -20,7 +21,6 @@ var changeTexton = function (numTexton, numLiens) {
 };
 
 //Il faut que les liens internet marchent pour tester sans compiler, mais que les liens webjar marchent dans la distribution.
-
 window.onload = function () {
     id('abutton').onclick = function () {
         this.blur();

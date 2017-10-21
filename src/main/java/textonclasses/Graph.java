@@ -22,11 +22,11 @@ public class Graph {
 
     @JsonCreator
     public Graph(@JsonProperty("nodes") List<TextonHeader> nodes, @JsonProperty("edges") List<TextonLien> edges) {
-        this.nodes = nodes;
+        this.nodes = new ArrayList<>(nodes);
         //This is necessary in order to textons from 1.
         //But it is not serialized to Json (see private method annotated @JsonProperty).
-        nodes.add(0, texton0);
-        this.edges = edges;
+        this.nodes.add(0, texton0);
+        this.edges = new ArrayList<>(edges);
     }
 
     public static Graph createGraph(String json) throws IOException {

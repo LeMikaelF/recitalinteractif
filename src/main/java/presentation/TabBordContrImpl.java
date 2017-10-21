@@ -39,7 +39,7 @@ import javafx.util.Duration;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import server.Vote;
-import server.VoteChangeEvent;
+import events.VoteChangeEvent;
 import textonclasses.Graph;
 import textonclasses.Texton;
 import textonclasses.TextonHeader;
@@ -57,6 +57,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//FIXME La fenêtre de présentation clignote quand on la re-sélectionne (si on était passé à une autre fenêtre).
 public class TabBordContrImpl implements TabBordContr {
 
     @FXML
@@ -158,7 +159,7 @@ public class TabBordContrImpl implements TabBordContr {
     private void menuHandler(ActionEvent event) {
         try {
             if (event.getSource().equals(menuFermer)) {
-
+                getStage().close();
             } else if (event.getSource().equals(menuLienA)) {
                 changeTexton(Vote.A);
             } else if (event.getSource().equals(menuLienB)) {
@@ -225,7 +226,7 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void changeTexton(Vote vote) throws IOException {
-        if (graph.getChildren(texton.getNumTexton()).size() >= Arrays.asList(Vote.values()).indexOf(vote)) {
+        if (graph.getChildren(texton.getNumTexton()).size() <= Arrays.asList(Vote.values()).indexOf(vote)) {
             //Le lien choisi n'existe pas parce que le texton n'a pas assez de liens.
             FXCustomDialogs.showError("Vote invalide. Le texton ne possède pas assez de liens sortants.");
         }
@@ -288,12 +289,6 @@ public class TabBordContrImpl implements TabBordContr {
         CanvasUtil.setNodeAnchorToAnchorPane(webView, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(webView);
 
-        List<TextonHeader> testPath = Stream.of(
-                new TextonHeader(1, "Texton d'accueil"),
-                new TextonHeader(3, "11e prélude « mystique » (prière), op. 63 n° 2"),
-                new TextonHeader(2, "Seconde ballade « Liberté! », op. 26")
-        ).collect(Collectors.toList());
-
         //Nécessaire parce que Jackson ne tolère pas une collection "unmodifiable".
         List<TextonHeader> textonPath = new ArrayList<>(commsManager.getTextonPath());
 
@@ -322,7 +317,7 @@ public class TabBordContrImpl implements TabBordContr {
             }
         });
 
-        //TODO Améliorer la fonction de mise à jour du screencast. Le public n'a pas besoin de voir le mouvement du graphe qui se stabilise. Seulement les clics, les mises à jour du "path", les drags et l'initialisation.
+        //TODO Communiquer les clics du bouton à VisContrImpl en postant les events sur le EventBus.
         //Change behaviour of "over" button to control conclusion.
         btnTermine.textProperty().set("Texton suivant");
         btnTermine.onActionProperty().set(event -> webEngine.executeScript("moveForwardInGraph()"));
@@ -380,6 +375,7 @@ public class TabBordContrImpl implements TabBordContr {
     void initialize() throws IOException {
 
         eventBus.register(this);
+        System.out.println("EventBus dans VisContrImpl: " + eventBus.hashCode());
         Util.initializeStageRetriever(textAreaSource, stageProperty);
         graph = textonIoFactory.create(path).getGraph();
         tcTabBord.setGraph(graph);
@@ -403,8 +399,8 @@ public class TabBordContrImpl implements TabBordContr {
 
     @Subscribe
     public void onVoteChangeEvent(VoteChangeEvent vce) {
+        //Has to run on JavaFX thread.
         Platform.runLater(() -> {
-            System.out.println("Ceci est onVoteChangeEvent dans TabBordContrImpl");
             for (int i = 0; i < vce.getVotes().size(); i++) {
                 votes.get(i).set(vce.getVotes().get(i));
             }
@@ -441,6 +437,7 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void updateTextonClock() {
+        //FIXME Je ne suis pas certain que l'horloge de textons marche.
         long currentClock = System.currentTimeMillis() - textonClock;
         lblHorlTexton.textProperty().set(getFormattedTime(currentClock));
     }
