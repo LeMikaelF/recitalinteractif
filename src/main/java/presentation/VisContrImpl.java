@@ -3,28 +3,37 @@ package presentation;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import events.PresenterImageUpdateEvent;
-import events.ScreenDispatchEvent;
-import events.VoteChangeEvent;
+import events.*;
+import guice.ConclusionBuilderVisJsFactory;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import util.*;
+import javafx.util.Duration;
+import textonclasses.Graph;
+import textonclasses.TextonHeader;
+import util.CanvasUtil;
+import util.ResizableCanvasImpl;
+import util.ResizableDraggableNodeManager;
+import util.Util;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO Transférer le WebView sur la visualisation, et mettre seulement un aperçu en basse résolution (et fréquence) sur le tableau de bord.
-//TODO Zoomer sur chaque module (à la prezi) pendant la conclusion, et déplacer la caméra pour animer. À la fin, dé-zoomer et afficher le réseau au complet.
-//FIXME Cacher la barre d'outils durant la conclusion, ou bien lui faire écrire les noms des textons.
+//TODO Zoomer sur chaque module (à la prezi) pendant la toConclusion, et déplacer la caméra pour animer. À la fin, dé-zoomer et afficher le réseau au complet.
 //FIXME Il y a un effet de letterbox assez marqué. Ajuster l'image à la fenêtre en l'agrandissant.
 //TODO Ajouter les options du graphique de vis.js dans une autre fenêtre.
 public class VisContrImpl implements VisContr {
@@ -49,16 +58,58 @@ public class VisContrImpl implements VisContr {
     private EventBus eventBus;
     @Inject
     private CommsManager commsManager;
+    @Inject
+    private ConclusionBuilderVisJsFactory conclusionFactory;
 
-    public VisContrImpl() {
-        stageProperty.addListener((observable, oldValue, newValue) -> {if(newValue != null) System.out.println(newValue);});
-    }
-
+    private Node conclusion;
     private ResizableCanvasImpl canvas = new ResizableCanvasImpl();
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();
     private IntegerProperty votesEnr = new SimpleIntegerProperty();
     private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
+    private boolean conclusionRunning;
+
+    public VisContrImpl() {
+        stageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) System.out.println(newValue);
+        });
+    }
+
+    private void toConclusion(Graph graph) {
+        //Nécessaire parce que Jackson ne tolère pas une collection "unmodifiable".
+        List<TextonHeader> textonPath = new ArrayList<>(commsManager.getTextonPath());
+        ConclusionBuilder conclusionBuilder = conclusionFactory.create(textonPath, graph);
+        eventBus.register(conclusionBuilder);
+        conclusion = conclusionBuilder.getNode();
+        anchorPane.getChildren().clear();
+        anchorPane.getChildren().add(conclusion);
+        ResizableDraggableNodeManager.makeNodeDraggable(conclusion);
+        ResizableDraggableNodeManager.makeNodeResizableCtrl(conclusion);
+
+        tBarPres.setDisable(true);
+
+        Timeline screencast = new Timeline();
+        screencast.setCycleCount(Timeline.INDEFINITE);
+        screencast.getKeyFrames().add(new KeyFrame(Duration.millis(1000), event -> {
+            //SnapshotParameters sp = new SnapshotParameters();
+            //sp.setViewport(new Rectangle2D(0, 0, conclusion.getBoundsInParent().getWidth(), conclusion.getBoundsInParent().getHeight()));
+            //Image snapshot = conclusion.snapshot(sp, null);
+            Image snapshot = conclusion.snapshot(null, null);
+            eventBus.post(new PresenterImageUpdateEvent(snapshot));
+        }));
+        screencast.play();
+        conclusionRunning = true;
+    }
+
+    private void toRecital() {
+        anchorPane.getChildren().clear();
+        anchorPane.getChildren().add(canvas);
+
+        tBarPres.setDisable(false);
+
+        conclusion = null;
+        conclusionRunning = false;
+    }
 
     @FXML
     void initialize() {
@@ -77,11 +128,23 @@ public class VisContrImpl implements VisContr {
     }
 
     @Subscribe
+    private void onControlObjectEvent(ControlObjectEvent event) {
+        if (event.getControlEvent().equals(ControlEvent.CONCLUSION) && event.getObject() instanceof Graph) {
+            toConclusion((Graph) event.getObject());
+        }
+    }
+
+    @Subscribe
+    private void onControlEvent(ControlEvent event) {
+        if (event.equals(ControlEvent.COMMENCER)) {
+            toRecital();
+        }
+    }
+
+    @Subscribe
     private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent presenterImageUpdateEvent) {
         canvas.setImage(presenterImageUpdateEvent.getImage());
     }
-
-
 
     @Subscribe
     public void onVoteChangeEvent(VoteChangeEvent vce) {

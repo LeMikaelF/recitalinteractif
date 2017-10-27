@@ -3,6 +3,7 @@ package guice;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
 import presentation.*;
 import server.*;
@@ -24,6 +25,7 @@ public final class FxGuiceModule extends AbstractModule {
         Multibinder<VoteCollector> multibinder = Multibinder.newSetBinder(binder(), VoteCollector.class);
         multibinder.addBinding().to(WebsocketHandlerImpl.class);
 
+        install(new FactoryModuleBuilder().implement(ConclusionBuilder.class, ConclusionBuilderVisJs.class).build(ConclusionBuilderVisJsFactory.class));
         install(new CommonModule());
     }
 

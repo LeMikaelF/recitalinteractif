@@ -1,26 +1,18 @@
 package presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import events.PresenterImageUpdateEvent;
-import events.ScreenDispatchEvent;
-import events.TextonChangeEvent;
+import events.*;
 import io.TextonIoFactory;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -28,18 +20,15 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
-import javafx.scene.input.MouseButton;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import server.Vote;
-import events.VoteChangeEvent;
 import textonclasses.Graph;
 import textonclasses.Texton;
 import textonclasses.TextonHeader;
@@ -49,7 +38,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//FIXME La fenêtre de présentation clignote quand on la re-sélectionne (si on était passé à une autre fenêtre).
 public class TabBordContrImpl implements TabBordContr {
 
     @FXML
@@ -116,9 +103,18 @@ public class TabBordContrImpl implements TabBordContr {
     private Label lblHorlRecital;
     @FXML
     private Label lblHorloge;
-
+    private ImageView imageView = new ImageView();
     private Path path = Paths.get(PropLoader.getMap().get("location"));
     private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
+    ChangeListener<Boolean> conclusionNodeOperations = (observable, oldValue, newValue) -> {
+        if (newValue) {
+            anchorPaneTabBord.getChildren().clear();
+            anchorPaneTabBord.getChildren().add(imageView);
+        } else {
+            anchorPaneTabBord.getChildren().clear();
+            anchorPaneTabBord.getChildren().add(tcTabBord);
+        }
+    };
     private long recitalClock;
     private long textonClock;
     private Texton texton;
@@ -136,16 +132,21 @@ public class TabBordContrImpl implements TabBordContr {
     //This needs to be here because the constructor runs some necessary actions.
     @Inject
     private CommsManager commsManager;
-
     //TODO Ajouter la citation, provient de https://stackoverflow.com/questions/28581639/javafx8-presentation-view-duplicate-pane-and-content
     private ChangeListener<Boolean> needsLayoutListener = (observable, oldValue, newValue) -> {
         if (!newValue) {
-            //TODO Appliquer un arrière-plan (ce serait beau style parchemin beige)
             SnapshotParameters sp = new SnapshotParameters();
-            sp.setViewport(new Rectangle2D(0, 0, tcTabBord.getWidth(), tcTabBord.getHeight()));
+            //sp.setViewport(new Rectangle2D(0, 0, tcTabBord.getWidth(), tcTabBord.getHeight()));
+            if (tcTabBord.getTexton() == null) {
+                sp.setViewport(new Rectangle2D(0, 0, 0, 0));
+            } else {
+                sp.setViewport(new Rectangle2D(0, 0, tcTabBord.getTexton().getImage().getWidth(),
+                        tcTabBord.getTexton().getImage().getHeight()));
+            }
             eventBus.post(new PresenterImageUpdateEvent(anchorPaneTabBord.snapshot(sp, null)));
         }
     };
+    private SimpleBooleanProperty conclusionRunning = new SimpleBooleanProperty(false);
 
     @Inject
     public TabBordContrImpl() {
@@ -180,7 +181,7 @@ public class TabBordContrImpl implements TabBordContr {
             } else if (event.getSource().equals(menuInstaller)) {
                 installerPres();
             } else if (event.getSource().equals(menuConclusion)) {
-                conclusion();
+                toConclusion();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -255,7 +256,6 @@ public class TabBordContrImpl implements TabBordContr {
         textAreaTexte.textProperty().set(texton.getDescription());
     }
 
-    //TODO Tester installer/restaurer la présentation
     private void installerPres() {
         screenDispatcher.sendMaximizeEvent(getStage());
     }
@@ -283,52 +283,24 @@ public class TabBordContrImpl implements TabBordContr {
         }
     }
 
-    private void conclusion() {
-        anchorPaneTabBord.getChildren().clear();
-        WebView webView = new WebView();
-        CanvasUtil.setNodeAnchorToAnchorPane(webView, 0, 0, 0, 0);
-        anchorPaneTabBord.getChildren().add(webView);
+    private void toConclusion() {
+        eventBus.post(new ControlObjectEvent(graph, ControlEvent.CONCLUSION));
+        List<TextonHeader> textonPath = commsManager.getTextonPath();
 
-        //Nécessaire parce que Jackson ne tolère pas une collection "unmodifiable".
-        List<TextonHeader> textonPath = new ArrayList<>(commsManager.getTextonPath());
-
-        //This is required to properly serialze a List<TextonHeader>
-        ObjectMapper mapper = new ObjectMapper();
-        TypeFactory typeFactory = mapper.getTypeFactory();
-        JavaType javaType = typeFactory.constructParametricType(ArrayList.class, TextonHeader.class);
-
-        WebEngine webEngine = webView.getEngine();
-        webEngine.load("http://localhost/conclusion/conclusion.html");
-        webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.equals(State.SUCCEEDED)) {
-                try {
-
-                    webEngine.executeScript("receiveJson('" + StringEscapeUtils.escapeEcmaScript(
-                            new ObjectMapper().writeValueAsString(graph)) + "')");
-                    //webEngine.executeScript("receiveTextonPath('" + new ObjectMapper().writer().forType(javaType).writeValueAsString(commsManager.getTextonPath()) + "')");
-                    //For testing only:
-                    webEngine.executeScript("receiveTextonPath('"
-                            + StringEscapeUtils.escapeEcmaScript(
-                            new ObjectMapper().writer().forType(javaType).writeValueAsString(textonPath)) + "')");
-                } catch (JsonProcessingException e) {
-                    FXCustomDialogs.showError("Impossible d'initialiser la conclusion. Veuillez réactualiser la page.");
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        //TODO Communiquer les clics du bouton à VisContrImpl en postant les events sur le EventBus.
-        //Change behaviour of "over" button to control conclusion.
+        //Change behaviour of "over" button to control toConclusion.
         btnTermine.textProperty().set("Texton suivant");
-        btnTermine.onActionProperty().set(event -> webEngine.executeScript("moveForwardInGraph()"));
+        btnTermine.onActionProperty().set(event -> eventBus.post(ControlEvent.SUIVANT));
         //Make physics checkbox visible and set correct behaviour.
         if (!checkBoxPhysics.isVisible()) {
             checkBoxPhysics.setVisible(true);
             checkBoxPhysics.selectedProperty().set(true);
-            checkBoxPhysics.selectedProperty().addListener((observable, oldValue, newValue) -> webEngine.executeScript("setPhysics(" + newValue + ")"));
+            checkBoxPhysics.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) eventBus.post(ControlEvent.PHYSON);
+                else eventBus.post(ControlEvent.PHYSOFF);
+            });
         }
 
-        //TODO Pour l'instant, la conclusion affiche simplement le parcours hypertextuel au format json brut.
+        //TODO Pour l'instant, la toConclusion affiche simplement le parcours hypertextuel au format json brut.
         //Amélioration possible: passer le List<TextonHeader> dans un TableView<TextonHeader>
         try {
             textAreaTexte.textProperty().set(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(textonPath));
@@ -339,43 +311,24 @@ public class TabBordContrImpl implements TabBordContr {
         textAreaSource.textProperty().set("Pg Haut/Bas: zoom \n flèches: déplacer le graphe\n Faites entrer la souris dans la fenêtre de prévisualisation" +
                 "pour actualiser la fenêtre de présentation publique.");
 
-        //Add listeners to copy image to VisContr
-        Runnable copyImage = () -> eventBus.post(new PresenterImageUpdateEvent(webView.snapshot(new SnapshotParameters(), null)));
-
-        Timeline screencast = new Timeline();
-        screencast.setCycleCount(Timeline.INDEFINITE);
-        screencast.getKeyFrames().add(new KeyFrame(Duration.millis(30), "screenshot", event -> copyImage.run()));
-
-        Timeline stopScreenCast = new Timeline();
-        stopScreenCast.setCycleCount(1);
-        stopScreenCast.getKeyFrames().add(new KeyFrame(Duration.seconds(3), event -> screencast.stop()));
-
-        Runnable updateForAWhile = () -> {
-            screencast.playFromStart();
-            stopScreenCast.playFromStart();
-        };
-
-        webView.setOnMouseEntered(event -> {
-            updateForAWhile.run();
-        });
-        webView.setOnMouseReleased(event -> stopScreenCast.playFromStart());
-
-        //Fit graph on double-click
-        webView.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY) && event.getClickCount() == 2) {
-                webEngine.executeScript("fitGraph()");
-            }
+        //Post key types on eventBus
+        getStage().addEventFilter(KeyEvent.ANY, event -> {
+            event.consume();
+            eventBus.post(new ControlObjectEvent(event, ControlEvent.KEYTYPED));
         });
 
-        //This runs right right away
-        updateForAWhile.run();
+        conclusionRunning.set(true);
+    }
+
+    private void toRecital() {
+        conclusionRunning.set(false);
+        //Revenir au mode récital.
     }
 
     @FXML
     void initialize() throws IOException {
 
         eventBus.register(this);
-        System.out.println("EventBus dans VisContrImpl: " + eventBus.hashCode());
         Util.initializeStageRetriever(textAreaSource, stageProperty);
         graph = textonIoFactory.create(path).getGraph();
         tcTabBord.setGraph(graph);
@@ -395,6 +348,27 @@ public class TabBordContrImpl implements TabBordContr {
         anchorPaneTabBord.needsLayoutProperty().addListener(needsLayoutListener);
 
         setupClocks();
+
+        conclusionRunning.addListener(conclusionNodeOperations);
+    }
+
+    @Subscribe
+    private void onControlEvent(ControlEvent event) {
+        if (event.equals(ControlEvent.CONCLUSION)) {
+            conclusionRunning.set(true);
+            anchorPaneTabBord.getChildren().clear();
+            anchorPaneTabBord.getChildren().add(imageView);
+        }
+        if (event.equals(ControlEvent.COMMENCER)) {
+            toRecital();
+        }
+    }
+
+    @Subscribe
+    private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent event) {
+        if (conclusionRunning.get()) {
+            imageView.setImage(event.getImage());
+        }
     }
 
     @Subscribe
@@ -437,7 +411,6 @@ public class TabBordContrImpl implements TabBordContr {
     }
 
     private void updateTextonClock() {
-        //FIXME Je ne suis pas certain que l'horloge de textons marche.
         long currentClock = System.currentTimeMillis() - textonClock;
         lblHorlTexton.textProperty().set(getFormattedTime(currentClock));
     }

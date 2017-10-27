@@ -6,7 +6,6 @@ var network;
 var container;
 var json;
 
-//TODO Mettre en forme le graphe avec les mêmes options que la conclusion.
 //Cette méthode est le seul point de communication Java -> javascript
 var initGraphWithJson = function (json) {
     json = JSON.parse(json);
@@ -52,8 +51,7 @@ window.onload = function () {
 
 function addEdge(data, callback) {
     var children = network.getConnectedNodes(data.from, 'to');
-    if (children.size <= 4) {
-        //FIXME Ceci ne s'affiche pas. Est-ce que c'est parce que je n'ai pas connecté le listener d'alertes et de confirmation de JavaFX?
+    if (children.length <= 4) {
         alert('Un texton ne peut pas posséder plus de quatre liens sortants.');
         return;
     }

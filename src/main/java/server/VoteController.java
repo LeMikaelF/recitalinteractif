@@ -16,14 +16,12 @@ import java.util.Set;
  */
 public class VoteController {
     @Inject
-    EventBus eventBus;
-
+    private EventBus eventBus;
     @Inject
-    Set<VoteCollector> voteCollectors;
-
-    Map<VoteCollector, List<Integer>> voteMap = new HashMap<>();
-    private boolean initialized = false;
-    private boolean wasAskedToBroadcast = false;
+    private Set<VoteCollector> voteCollectors;
+    private Map<VoteCollector, List<Integer>> voteMap = new HashMap<>();
+    private boolean initialized;
+    private boolean wasAskedToBroadcast;
 
     public void init() {
         eventBus.register(this);
@@ -40,15 +38,17 @@ public class VoteController {
 
     @Subscribe
     public void onVoteChangeEvent(VoteChangeEvent voteChangeEvent) {
+        //Tally votes from VoteCollectors
         voteMap.put(voteChangeEvent.getVoteCollector(), voteChangeEvent.getVotes());
     }
 
     @Subscribe
     public void onTextonChangeEvent(TextonChangeEvent textonChangeEvent) {
+        //Initialize broadcasting at beginning of recital.
         if (!wasAskedToBroadcast) {
             wasAskedToBroadcast = true;
             startBroadcasting();
-        } else return;
+        }
     }
 
 }

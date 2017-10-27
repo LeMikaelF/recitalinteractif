@@ -39,10 +39,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //TODO L'image dépasse un peu des côtés des fois (quand on change la fenêtre de taille, l'algorithme réagit mal?).
-//FIXME Mettre du wordwrap aux textArea du commentaire et de la decription.
 public class BuilderContr {
 
-    Path projectPath;
     @FXML
     private MenuItem menuNouveau;
     @FXML
@@ -73,9 +71,9 @@ public class BuilderContr {
     private EventBus eventBus;
     @Inject
     private TextonIoFactory textonIoFactory;
-
     @Inject
     private BuilderVisContr builderVisContr;
+    private Path projectPath;
     private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private Texton texton;
     private File currentFile;
@@ -148,7 +146,7 @@ public class BuilderContr {
         Texton save = buildTextonFromFields();
 
         try {
-            if(currentFile == null) throw new IOException();
+            if (currentFile == null) throw new IOException();
             textonIoFactory.create(currentFile.toPath()).writeTexton(save, true);
         } catch (IOException e) {
             FXCustomDialogs.showException(e);
@@ -160,16 +158,16 @@ public class BuilderContr {
     private void menuEnregistrerSous() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName(Util.getFormattedNumSerie(Integer.parseInt(textFieldNum.textProperty().get())) + ".json");
-        if(currentFile != null) fileChooser.setInitialDirectory(currentFile.getParentFile());
+        if (currentFile != null) fileChooser.setInitialDirectory(currentFile.getParentFile());
         fileChooser.setTitle("Enregistrer le texton");
         ExtensionFilter filter = new ExtensionFilter("Texton au format json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File tempFile = fileChooser.showSaveDialog(getStage());
-        if(tempFile != null) currentFile = tempFile;
+        if (tempFile != null) currentFile = tempFile;
         try {
-        if(currentFile == null) throw new IOException();
-        buildTextonFromFields();
+            if (currentFile == null) throw new IOException();
+            buildTextonFromFields();
             textonIoFactory.create(currentFile.toPath()).writeTexton(buildTextonFromFields(), true);
             deactivateUpdatedListener();
         } catch (IOException e) {
@@ -194,13 +192,13 @@ public class BuilderContr {
         }
         menuEnregistrer.disableProperty().set(false);
         FileChooser fileChooser = new FileChooser();
-        if(currentFile != null) fileChooser.setInitialDirectory(currentFile.getParentFile());
+        if (currentFile != null) fileChooser.setInitialDirectory(currentFile.getParentFile());
         fileChooser.setTitle("Ouvrir le texton");
         ExtensionFilter filter = new ExtensionFilter("Texton au format json", "*.json");
         fileChooser.getExtensionFilters().add(filter);
         fileChooser.setSelectedExtensionFilter(filter);
         File file = fileChooser.showOpenDialog(getStage());
-        if(file == null) return;
+        if (file == null) return;
 
         //Check that filename is well-formed.
         if (!file.toPath().getFileName().toString().matches("[0-9][0-9][0-9][.]json")) {

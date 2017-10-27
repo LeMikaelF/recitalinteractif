@@ -49,7 +49,7 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
             WebsocketHandlerImpl.getClientsVotesMap().keySet().forEach(WebsocketHandlerImpl::broadcast);
     }
 
-    public static ConcurrentMap<Session, Vote> getClientsVotesMap() {
+    private static ConcurrentMap<Session, Vote> getClientsVotesMap() {
         return WebsocketHandlerImpl.clientsVotesMap;
     }
 
@@ -72,17 +72,6 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
         Vote vote = Vote.valueOf(str);
         getClientsVotesMap().put(session, vote);
         sendVoteUpdate();
-    }
-
-    private void sendVoteUpdate() {
-        Vote[] voteArrayFull = Vote.values();
-        Vote[] voteArrayOnlyVotes = new Vote[voteArrayFull.length - 1];
-        System.arraycopy(voteArrayFull, 0, voteArrayOnlyVotes, 0, voteArrayFull.length - 1);
-        List<Integer> votes = Arrays.stream(voteArrayOnlyVotes)
-                .mapToInt(value -> new Long(getClientsVotesMap().values().stream().filter(value::equals)
-                        .count()).intValue()).boxed().collect(Collectors.toList());
-
-        eventBus.post(new VoteChangeEvent(getClientsVotesMap().keySet().size(), votes, this));
     }
 
     @Override
@@ -113,7 +102,18 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
 
     @Override
     public void resetVotes() {
-        clientsVotesMap.values().clear();
+        clientsVotesMap.replaceAll((session, vote) -> Vote.NULL);
+    }
+
+    private void sendVoteUpdate() {
+        Vote[] voteArrayFull = Vote.values();
+        Vote[] voteArrayOnlyVotes = new Vote[voteArrayFull.length - 1];
+        System.arraycopy(voteArrayFull, 0, voteArrayOnlyVotes, 0, voteArrayFull.length - 1);
+        List<Integer> votes = Arrays.stream(voteArrayOnlyVotes)
+                .mapToInt(value -> new Long(getClientsVotesMap().values().stream().filter(value::equals)
+                        .count()).intValue()).boxed().collect(Collectors.toList());
+
+        eventBus.post(new VoteChangeEvent(getClientsVotesMap().keySet().size(), votes, this));
     }
 
     private static class BroadcastInfo {
@@ -122,7 +122,7 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
         private int textonCourant;
 
         @JsonCreator
-        BroadcastInfo(@JsonProperty("numLiens") int numLiens,@JsonProperty("textonCourant") int textonCourant) {
+        BroadcastInfo(@JsonProperty("numLiens") int numLiens, @JsonProperty("textonCourant") int textonCourant) {
             this.numLiens = numLiens;
             this.textonCourant = textonCourant;
         }

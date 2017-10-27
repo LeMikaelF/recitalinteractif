@@ -26,7 +26,7 @@ function receiveJson(json) {
     edges = new vis.DataSet(graph.edges);
     nodeArray = nodes.get({returnType: 'Object'});
     edgeArray = edges.get({returnType: 'Object'});
-    network = new vis.Network(container, {'nodes': nodes, 'edges': edges}, Object.assign(options, optionsNastasia));
+    network = new vis.Network(container, {'nodes': nodes, 'edges': edges}, Object.assign(optionsNastasia, options));
 }
 
 

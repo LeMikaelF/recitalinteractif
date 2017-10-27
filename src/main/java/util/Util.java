@@ -3,19 +3,20 @@ package util;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.util.resource.Resource;
 import server.Vote;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Created by Mikaël on 2016-10-31.
@@ -27,7 +28,7 @@ public class Util {
             @Override
             public void changed(ObservableValue<? extends Scene> observable, Scene oldValue, Scene newValue) {
                 //This is because if window is already initialized, the second listener won't run.
-                if(newValue != null && newValue.getWindow() != null) {
+                if (newValue != null && newValue.getWindow() != null) {
                     stageProperty.set((Stage) newValue.getWindow());
                     anyNodeOnStage.sceneProperty().removeListener(this);
                     return;
@@ -35,8 +36,8 @@ public class Util {
                 newValue.windowProperty().addListener(new ChangeListener<Window>() {
                     @Override
                     public void changed(ObservableValue<? extends Window> observable1, Window oldValue1, Window newValue1) {
-                            stageProperty.set((Stage) newValue1);
-                            newValue.windowProperty().removeListener(this);
+                        stageProperty.set((Stage) newValue1);
+                        newValue.windowProperty().removeListener(this);
                     }
                 });
                 anyNodeOnStage.sceneProperty().removeListener(this);
@@ -44,6 +45,17 @@ public class Util {
         });
     }
 
+    public static void initializeStageRetriever(Node anyNodeOnStage, ObjectProperty<Stage> stageProperty, Consumer<Stage> callback) {
+        ChangeListener<Stage> listener = new ChangeListener<Stage>() {
+            @Override
+            public void changed(ObservableValue<? extends Stage> observable, Stage oldValue, Stage newValue) {
+                callback.accept(newValue);
+                observable.removeListener(this);
+            }
+        };
+        stageProperty.addListener(listener);
+        initializeStageRetriever(anyNodeOnStage, stageProperty);
+    }
 
     public static String[] getNames(Class<? extends Enum<?>> e) {
         /*Cette méthode est tirée de Bohemian (nom d'utilisateur). 2015. Réponse à « Getting all names in an enum as

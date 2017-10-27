@@ -154,8 +154,8 @@ public class BuilderVisContr {
 
     private void reconstruire() {
         FileChooser fileChooser = new FileChooser();
-        //FIXME Ceci ne marche pas si path est null. Pourtant, le MenuItem dit «reconstruire...», les trois points laissent entendre qu'un dialogue va suivre. Peut-être est-ce aussi la même chose avec les autres menus?
-        fileChooser.setInitialDirectory(path.getParent().toFile());
+        if (path != null)
+            fileChooser.setInitialDirectory(path.getParent().toFile());
         fileChooser.setTitle("Reconstruire le graphe");
         fileChooser.setInitialFileName("graph.json");
         ExtensionFilter filter = new ExtensionFilter("Fichier graphe .json", "*.json");

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * Created by Mikaël on 2017-09-24.
  */
 
+//FIXME On voit mal le texte quand l'image est foncée.
 //J'ai choisi de diminuer la grosseur du texte parce que je n'étais capable de gérer le word-wrap avec des TextFlow.
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
