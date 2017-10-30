@@ -5,7 +5,6 @@ var votedisplay;
 var connecterror = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Erreur de connexion. Rafraîchissez la page.";
 var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté.";
 var ws;
-//TODO Les lettres plus grosses
 //TODO Rétroaction du vote (dire pour lequel l'auditeur a voté)
 //TODO Changer ceci pour l'adresse IP du serveur injectée en jsp
 var address = 'ws://localhost:80/ws';
