@@ -66,23 +66,3 @@ function moveForwardInGraph() {
     currentIndex++;
     lastNode = node;
 }
-
-//Moved to common/common.js
-/*
-function setPhysics(bool) {
-    if(bool) {
-        //network.startSimulation();
-        network.setOptions({
-            "physics": {
-                "enabled": true
-            }
-        });
-    } else {
-        //network.stopSimulation();
-        network.setOptions({
-            "physics": {
-                "enabled": false
-            }
-        })
-    }
-}*/

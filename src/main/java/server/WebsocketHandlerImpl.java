@@ -2,12 +2,16 @@ package server;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import events.TextonChangeEvent;
 import events.VoteChangeEvent;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 
@@ -68,10 +72,27 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     @Override
     @OnWebSocketMessage
     public void onMessage(Session session, String str) {
-        System.out.println("Message reçu d'un client websocket : " + str);
+        //System.out.println("Message reçu d'un client websocket : " + str);
         Vote vote = Vote.valueOf(str);
         getClientsVotesMap().put(session, vote);
         sendVoteUpdate();
+
+        //Send confirmation to client
+        try {
+            session.getRemote().sendString(confirmationString(vote));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String confirmationString(Vote vote) throws JsonProcessingException {
+        //Response example: {"vote": "A"}
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+        node.put("vote", vote.toString());
+        String response = new ObjectMapper().writeValueAsString(node);
+        //response = StringEscapeUtils.escapeEcmaScript(response);
+        return response;
     }
 
     @Override
@@ -103,8 +124,16 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     @Override
     public void resetVotes() {
         clientsVotesMap.replaceAll((session, vote) -> Vote.NULL);
+        clientsVotesMap.keySet().forEach(session -> {
+            try {
+                session.getRemote().sendString(confirmationString(Vote.NULL));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
+    //Post vote update on EventBus
     private void sendVoteUpdate() {
         Vote[] voteArrayFull = Vote.values();
         Vote[] voteArrayOnlyVotes = new Vote[voteArrayFull.length - 1];
@@ -116,8 +145,8 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
         eventBus.post(new VoteChangeEvent(getClientsVotesMap().keySet().size(), votes, this));
     }
 
+    //Immutable class used to store broadcast info.
     private static class BroadcastInfo {
-        //Immutable class used to store broadcast info.
         private int numLiens;
         private int textonCourant;
 

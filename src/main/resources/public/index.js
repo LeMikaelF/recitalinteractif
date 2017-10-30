@@ -1,13 +1,13 @@
 var currentTexton = null;
+var vote = "NULL";
 var connectstatus;
 var instructionsarea;
 var votedisplay;
 var connecterror = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Erreur de connexion. Rafraîchissez la page.";
 var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté.";
 var ws;
-//TODO Rétroaction du vote (dire pour lequel l'auditeur a voté)
 //TODO Changer ceci pour l'adresse IP du serveur injectée en jsp
-var address = 'ws://localhost:80/ws';
+var address = "ws://localhost:80/ws";
 //var address = 'ws://1.2.3.45:80/ws';
 var id = function (id) {
     return document.getElementById(id);
@@ -15,7 +15,7 @@ var id = function (id) {
 var changeTexton = function (numTexton, numLiens) {
     currentTexton = numTexton;
     disableControls();
-    displayInstructions('Changement de texton');
+    displayInstructions("Changement de texton");
     setTimeout(function () {
         enableControls(numLiens);
     }, 2000);
@@ -23,29 +23,29 @@ var changeTexton = function (numTexton, numLiens) {
 
 //Il faut que les liens internet marchent pour tester sans compiler, mais que les liens webjar marchent dans la distribution.
 window.onload = function () {
-    id('abutton').onclick = function () {
+    id("abutton").onclick = function () {
         this.blur();
-        checkAndSend('A');
+        checkAndSend("A");
     };
-    id('bbutton').onclick = function () {
+    id("bbutton").onclick = function () {
         this.blur();
-        checkAndSend('B');
+        checkAndSend("B");
     };
-    id('cbutton').onclick = function () {
+    id("cbutton").onclick = function () {
         this.blur();
-        checkAndSend('C');
+        checkAndSend("C");
     };
-    id('dbutton').onclick = function () {
+    id("dbutton").onclick = function () {
         this.blur();
-        checkAndSend('D');
+        checkAndSend("D");
     };
-    id('annulerbtn').onclick = function () {
+    id("annulerbtn").onclick = function () {
         this.blur();
-        checkAndSend('NULL')
+        checkAndSend("NULL");
     };
-    connectstatus = id('connectstatus');
-    instructionsarea = id('instructionsarea');
-    votedisplay = id('votedisplay');
+    connectstatus = id("connectstatus");
+    instructionsarea = id("instructionsarea");
+    votedisplay = id("votedisplay");
 
     disableControls();
 
@@ -56,29 +56,35 @@ window.onload = function () {
     };
 
     ws.onmessage = function (msg) {
-        console.log('message reçu du serveur: ' + msg.data);
+        console.log("message reçu du serveur: " + msg.data);
         var msgobj = JSON.parse(msg.data);
-        enableControls(msgobj.numLiens);
-        if (currentTexton !== msgobj.textonCourant && msgObj.textonCourant !== 0) {
-            changeTexton(msgobj.textonCourant);
+        if (msgobj.hasOwnProperty("vote")) {
+            vote = msgobj.vote;
+            setVoteDisplay(vote);
         }
-        if(msgobj.textonCourant === 0){
-            disableControls();
-            displayInstructions('Vote désactivé');
+        else if (msgobj.hasOwnProperty("numLiens") && msgobj.hasOwnProperty("textonCourant")) {
+            enableControls(msgobj.numLiens);
+            if (currentTexton !== msgobj.textonCourant && msgObj.textonCourant !== 0) {
+                changeTexton(msgobj.textonCourant);
+            }
+            if (msgobj.textonCourant === 0) {
+                disableControls();
+                displayInstructions("Vote désactivé");
+            }
         }
     };
 
     ws.onclose = function () {
         disableControls();
         displayNotConnMess();
-        displayInstructions('');
+        displayInstructions("");
 
     };
     ws.onerror = function () {
         disableControls();
         displayNotConnMess();
-        displayInstructions('Erreur de connexion. Essayez de rafraîchir la page.');
-    }
+        displayInstructions("Erreur de connexion. Essayez de rafraîchir la page.");
+    };
 };
 
 function checkAndSend(str) {
@@ -92,24 +98,25 @@ window.onbeforeunload = function () {
 };
 
 function disableControls() {
-    id('abutton').disabled = true;
-    id('bbutton').disabled = true;
-    id('cbutton').disabled = true;
-    id('dbutton').disabled = true;
-    id('annulerbtn').disabled = true;
+    id("abutton").disabled = true;
+    id("bbutton").disabled = true;
+    id("cbutton").disabled = true;
+    id("dbutton").disabled = true;
+    id("annulerbtn").disabled = true;
 }
 
 function enableControls(numLiens) {
     if (numLiens > 0)
-        id('abutton').disabled = false;
+        id("abutton").disabled = false;
     if (numLiens > 1)
-        id('bbutton').disabled = false;
+        id("bbutton").disabled = false;
     if (numLiens > 2)
-        id('cbutton').disabled = false;
+        id("cbutton").disabled = false;
     if (numLiens > 3)
-        id('dbutton').disabled = false;
-    id('annulerbtn').disabled = false;
+        id("dbutton").disabled = false;
+    id("annulerbtn").disabled = false;
 }
+
 function displayConnMess() {
     connectstatus.className = "alert alert-success";
     connectstatus.innerHTML = connectsuccess;
@@ -123,5 +130,15 @@ function displayNotConnMess() {
 function displayInstructions(str) {
     if (str === "") instructionsarea.innerHTML = "";
     instructionsarea.innerHTML = "<div class = 'well well-sm'><span class='glyphicon glyphicon-info-sign'></span>" + str + "</div>";
+}
+
+function setVoteDisplay(vote) {
+    var votedisplay = document.getElementById("votedisplay");
+    var voteToDisplay;
+    if (vote === "NULL")
+        voteToDisplay = "Aucun";
+    else
+        voteToDisplay = vote;
+    votedisplay.innerHTML = "Votre vote : " + voteToDisplay;
 }
 
