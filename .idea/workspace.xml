@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="652f6ee2-4adb-4cc7-8a82-aced81a49174" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/jsLinters/jslint.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/fxml/css/styles.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/server/WebsocketHandlerImpl.java" afterPath="$PROJECT_DIR$/src/main/java/server/WebsocketHandlerImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/public/conclusion/conclusion.js" afterPath="$PROJECT_DIR$/src/main/resources/public/conclusion/conclusion.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/public/index.js" afterPath="$PROJECT_DIR$/src/main/resources/public/index.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java" afterPath="$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java" afterPath="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/public/index.js" afterPath="$PROJECT_DIR$/target/classes/public/index.js" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -37,53 +38,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/public/index.js">
+      <file leaf-file-name="styles.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/fxml/css/styles.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ConclusionBuilderVisJs.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/presentation/ConclusionBuilderVisJs.java">
+      <file leaf-file-name="TextonOverlayCanvasOnlyText.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="53" column="84" lean-forward="false" selection-start-line="53" selection-start-column="84" selection-end-line="53" selection-end-column="84" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="conclusion.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/public/conclusion/conclusion.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="791">
-              <caret line="67" column="1" lean-forward="false" selection-start-line="67" selection-start-column="1" selection-end-line="67" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WebsocketHandlerImpl.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/server/WebsocketHandlerImpl.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="250">
-              <caret line="93" column="10" lean-forward="false" selection-start-line="93" selection-start-column="10" selection-end-line="93" selection-end-column="10" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/public/index.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="67" column="56" lean-forward="false" selection-start-line="67" selection-start-column="56" selection-end-line="67" selection-end-column="56" />
+            <state relative-caret-position="323">
+              <caret line="53" column="70" lean-forward="false" selection-start-line="53" selection-start-column="70" selection-end-line="53" selection-end-column="70" />
               <folding>
-                <marker date="1509121683185" expanded="true" signature="2763:2808" ph="..." />
+                <element signature="e#4462#4463#0" expanded="true" />
+                <element signature="e#4502#4503#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -106,9 +78,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>vis</find>
-      <find>test</find>
-      <find>RELEASE</find>
       <find>fileChooser</find>
       <find>canvas</find>
       <find>fileChoo</find>
@@ -136,6 +105,9 @@
       <find>Wrap</find>
       <find>snap</find>
       <find>Alert</find>
+      <find>console</find>
+      <find>CompositeT</find>
+      <find>Composite</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\Mikaël\IdeaProjects\Présentation\src\main\resources\public</dir>
@@ -160,7 +132,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/test/java/tests/auinsret.java" />
         <option value="$PROJECT_DIR$/src/test/java/tests/JavaFXThreadingRule.java" />
         <option value="$PROJECT_DIR$/src/test/resources/graph.json" />
@@ -169,7 +140,6 @@
         <option value="$PROJECT_DIR$/src/main/java/events/SendObjectEvent.java" />
         <option value="$PROJECT_DIR$/src/test/java/tests/GuiceTestModule.java" />
         <option value="$PROJECT_DIR$/src/test/java/tests/TextonDisplayTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java" />
         <option value="$PROJECT_DIR$/src/main/java/textonclasses/TextonHeader.java" />
         <option value="$PROJECT_DIR$/src/test/java/tests/MiscTests.java" />
         <option value="$PROJECT_DIR$/src/main/java/events/ScreenDispatchEvent.java" />
@@ -196,21 +166,23 @@
         <option value="$PROJECT_DIR$/src/main/java/presentation/CommsManagerImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/server/VoteController.java" />
         <option value="$PROJECT_DIR$/src/test/java/tests/Util.java" />
-        <option value="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java" />
         <option value="$PROJECT_DIR$/src/main/java/presentation/ConclusionBuilderVisJs.java" />
         <option value="$PROJECT_DIR$/src/main/java/builder/BuilderContr.java" />
         <option value="$PROJECT_DIR$/src/main/java/builder/BuilderVisContr.java" />
         <option value="$PROJECT_DIR$/src/main/java/util/Util.java" />
-        <option value="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/util/ResizableDraggableNodeManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/util/ResizableCanvas.java" />
-        <option value="$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java" />
         <option value="$PROJECT_DIR$/src/main/resources/public/builder/builder.js" />
         <option value="$PROJECT_DIR$/src/main/resources/public/css/index.css" />
         <option value="$PROJECT_DIR$/src/main/resources/public/index.html" />
         <option value="$PROJECT_DIR$/src/main/resources/public/conclusion/conclusion.js" />
         <option value="$PROJECT_DIR$/src/main/java/server/WebsocketHandlerImpl.java" />
         <option value="$PROJECT_DIR$/src/main/resources/public/index.js" />
+        <option value="$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java" />
+        <option value="$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/fxml/css/styles.css" />
+        <option value="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java" />
       </list>
     </option>
   </component>
@@ -396,6 +368,14 @@
               <item name="Présentation" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Presentation" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Présentation" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -405,32 +385,6 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="fxml" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Presentation" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Présentation" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Presentation" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Présentation" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="conclusion" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Presentation" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Présentation" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="public" type="462c0819:PsiDirectoryNode" />
-              <item name="css" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -1161,7 +1115,7 @@
       <workItem from="1508690719072" duration="358000" />
       <workItem from="1509036893381" duration="6640000" />
       <workItem from="1509115257588" duration="6100000" />
-      <workItem from="1509381558484" duration="3724000" />
+      <workItem from="1509381558484" duration="7603000" />
     </task>
     <task id="LOCAL-00001" summary="Cleanup">
       <created>1506642160319</created>
@@ -1296,7 +1250,14 @@
       <option name="project" value="LOCAL" />
       <updated>1509382452569</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Rétroaction des votes">
+      <created>1509385335907</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1509385335907</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1332,7 +1293,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="437253000" />
+    <option name="totallyTimeSpent" value="441132000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1353,10 +1314,10 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27547592" sideWeight="0.50733495" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26080248" sideWeight="0.50680786" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32885087" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3271605" sideWeight="0.49755502" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22993827" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17283951" sideWeight="0.49319214" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44444445" sideWeight="0.49266502" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1475,7 +1436,8 @@
     <MESSAGE value="Conclusion fonctionnelle, vote fonctionnel." />
     <MESSAGE value="Tests faits au colloquium, commentaire du public inscrits en TODOs." />
     <MESSAGE value="Sauvegarde" />
-    <option name="LAST_COMMIT_MESSAGE" value="Sauvegarde" />
+    <MESSAGE value="Rétroaction des votes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rétroaction des votes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1500,20 +1462,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/util/TextonImageCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/presentation/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-94">
-          <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/server/ServerRunnable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -1550,13 +1498,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/util/ResizableCanvasNoFit.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/util/ResizableCanvasImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="18" column="22" lean-forward="true" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/fxml/background-repeat.jpg">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -1721,25 +1662,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="18" column="54" lean-forward="false" selection-start-line="18" selection-start-column="54" selection-end-line="18" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/builder/BuilderContr.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2081">
           <caret line="82" column="0" lean-forward="false" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -1761,24 +1688,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
           <caret line="20" column="5" lean-forward="true" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="369" column="0" lean-forward="false" selection-start-line="369" selection-start-column="0" selection-end-line="369" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="118" column="0" lean-forward="false" selection-start-line="118" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1828,8 +1737,8 @@
         <state relative-caret-position="270">
           <caret line="20" column="33" lean-forward="false" selection-start-line="20" selection-start-column="33" selection-end-line="20" selection-end-column="33" />
           <folding>
-            <element signature="e#458#459#0" expanded="true" />
-            <element signature="e#485#486#0" expanded="true" />
+            <element signature="e#458#459#0" expanded="false" />
+            <element signature="e#485#486#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1863,6 +1772,65 @@
         <state relative-caret-position="191">
           <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/util/ResizableCanvasImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="18" column="22" lean-forward="true" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="21" column="4" lean-forward="false" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/events/PresenterImageUpdateEvent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="16" column="5" lean-forward="true" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="620">
+          <caret line="146" column="9" lean-forward="false" selection-start-line="146" selection-start-column="9" selection-end-line="146" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="369" column="24" lean-forward="false" selection-start-line="369" selection-start-column="24" selection-end-line="369" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/fxml/css/styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="53" column="70" lean-forward="false" selection-start-line="53" selection-start-column="70" selection-end-line="53" selection-end-column="70" />
+          <folding>
+            <element signature="e#4462#4463#0" expanded="true" />
+            <element signature="e#4502#4503#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

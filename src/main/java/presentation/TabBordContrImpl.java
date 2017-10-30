@@ -367,6 +367,8 @@ public class TabBordContrImpl implements TabBordContr {
     @Subscribe
     private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent event) {
         if (conclusionRunning.get()) {
+            //This line cuts down memory usage by half.
+            imageView.setImage(null);
             imageView.setImage(event.getImage());
         }
     }

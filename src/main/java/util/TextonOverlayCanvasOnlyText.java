@@ -1,7 +1,10 @@
 package util;
 
 import javafx.beans.value.ChangeListener;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -47,6 +50,9 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
         }
 
         textFlows.forEach(textFlow -> {
+            //For readability
+            textFlow.setEffect(new DropShadow(10, 0, 0, Color.WHITE));
+
             textFlow.getChildren().forEach(node -> ((Text) node).setFont(Font.font(20)));
             textFlow.prefWidthProperty().bind(widthProperty().subtract(getWidth() / 15).subtract(getWidth() / 15));
 
@@ -80,7 +86,7 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
         }
     };
 
-    public TextonOverlayCanvasOnlyText() {
+    TextonOverlayCanvasOnlyText() {
         //Generate colored link descriptors
         Vote[] voteArray = Vote.values();
         //We need to exclude last Vote because its value is NULL.

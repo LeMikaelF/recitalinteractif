@@ -23,13 +23,12 @@ import javafx.util.Duration;
 import textonclasses.Graph;
 import textonclasses.TextonHeader;
 import util.CanvasUtil;
-import util.ResizableCanvasImpl;
+import util.CompositeTextonCanvas;
 import util.ResizableDraggableNodeManager;
 import util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,12 +61,13 @@ public class VisContrImpl implements VisContr {
     private ConclusionBuilderVisJsFactory conclusionFactory;
 
     private Node conclusion;
-    private ResizableCanvasImpl canvas = new ResizableCanvasImpl();
+    private CompositeTextonCanvas canvas = new CompositeTextonCanvas();
     private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
     private IntegerProperty numEnr = new SimpleIntegerProperty();
     private IntegerProperty votesEnr = new SimpleIntegerProperty();
     private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private boolean conclusionRunning;
+    private Graph graph = null;
 
     public VisContrImpl() {
         stageProperty.addListener((observable, oldValue, newValue) -> {
@@ -104,9 +104,7 @@ public class VisContrImpl implements VisContr {
     private void toRecital() {
         anchorPane.getChildren().clear();
         anchorPane.getChildren().add(canvas);
-
         tBarPres.setDisable(false);
-
         conclusion = null;
         conclusionRunning = false;
     }
@@ -142,8 +140,12 @@ public class VisContrImpl implements VisContr {
     }
 
     @Subscribe
-    private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent presenterImageUpdateEvent) {
-        canvas.setImage(presenterImageUpdateEvent.getImage());
+    private void onTextonChangeEvent(TextonChangeEvent event) {
+        if (graph == null) {
+            graph = event.getGraph();
+            canvas.setGraph(graph);
+        }
+        canvas.setTexton(event.getTexton());
     }
 
     @Subscribe
@@ -169,3 +171,9 @@ public class VisContrImpl implements VisContr {
         return stageProperty.get();
     }
 }
+
+/*  Was used to copy presenter view onto the visualization. Has been replaced by a duplicate canvas.
+    @Subscribe
+    private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent presenterImageUpdateEvent) {
+        canvas.setImage(presenterImageUpdateEvent.getImage());
+    }*/

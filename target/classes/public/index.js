@@ -58,9 +58,7 @@ window.onload = function () {
     ws.onmessage = function (msg) {
         console.log("message reçu du serveur: " + msg.data);
         var msgobj = JSON.parse(msg.data);
-        console.log(msgobj);
         if (msgobj.hasOwnProperty("vote")) {
-        console.dir(msgobj);
             vote = msgobj.vote;
             setVoteDisplay(vote);
         }
