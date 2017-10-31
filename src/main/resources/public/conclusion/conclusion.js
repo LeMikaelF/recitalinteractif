@@ -10,16 +10,17 @@ var path;
 var nodeArray;
 var edgeArray;
 var options = {
-  interaction:{
-      keyboard:{
-          enabled: true
-      }
-  },
-  configure:{
-      enabled: true,
-      showButton: true
-  }
+    interaction: {
+        keyboard: {
+            enabled: true
+        }
+    },
+    configure: {
+        enabled: true,
+        showButton: true
+    }
 };
+
 function receiveJson(json) {
     var graph = JSON.parse(json);
     nodes = new vis.DataSet(graph.nodes);
@@ -45,14 +46,15 @@ function receiveTextonPath(str) {
 
 var currentIndex = 0;
 var lastNode;
+
 function moveForwardInGraph() {
-    if(currentIndex >= path.length) return;
+    if (currentIndex >= path.length) return;
     var node = nodeArray[path[currentIndex].id];
     //Set edge looking back
-    if(currentIndex > 0 && currentIndex < path.length) {
-        Object.keys(edgeArray).forEach(function(key, index) {
+    if (currentIndex > 0 && currentIndex < path.length) {
+        Object.keys(edgeArray).forEach(function (key, index) {
             var edge = edgeArray[key];
-            if(edge.from === lastNode.id && edge.to === node.id){
+            if (edge.from === lastNode.id && edge.to === node.id) {
                 edge.color = pathOptions.edges.color;
                 edges.update(edge);
             }
@@ -63,6 +65,20 @@ function moveForwardInGraph() {
         node.color = pathOptions.nodes.color;
         nodes.update(node);
     }
+
+    //Prezi-stye animation, focus on each node
+    var options = {scale: 1, animation: true};
+    network.focus(node.id, options);
+
+
+    //Fit graph on last node
+    if (currentIndex === path.length - 1) {
+        fitGraph();
+    }
+
+
     currentIndex++;
     lastNode = node;
+
+
 }

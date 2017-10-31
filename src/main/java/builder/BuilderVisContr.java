@@ -12,17 +12,11 @@ import io.TextonIo;
 import io.TextonIoFactory;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
@@ -30,25 +24,18 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.Pair;
 import netscape.javascript.JSObject;
 import org.apache.commons.text.StringEscapeUtils;
 import textonclasses.Graph;
-import textonclasses.TextonHeader;
 import util.FXCustomDialogs;
 import util.Util;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-//TODO Ajouter un tooltip qui donne le nombre de liens entrants et sortants d'un noeud.
 //TODO Ajouter un utilitaire de validation du graphe (peut être un plugin).
 //À valider: Maximum 4 liens par texton
 //Minimum 2 liens par texton
@@ -270,7 +257,8 @@ public class BuilderVisContr {
         //Populate plugins menu
         menuPlugins.getItems().addAll(statPlugins.stream().map(statisticsPlugin -> {
             MenuItem menuItem = new MenuItem(statisticsPlugin.getName());
-            menuItem.onActionProperty().set(event -> getPluginResultTable(statisticsPlugin));
+            menuItem.onActionProperty().set(event ->
+                    FXCustomDialogs.displayInDialog(builder.Util.getPluginResultTable(statisticsPlugin, graph), "Résultats du plugin"));
             return menuItem;
         }).collect(Collectors.toList()));
 
@@ -279,51 +267,6 @@ public class BuilderVisContr {
         webEngine.confirmHandlerProperty().set(webConfirmHandler);
         checkMenuPhysics.setSelected(true);
         checkMenuPhysics.selectedProperty().addListener((observable, oldValue, newValue) -> webEngine.executeScript("setPhysics(" + newValue + ")"));
-    }
-
-    private Node getPluginResultTable(StatisticsPlugin plugin) {
-        plugin.init(graph);
-        //If any of the prompts fails, return an empty node.
-        if (plugin.getPrompts().stream().anyMatch((Pair<Function<String, Boolean>, String> functionStringPair) -> {
-            String intro = "Le plugin " + plugin.getName() + " demande l'information suivante :\n";
-            String input = FXCustomDialogs.showInput(intro + functionStringPair.getValue());
-
-            //If there has been an error processing input
-            if (!functionStringPair.getKey().apply(input)) {
-                FXCustomDialogs.showError("Impossible d'initialiser le plugin " + plugin.getName());
-
-                return true;
-            }
-            return false;
-        })) return new AnchorPane();
-
-        Map<TextonHeader, Double> pluginResults = plugin.compute();
-        ObservableList<Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
-
-        TableColumn<Entry<TextonHeader, Double>, Integer> columnNum = new TableColumn<>("Numéro");
-        columnNum.setCellValueFactory(param -> new SimpleObjectProperty<Integer>(param.getValue().getKey().getNumTexton()));
-
-        TableColumn<Entry<TextonHeader, Double>, String> columnName = new TableColumn<>("Nom");
-        columnName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getKey().getName()));
-
-        TableColumn<Entry<TextonHeader, Double>, Double> columnStat = new TableColumn<>(plugin.getResultName());
-        columnStat.setCellValueFactory(param -> new SimpleObjectProperty<Double>(param.getValue().getValue()));
-
-        TableView<Entry<TextonHeader, Double>> table = new TableView<>(pluginResultsAsList);
-        table.setEditable(false);
-        table.getColumns().add(columnNum);
-        table.getColumns().add(columnName);
-        table.getColumns().add(columnStat);
-
-        Label labelIntro = new Label("Résultats du plugin " + plugin.getName());
-        labelIntro.setStyle("-fx-font-weight: bold");
-        Label labelDesc = new Label(plugin.getResultDescription());
-        Stream.of(labelIntro, labelDesc).forEach(label -> label.setWrapText(true));
-
-        final VBox vBox = new VBox(5);
-        vBox.setPadding(new Insets(10, 0, 0, 10));
-        vBox.getChildren().addAll(labelIntro, labelDesc, table);
-        return vBox;
     }
 
     public class JavaApplication {

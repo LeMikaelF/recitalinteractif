@@ -16,8 +16,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.ImageView;
@@ -106,15 +104,19 @@ public class TabBordContrImpl implements TabBordContr {
     private ImageView imageView = new ImageView();
     private Path path = Paths.get(PropLoader.getMap().get("location"));
     private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
-    ChangeListener<Boolean> conclusionNodeOperations = (observable, oldValue, newValue) -> {
+
+    private ChangeListener<Boolean> conclusionNodeOperations = (observable, oldValue, newValue) -> {
         if (newValue) {
+            CanvasUtil.setNodeAnchorToAnchorPane(imageView, 0, 0, 0, 0);
             anchorPaneTabBord.getChildren().clear();
             anchorPaneTabBord.getChildren().add(imageView);
         } else {
+            CanvasUtil.setNodeAnchorToAnchorPane(tcTabBord, 0, 0, 0, 0);
             anchorPaneTabBord.getChildren().clear();
             anchorPaneTabBord.getChildren().add(tcTabBord);
         }
     };
+
     private long recitalClock;
     private long textonClock;
     private Texton texton;
@@ -132,20 +134,6 @@ public class TabBordContrImpl implements TabBordContr {
     //This needs to be here because the constructor runs some necessary actions.
     @Inject
     private CommsManager commsManager;
-    //TODO Ajouter la citation, provient de https://stackoverflow.com/questions/28581639/javafx8-presentation-view-duplicate-pane-and-content
-    private ChangeListener<Boolean> needsLayoutListener = (observable, oldValue, newValue) -> {
-        if (!newValue) {
-            SnapshotParameters sp = new SnapshotParameters();
-            //sp.setViewport(new Rectangle2D(0, 0, tcTabBord.getWidth(), tcTabBord.getHeight()));
-            if (tcTabBord.getTexton() == null) {
-                sp.setViewport(new Rectangle2D(0, 0, 0, 0));
-            } else {
-                sp.setViewport(new Rectangle2D(0, 0, tcTabBord.getTexton().getImage().getWidth(),
-                        tcTabBord.getTexton().getImage().getHeight()));
-            }
-            eventBus.post(new PresenterImageUpdateEvent(anchorPaneTabBord.snapshot(sp, null)));
-        }
-    };
     private SimpleBooleanProperty conclusionRunning = new SimpleBooleanProperty(false);
 
     @Inject
@@ -344,11 +332,12 @@ public class TabBordContrImpl implements TabBordContr {
         CanvasUtil.setNodeAnchorToAnchorPane(tcTabBord, 0, 0, 0, 0);
         anchorPaneTabBord.getChildren().add(tcTabBord);
 
-        //Update EventBus with changes to anchorPanePres
-        anchorPaneTabBord.needsLayoutProperty().addListener(needsLayoutListener);
-
         setupClocks();
 
+        //Conclusion stuff
+        imageView.setPreserveRatio(true);
+        imageView.fitWidthProperty().bind(anchorPaneTabBord.widthProperty());
+        imageView.fitHeightProperty().bind(anchorPaneTabBord.heightProperty());
         conclusionRunning.addListener(conclusionNodeOperations);
     }
 

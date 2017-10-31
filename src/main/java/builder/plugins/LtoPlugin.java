@@ -4,30 +4,17 @@ import javafx.util.Pair;
 import textonclasses.Graph;
 import textonclasses.TextonHeader;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Created by Mikaël on 2017-10-07.
- */
-
-//TODO This plugin is broken.
-    //Use code at: C:\Programmation\Plugin Gephi LTO\modules\LtoPlugin\src\main\java
 public class LtoPlugin implements StatisticsPlugin {
 
-    private final String NAME = "Fréqence d'occurence (limité)";
-    private final String RESULT_NAME = "Occurence (%)";
-    private final String DESCRIPTION = "Ce plugin calcule le pourcentage d'occurence d'un texton par rapport à un chemin limité (en nombre de textons), en commençant par un texton spécifié.";
-
+    private Graph graph;
     private int start;
     private int limit;
-
-    private Graph graph;
-    private Map<TextonHeader, Double> statMap;
+    private Map<TextonHeader, Double> statMap = new HashMap<>();
 
     //Build prompts.
     private Function<String, Boolean> requireFirstTexton = s -> {
@@ -65,50 +52,55 @@ public class LtoPlugin implements StatisticsPlugin {
     private Pair<Function<String, Boolean>, String> pair2 = new Pair<>(requireLimit, requireLimitString);
     private List<Pair<Function<String, Boolean>, String>> prompts = Stream.of(pair1, pair2).collect(Collectors.toList());
 
-    //For testing only
-    private int numPaths;
-    private List<TextonHeader> resultList = new ArrayList<>();
+    //Adapted from Gephi plugin
+    private void setLto(int limit, TextonHeader start, List<TextonHeader> list) {
+        List<TextonHeader> path = new ArrayList<>(list);
+        path.add(start);
 
-    private List<TextonHeader> setLTO2(int limit, TextonHeader start, List<TextonHeader> path) {
-        path = new ArrayList<>(path);
+        //If path length limit has been reached
+        if (limit == 0 || graph.getChildren(start.getNumTexton()).size() == 0) {
+            ListIterator<TextonHeader> it = path.listIterator();
+            while (it.hasNext()) {
+                TextonHeader textonHeader = it.next();
+                TextonHeader neighbour = null;
 
-        long numberOfChildrensChildren = graph.getTextonHeaderChildren(start.getNumTexton())
-                .stream().flatMap(textonHeader -> graph.getTextonHeaderChildren(textonHeader.getNumTexton()).stream()).count();
-
-        if (limit == 0 || numberOfChildrensChildren == 0) {
-            numPaths++;
-            return path;
-        } else path.add(start);
-
-        for (TextonHeader textonHeader : graph.getTextonHeaderChildren(start.getNumTexton())) {
-            path.addAll(setLTO2(limit - 1, textonHeader, path));
+                //Current interface does not allow computing of edge statistics, but it could be easily implemented.
+                //(see old Gephi plugin)
+                double freq = 0;
+                statMap.compute(textonHeader, (textonHeader1, aDouble) -> aDouble == null ? 0 : aDouble + 1);
+            }
+            return;
         }
-        return path;
+
+        for (TextonHeader child : graph.getTextonHeaderChildren(start.getNumTexton())) {
+            //Test that edge has not already been visited.
+            if (path.contains(child) && path.get((path.indexOf(child) - 1)).equals(start))
+                continue;
+            //Recursion
+            setLto(limit - 1, child, path);
+        }
     }
 
     @Override
     public Map<TextonHeader, Double> compute() {
-        List<TextonHeader> occurences = setLTO2(limit, graph.getTextonHeader(start), new ArrayList<>());
-        System.out.println(numPaths);
-        System.out.println(occurences);
-        Map<TextonHeader, Double> map = occurences.stream()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingDouble(value -> 1)));
-        return map;
+        setLto(limit, graph.getTextonHeader(start), new ArrayList<>());
+        return statMap;
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Fréqence d'occurence (limité)";
     }
 
     @Override
     public String getResultName() {
-        return null;
+        return "Occurence (%)";
     }
 
     @Override
     public String getResultDescription() {
-        return null;
+        return "Ce plugin calcule le pourcentage d'occurence d'un texton par rapport à un " +
+                "chemin limité (en nombre de textons), en commençant par un texton spécifié.";
     }
 
     @Override

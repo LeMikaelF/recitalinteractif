@@ -13,7 +13,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
@@ -32,7 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO Zoomer sur chaque module (à la prezi) pendant la toConclusion, et déplacer la caméra pour animer. À la fin, dé-zoomer et afficher le réseau au complet.
+//FIXME Empêcher tous les clics de se rendre jusqu'au WebView.
 public class VisContrImpl implements VisContr {
 
     @FXML
@@ -79,8 +81,10 @@ public class VisContrImpl implements VisContr {
         ConclusionBuilder conclusionBuilder = conclusionFactory.create(textonPath, graph);
         eventBus.register(conclusionBuilder);
         conclusion = conclusionBuilder.getNode();
+        CanvasUtil.setNodeAnchorToAnchorPane(conclusion, 0, 0, 0, 0);
         anchorPane.getChildren().clear();
         anchorPane.getChildren().add(conclusion);
+
         ResizableDraggableNodeManager.makeNodeDraggable(conclusion);
         ResizableDraggableNodeManager.makeNodeResizableCtrl(conclusion);
 
@@ -89,7 +93,7 @@ public class VisContrImpl implements VisContr {
         Timeline screencast = new Timeline();
         screencast.setCycleCount(Timeline.INDEFINITE);
         screencast.getKeyFrames().add(new KeyFrame(Duration.millis(1000), event -> {
-            //SnapshotParameters sp = new SnapshotParameters();
+            SnapshotParameters sp = new SnapshotParameters();
             //sp.setViewport(new Rectangle2D(0, 0, conclusion.getBoundsInParent().getWidth(), conclusion.getBoundsInParent().getHeight()));
             //Image snapshot = conclusion.snapshot(sp, null);
             Image snapshot = conclusion.snapshot(null, null);
@@ -169,9 +173,3 @@ public class VisContrImpl implements VisContr {
         return stageProperty.get();
     }
 }
-
-/*  Was used to copy presenter view onto the visualization. Has been replaced by a duplicate canvas.
-    @Subscribe
-    private void onPresenterImageUpdateEvent(PresenterImageUpdateEvent presenterImageUpdateEvent) {
-        canvas.setImage(presenterImageUpdateEvent.getImage());
-    }*/
