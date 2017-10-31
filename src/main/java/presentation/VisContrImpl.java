@@ -33,8 +33,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //TODO Zoomer sur chaque module (à la prezi) pendant la toConclusion, et déplacer la caméra pour animer. À la fin, dé-zoomer et afficher le réseau au complet.
-//FIXME Il y a un effet de letterbox assez marqué. Ajuster l'image à la fenêtre en l'agrandissant.
-//TODO Ajouter les options du graphique de vis.js dans une autre fenêtre.
 public class VisContrImpl implements VisContr {
 
     @FXML
