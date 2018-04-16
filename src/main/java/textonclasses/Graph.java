@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,12 @@ public class Graph {
     @JsonCreator
     public Graph(@JsonProperty("nodes") List<TextonHeader> nodes, @JsonProperty("edges") List<TextonLien> edges) {
         this.nodes = new ArrayList<>(nodes);
+        this.nodes.sort((o1, o2) -> {
+            if(o1.getNumTexton() < o2.getNumTexton()) return -1;
+            if(o1.getNumTexton() > o2.getNumTexton()) return 1;
+            else return 0;
+        });
+
         //This is necessary in order to textons from 1.
         //But it is not serialized to Json (see private method annotated @JsonProperty).
         this.nodes.add(0, texton0);

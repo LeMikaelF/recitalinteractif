@@ -34,7 +34,9 @@ public class ServerRunnableImpl implements ServerRunnable {
         System.setProperty("org.eclipse.jetty.LEVEL", "INFO");
 
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(80);
+        //Changé pour marcher sous Linux
+        //connector.setPort(80);
+        connector.setPort(5555);
         server.addConnector(connector);
 
         try {

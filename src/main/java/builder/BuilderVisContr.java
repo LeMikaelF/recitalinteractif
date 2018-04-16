@@ -176,7 +176,9 @@ public class BuilderVisContr {
             graph = textonIo.getGraph();
             path = file.toPath();
             //webEngine.load(getClass().getResource("/public/builder/builder.html").toExternalForm());
-            webEngine.load("http://localhost/builder/builder.html");
+            //Changé pour marcher sous Linux.
+            //webEngine.load("http://localhost/builder/builder.html");
+            webEngine.load("http://localhost:5555/builder/builder.html");
             webEngine.getLoadWorker().stateProperty().addListener(
                     (ov, oldState, newState) -> {
                         if (newState == State.SUCCEEDED) {

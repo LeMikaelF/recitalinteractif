@@ -70,14 +70,20 @@ var optionsNastasia = {
         "solver": "forceAtlas2Based"
     }*/
     "physics": {
-        "repulsion": {
+        /*"repulsion": {
             "centralGravity": 0,
-            "springLength": 330,
+            //"springLength": 330,
+            "springLength": 1500,
             "springConstant": 0.065,
             "nodeDistance": 405
+        },*/
+        "forceAtlas2Based": {
+            "avoidOverlap": 1,
+            "springConstant": 0.02,
+            "springLength": 1000
         },
         "minVelocity": 0.75,
-        "solver": "repulsion"
+        "solver": "forceAtlas2Based"
     }
 };
 
@@ -101,7 +107,7 @@ var pathOptions = {
 };
 
 function setPhysics(bool) {
-    if(bool) {
+    if (bool) {
         //network.startSimulation();
         network.setOptions({
             "physics": {

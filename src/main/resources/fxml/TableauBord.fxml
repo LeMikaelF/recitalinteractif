@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.TabBordContrImpl">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="presentation.TabBordContrImpl">
     <children>
         <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
@@ -45,14 +45,14 @@
             <children>
                 <AnchorPane HBox.hgrow="ALWAYS">
                     <children>
-                        <SplitPane dividerPositions="0.6596858638743456" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane dividerPositions="0.6178010471204188" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <items>
-                                <AnchorPane fx:id="anchorPaneTabBord" minHeight="0.0" minWidth="0.0" />
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <TextArea fx:id="textAreaTexte" prefHeight="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                        <TextArea fx:id="textAreaTexte" prefHeight="200.0" style="-fx-font-size: 2em;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     </children>
                                 </AnchorPane>
+                                <AnchorPane fx:id="anchorPaneTabBord" minHeight="0.0" minWidth="0.0" style="-fx-font-size: 8em;" />
                             </items>
                         </SplitPane>
                     </children>
@@ -67,7 +67,7 @@
                                     </padding>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label fx:id="lblNumEnr" text="999">
+                                <Label fx:id="lblNumEnr" style="-fx-font-size: 2em;" text="999">
                                     <padding>
                                         <Insets left="5.0" right="5.0" />
                                     </padding>
@@ -82,7 +82,7 @@
                                     </padding>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label fx:id="lblNumA" text="999">
+                                <Label fx:id="lblNumA" style="-fx-font-size: 2em;" text="999">
                                     <padding>
                                         <Insets left="5.0" right="5.0" />
                                     </padding>
@@ -97,7 +97,7 @@
                                     </padding>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label fx:id="lblNumB" text="999">
+                                <Label fx:id="lblNumB" style="-fx-font-size: 2em;" text="999">
                                     <padding>
                                         <Insets left="5.0" right="5.0" />
                                     </padding>
@@ -112,7 +112,7 @@
                                     </padding>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label fx:id="lblNumC" text="999">
+                                <Label fx:id="lblNumC" style="-fx-font-size: 2em;" text="999">
                                     <padding>
                                         <Insets left="5.0" right="5.0" />
                                     </padding>
@@ -127,7 +127,7 @@
                                     </padding>
                                 </Label>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Label fx:id="lblNumD" text="999">
+                                <Label fx:id="lblNumD" style="-fx-font-size: 2em;" text="999">
                                     <padding>
                                         <Insets left="5.0" right="5.0" />
                                     </padding>

@@ -237,6 +237,8 @@ public class TabBordContrImpl implements TabBordContr {
         eventBus.post(new TextonChangeEvent(texton, graph));
 
         //Set all fields
+        //FIXME Je crois que le problème est que les valeurs ne sont
+        //FIXME jamais remises à zéro lors du changement de texton.
         tcTabBord.setTexton(texton);
         lblNumTexton.textProperty().set(String.valueOf(texton.getNumTexton()));
         lblNomTexton.textProperty().set(texton.getName());

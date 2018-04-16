@@ -51,7 +51,7 @@ window.onload = function () {
 
 function addEdge(data, callback) {
     var children = network.getConnectedNodes(data.from, 'to');
-    if (children.length <= 4) {
+    if (children.length >= 4) {
         alert('Un texton ne peut pas posséder plus de quatre liens sortants.');
         return;
     }

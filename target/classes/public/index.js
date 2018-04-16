@@ -1,15 +1,4 @@
-var currentTexton = null;
-var vote = "NULL";
-var connectstatus;
-var instructionsarea;
-var votedisplay;
-var connecterror = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Erreur de connexion. Rafraîchissez la page.";
-var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté.";
-var ws;
 var address =  "ws://" + window.location.host + "/ws";
-var id = function (id) {
-    return document.getElementById(id);
-};
 var changeTexton = function (numTexton, numLiens) {
     currentTexton = numTexton;
     disableControls();
@@ -18,6 +7,18 @@ var changeTexton = function (numTexton, numLiens) {
         enableControls(numLiens);
     }, 2000);
 };
+var connecterror = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Erreur de connexion. Rafraîchissez la page.";
+var connectsuccess = "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>Vous êtes connecté.";
+var currentTexton = null;
+var connectstatus;
+var id = function (id) {
+    return document.getElementById(id);
+};
+var instructionsarea;
+var keepAlivePid = 0;
+var vote = "NULL";
+var votedisplay;
+var ws;
 
 //Il faut que les liens internet marchent pour tester sans compiler, mais que les liens webjar marchent dans la distribution.
 window.onload = function () {
@@ -53,10 +54,12 @@ window.onload = function () {
 
     ws.onopen = function () {
         displayConnMess();
+        startKeepAlive();
     };
 
     ws.onmessage = function (msg) {
         console.log("message reçu du serveur: " + msg.data);
+        if(msg.data === "pong") return;
         var msgobj = JSON.parse(msg.data);
         if (msgobj.hasOwnProperty("vote")) {
             vote = msgobj.vote;
@@ -78,12 +81,13 @@ window.onload = function () {
         disableControls();
         displayNotConnMess();
         displayInstructions("");
-
+        stopKeepAlive();
     };
     ws.onerror = function () {
         disableControls();
         displayNotConnMess();
         displayInstructions("Erreur de connexion. Essayez de rafraîchir la page.");
+        stopKeepAlive();
     };
 };
 
@@ -130,6 +134,16 @@ function displayNotConnMess() {
 function displayInstructions(str) {
     if (str === "") instructionsarea.innerHTML = "";
     instructionsarea.innerHTML = "<div class = 'well well-sm'><span class='glyphicon glyphicon-info-sign'></span>" + str + "</div>";
+}
+
+function startKeepAlive() {
+    keepAlivePid = setInterval(function () {
+        ws.send("ping");
+    }, 3000);
+}
+
+function stopKeepAlive() {
+    clearInterval(keepAlivePid);
 }
 
 function setVoteDisplay(vote) {

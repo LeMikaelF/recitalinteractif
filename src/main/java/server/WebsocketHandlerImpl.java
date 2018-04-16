@@ -72,6 +72,15 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     @Override
     @OnWebSocketMessage
     public void onMessage(Session session, String str) {
+        if ("ping".equals(str)) {
+            try {
+                session.getRemote().sendString("pong");
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         //System.out.println("Message reçu d'un client websocket : " + str);
         Vote vote = Vote.valueOf(str);
         getClientsVotesMap().put(session, vote);
@@ -131,6 +140,9 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
                 e.printStackTrace();
             }
         });
+
+        //FIXME Essayons ceci.
+        sendVoteUpdate();
     }
 
     //Post vote update on EventBus

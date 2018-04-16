@@ -50,7 +50,15 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
         textFlows.forEach(textFlow -> {
             //For readability
-            textFlow.setEffect(new DropShadow(10, 0, 0, Color.WHITE));
+            DropShadow shadow = new DropShadow(10, 0, 0, Color.WHITE);
+
+            //Pour que l'ombre soit plus visible.
+            DropShadow shadow2 = new DropShadow(10, 0, 0, Color.WHITE);
+            shadow.setInput(shadow2);
+            DropShadow shadow3 = new DropShadow(10, 0, 0, Color.WHITE);
+            shadow2.setInput(shadow3);
+
+            textFlow.setEffect(shadow);
 
             textFlow.getChildren().forEach(node -> ((Text) node).setFont(Font.font(20)));
             textFlow.prefWidthProperty().bind(widthProperty().subtract(getWidth() / 15).subtract(getWidth() / 15));

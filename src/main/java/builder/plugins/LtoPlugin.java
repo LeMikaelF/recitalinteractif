@@ -31,7 +31,7 @@ public class LtoPlugin implements StatisticsPlugin {
 
         return true;
     };
-    private String requireFirstTextonString = "Le nom du premier texton (à utiliser comme point de départ pour l'analyse)";
+    private String requireFirstTextonString = "Le numéro du premier texton (à utiliser comme point de départ pour l'analyse)";
 
     private Function<String, Boolean> requireLimit = s -> {
 
