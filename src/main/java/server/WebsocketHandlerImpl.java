@@ -10,8 +10,6 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import events.TextonChangeEvent;
 import events.VoteChangeEvent;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 
@@ -57,14 +55,17 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
         return WebsocketHandlerImpl.clientsVotesMap;
     }
 
-    public void setBroadcastInfo(int textonCourant, int numLiens) {
-        broadcastInfo.set(new BroadcastInfo(numLiens, textonCourant));
+    public void setBroadcastInfo(int textonCourant, int numLiens, List<String> texts) {
+        broadcastInfo.set(new BroadcastInfo(numLiens, textonCourant, texts));
     }
 
     @Override
     @Subscribe
     public void onTextonChangeEvent(TextonChangeEvent tce) {
-        setBroadcastInfo(tce.getTexton().getNumTexton(), tce.getGraph().getChildren(tce.getTexton().getNumTexton()).size());
+        setBroadcastInfo(tce.getTexton().getNumTexton(),
+                tce.getGraph().getChildren(tce.getTexton().getNumTexton()).size(),
+                tce.getGraph().getChildren(tce.getTexton().getNumTexton()).stream()
+                        .map(i -> tce.getGraph().getTextonHeader(i).getName()).collect(Collectors.toList()));
         broadcastAll();
         resetVotes();
     }
@@ -140,8 +141,6 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
                 e.printStackTrace();
             }
         });
-
-        //FIXME Essayons ceci.
         sendVoteUpdate();
     }
 
@@ -161,11 +160,13 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     private static class BroadcastInfo {
         private int numLiens;
         private int textonCourant;
+        private List<String> texts;
 
         @JsonCreator
-        BroadcastInfo(@JsonProperty("numLiens") int numLiens, @JsonProperty("textonCourant") int textonCourant) {
+        BroadcastInfo(@JsonProperty("numLiens") int numLiens, @JsonProperty("textonCourant") int textonCourant, @JsonProperty("texts") List<String> texts) {
             this.numLiens = numLiens;
             this.textonCourant = textonCourant;
+            this.texts = texts;
         }
 
         @JsonProperty("numLiens")
@@ -176,6 +177,11 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
         @JsonProperty("textonCourant")
         public int getTextonCourant() {
             return textonCourant;
+        }
+
+        @JsonProperty("texts")
+        public List<String> getTexts() {
+            return texts;
         }
     }
 

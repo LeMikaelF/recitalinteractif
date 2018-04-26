@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 //J'ai choisi de diminuer la grosseur du texte parce que je n'étais capable de gérer le word-wrap avec des TextFlow.
 public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
-
+//TODO Peut-etre baisser un peu les textes des 4 liens.
     private Graph graph;
     private boolean isTextonSet;
     private List<Text> texts = new ArrayList<>(4);
@@ -60,7 +60,8 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
 
             textFlow.setEffect(shadow);
 
-            textFlow.getChildren().forEach(node -> ((Text) node).setFont(Font.font(20)));
+            //Modifier cette ligne pour changer la taille du texte des liens.
+            textFlow.getChildren().forEach(node -> ((Text) node).setFont(Font.font(40)));
             textFlow.prefWidthProperty().bind(widthProperty().subtract(getWidth() / 15).subtract(getWidth() / 15));
 
             ChangeListener<Number> widthChangeListener = (observable, oldValue, newValue) -> {

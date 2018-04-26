@@ -48,7 +48,13 @@ var currentIndex = 0;
 var lastNode;
 
 function moveForwardInGraph() {
-    if (currentIndex >= path.length) return;
+    if (currentIndex === path.length + 1)
+        return;
+    //Fit graph on last node
+    if (currentIndex === path.length) {
+        fitGraph();
+        return;
+    }
     var node = nodeArray[path[currentIndex].id];
     //Set edge looking back
     if (currentIndex > 0 && currentIndex < path.length) {
@@ -71,14 +77,8 @@ function moveForwardInGraph() {
     network.focus(node.id, options);
 
 
-    //Fit graph on last node
-    if (currentIndex === path.length - 1) {
-        fitGraph();
-    }
-
 
     currentIndex++;
     lastNode = node;
-
 
 }

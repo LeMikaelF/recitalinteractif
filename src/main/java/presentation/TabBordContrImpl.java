@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -203,7 +204,10 @@ public class TabBordContrImpl implements TabBordContr {
             int max = 0;
             Vote vote = Vote.A;
             for (int i = 0; i < votes.size() - 1; i++) {
-                if (max < votes.get(i).get()) vote = Vote.values()[i];
+                if (max < votes.get(i).get()) {
+                    max = votes.get(i).get();
+                    vote = Vote.values()[i];
+                }
             }
             try {
                 changeTexton(vote);
@@ -237,8 +241,6 @@ public class TabBordContrImpl implements TabBordContr {
         eventBus.post(new TextonChangeEvent(texton, graph));
 
         //Set all fields
-        //FIXME Je crois que le problème est que les valeurs ne sont
-        //FIXME jamais remises à zéro lors du changement de texton.
         tcTabBord.setTexton(texton);
         lblNumTexton.textProperty().set(String.valueOf(texton.getNumTexton()));
         lblNomTexton.textProperty().set(texton.getName());
@@ -276,10 +278,19 @@ public class TabBordContrImpl implements TabBordContr {
     private void toConclusion() {
         eventBus.post(new ControlObjectEvent(graph, ControlEvent.CONCLUSION));
         List<TextonHeader> textonPath = commsManager.getTextonPath();
+        Iterator<TextonHeader> iterator = textonPath.iterator();
 
-        //Change behaviour of "over" button to control toConclusion.
+        //Change behaviour of "terminé" button to control toConclusion.
         btnTermine.textProperty().set("Texton suivant");
-        btnTermine.onActionProperty().set(event -> eventBus.post(ControlEvent.SUIVANT));
+        btnTermine.onActionProperty().set(event -> {
+            //Qui est-ce qui lit les SUIVANT?
+            eventBus.post(ControlEvent.SUIVANT);
+            if (iterator.hasNext()) {
+                lblNomTexton.setText(iterator.next().getName());
+            } else {
+                lblNomTexton.setText("Parcours terminé");
+            }
+        });
         //Make physics checkbox visible and set correct behaviour.
         if (!checkBoxPhysics.isVisible()) {
             checkBoxPhysics.setVisible(true);
