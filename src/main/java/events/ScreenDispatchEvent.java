@@ -9,8 +9,8 @@ import java.util.function.Consumer;
  */
 public class ScreenDispatchEvent {
 
-    Consumer<Stage> ifYouAreTabBordRunThis;
-    Consumer<Stage> ifYouAreVisRunThis;
+    private final Consumer<Stage> ifYouAreTabBordRunThis;
+    private final Consumer<Stage> ifYouAreVisRunThis;
 
     public ScreenDispatchEvent(Consumer<Stage> ifYouAreTabBordRunThis, Consumer<Stage> ifYouAreVisRunThis) {
         this.ifYouAreTabBordRunThis = ifYouAreTabBordRunThis;

@@ -19,7 +19,7 @@ public class VoteController {
     private EventBus eventBus;
     @Inject
     private Set<VoteCollector> voteCollectors;
-    private Map<VoteCollector, List<Integer>> voteMap = new HashMap<>();
+    private final Map<VoteCollector, List<Integer>> voteMap = new HashMap<>();
     private boolean initialized;
     private boolean wasAskedToBroadcast;
 
@@ -31,7 +31,7 @@ public class VoteController {
         }
     }
 
-    public void startBroadcasting() {
+    private void startBroadcasting() {
         if (!initialized) throw new IllegalStateException("VoteController is not initialized");
         voteCollectors.forEach(VoteCollector::startBroadcasting);
     }

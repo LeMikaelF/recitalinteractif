@@ -14,10 +14,10 @@ public class LtoPlugin implements StatisticsPlugin {
     private Graph graph;
     private int start;
     private int limit;
-    private Map<TextonHeader, Double> statMap = new HashMap<>();
+    private final Map<TextonHeader, Double> statMap = new HashMap<>();
 
     //Build prompts.
-    private Function<String, Boolean> requireFirstTexton = s -> {
+    private final Function<String, Boolean> requireFirstTexton = s -> {
         //First prompt: ask for first texton. Fail if not a valid texton number or not a number.
         try {
             int num = Integer.parseInt(s);
@@ -31,9 +31,9 @@ public class LtoPlugin implements StatisticsPlugin {
 
         return true;
     };
-    private String requireFirstTextonString = "Le numéro du premier texton (à utiliser comme point de départ pour l'analyse)";
+    private final String requireFirstTextonString = "Le numéro du premier texton (à utiliser comme point de départ pour l'analyse)";
 
-    private Function<String, Boolean> requireLimit = s -> {
+    private final Function<String, Boolean> requireLimit = s -> {
 
         try {
             int limit = Integer.parseInt(s);
@@ -46,11 +46,11 @@ public class LtoPlugin implements StatisticsPlugin {
         return true;
     };
 
-    private String requireLimitString = "Le nombre de textons maximal à utiliser dans un parcours";
+    private final String requireLimitString = "Le nombre de textons maximal à utiliser dans un parcours";
 
-    private Pair<Function<String, Boolean>, String> pair1 = new Pair<>(requireFirstTexton, requireFirstTextonString);
-    private Pair<Function<String, Boolean>, String> pair2 = new Pair<>(requireLimit, requireLimitString);
-    private List<Pair<Function<String, Boolean>, String>> prompts = Stream.of(pair1, pair2).collect(Collectors.toList());
+    private final Pair<Function<String, Boolean>, String> pair1 = new Pair<>(requireFirstTexton, requireFirstTextonString);
+    private final Pair<Function<String, Boolean>, String> pair2 = new Pair<>(requireLimit, requireLimitString);
+    private final List<Pair<Function<String, Boolean>, String>> prompts = Stream.of(pair1, pair2).collect(Collectors.toList());
 
     //Adapted from Gephi plugin
     private void setLto(int limit, TextonHeader start, List<TextonHeader> list) {
@@ -59,9 +59,7 @@ public class LtoPlugin implements StatisticsPlugin {
 
         //If path length limit has been reached
         if (limit == 0 || graph.getChildren(start.getNumTexton()).size() == 0) {
-            ListIterator<TextonHeader> it = path.listIterator();
-            while (it.hasNext()) {
-                TextonHeader textonHeader = it.next();
+            for (TextonHeader textonHeader : path) {
                 TextonHeader neighbour = null;
 
                 //Current interface does not allow computing of edge statistics, but it could be easily implemented.

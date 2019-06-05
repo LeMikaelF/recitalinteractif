@@ -8,9 +8,6 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentMap;
-
 /**
  * Created by Mikaël on 2017-10-02.
  */

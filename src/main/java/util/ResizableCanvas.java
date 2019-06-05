@@ -18,12 +18,12 @@ import java.util.ArrayList;
 Dirk Lemmerman Software & Consulting. 10 avril 2014.
 <http://dlsc.com/2014/04/10/javafx-tip-1-resizable-canvas/>. Consulté le 2 décembre 2016.*/
 
-public abstract class ResizableCanvas extends Canvas {
+abstract class ResizableCanvas extends Canvas {
 
     private double lastWidth;
     private double lastHeight;
-    private ObservableList<Double> observableList = FXCollections.observableArrayList(new ArrayList<Double>());
-    private SimpleListProperty<Double> boundsProperty = new SimpleListProperty<>(observableList);
+    private final ObservableList<Double> observableList = FXCollections.observableArrayList(new ArrayList<Double>());
+    private final SimpleListProperty<Double> boundsProperty = new SimpleListProperty<>(observableList);
 
     @Override
     public boolean isResizable() {
@@ -56,7 +56,7 @@ public abstract class ResizableCanvas extends Canvas {
         getGraphicsContext2D().drawImage(SwingFXUtils.toFXImage(image, null), rect.getMinX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
     }
 
-    Rectangle2D getFittedCoords(BufferedImage image) {
+    private Rectangle2D getFittedCoords(BufferedImage image) {
         /* Cette section est adaptée de Ali, Sadique. « Fitting an Image in to [sic] a Canvas Object ». Code that Works.
          * 3 octobre 2013. <https://sdqali.in/blog/2013/10/03/fitting-an-image-in-to-a-canvas-object/>. Consulté le
          * 2 décembre 2016.

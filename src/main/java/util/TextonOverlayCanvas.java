@@ -9,7 +9,7 @@ public abstract class TextonOverlayCanvas extends ResizableCanvas implements TCW
     private Texton texton;
 
     @Override
-    public abstract void draw();
+    protected abstract void draw();
 
     @Override
     public Texton getTexton() {
@@ -24,7 +24,7 @@ public abstract class TextonOverlayCanvas extends ResizableCanvas implements TCW
     }
 
     //Runs after draw() when new texton is set.
-    protected Runnable onSetTexton() {
+    Runnable onSetTexton() {
         return () -> {};
     }
 }

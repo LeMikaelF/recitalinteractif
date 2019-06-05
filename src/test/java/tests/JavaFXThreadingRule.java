@@ -24,7 +24,7 @@ import org.junit.runners.model.Statement;
  * @author Andy Till
  *
  */
-public class JavaFXThreadingRule implements TestRule {
+class JavaFXThreadingRule implements TestRule {
 
     /**
      * Flag for setting up the JavaFX, we only need to do this once for all tests.
@@ -41,11 +41,11 @@ public class JavaFXThreadingRule implements TestRule {
 
         private final Statement statement;
 
-        public OnJFXThreadStatement(Statement aStatement) {
+        OnJFXThreadStatement(Statement aStatement) {
             statement = aStatement;
         }
 
-        private Throwable rethrownException = null;
+        private Throwable rethrownException;
 
         @Override
         public void evaluate() throws Throwable {
@@ -78,7 +78,7 @@ public class JavaFXThreadingRule implements TestRule {
             }
         }
 
-        protected void setupJavaFX() throws InterruptedException {
+        void setupJavaFX() throws InterruptedException {
 
             long timeMillis = System.currentTimeMillis();
 

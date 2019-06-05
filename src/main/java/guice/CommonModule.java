@@ -9,7 +9,7 @@ import io.TextonIoFactory;
 /**
  * Created by Mikaël on 2017-10-07.
  */
-public class CommonModule extends AbstractModule {
+class CommonModule extends AbstractModule {
 
     @Override
     protected void configure() {

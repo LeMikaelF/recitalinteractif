@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 @Singleton
 public class MyWebSocketServlet extends WebSocketServlet {
     @Inject
+    private
     Provider<WebsocketHandlerImpl> provider;
     @Override
     public void configure(WebSocketServletFactory webSocketServletFactory) {

@@ -12,8 +12,8 @@ import java.util.stream.Stream;
 public class CompositeTextonCanvas extends AnchorPane implements TCWithTexton {
 
     private Graph graph;
-    private TextonImageCanvas textonImageCanvas = new TextonImageCanvas();
-    private TextonOverlayCanvas textonOverlayCanvas = new TextonOverlayCanvasOnlyText();
+    private final TextonImageCanvas textonImageCanvas = new TextonImageCanvas();
+    private final TextonOverlayCanvas textonOverlayCanvas = new TextonOverlayCanvasOnlyText();
 
     {
         getChildren().addAll(textonImageCanvas, textonOverlayCanvas);

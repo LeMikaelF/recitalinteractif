@@ -5,7 +5,7 @@ package events;
  */
 public class ControlObjectEvent extends ObjectEvent {
 
-    ControlEvent controlEvent;
+    private ControlEvent controlEvent;
 
     public ControlEvent getControlEvent() {
         return controlEvent;

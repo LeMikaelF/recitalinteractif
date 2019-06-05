@@ -1,7 +1,5 @@
 package server;
 
-import com.google.inject.Provider;
-
 
 /**
  * Created by Mikaël on 2017-10-02.

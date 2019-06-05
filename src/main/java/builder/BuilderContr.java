@@ -74,7 +74,7 @@ public class BuilderContr {
     @Inject
     private BuilderVisContr builderVisContr;
     private Path projectPath;
-    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private Texton texton;
     private File currentFile;
     private Image image;
@@ -82,11 +82,11 @@ public class BuilderContr {
     private List<TextInputControl> textInputControls;
 
     private boolean updatedButNotSaved;
-    private ChangeListener<String> changeListenerUpdated = (observable, oldValue, newValue) -> {
+    private final ChangeListener<String> changeListenerUpdated = (observable, oldValue, newValue) -> {
         updatedButNotSaved = true;
         deactivateUpdatedListener();
     };
-    private ChangeListener<String> numEnforcer =
+    private final ChangeListener<String> numEnforcer =
             (observable, oldValue, newValue) -> {
                 ((TextInputControl) ((StringProperty) observable).getBean())
                         .setText(newValue.replaceAll("[^\\d]", ""));

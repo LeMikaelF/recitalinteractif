@@ -4,7 +4,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 import events.ControlEvent;
 import events.TextonChangeEvent;
 import server.Server;
@@ -20,16 +19,14 @@ import java.util.List;
  */
 public class CommsManagerImpl implements CommsManager {
 
-    private EventBus eventBus;
-    private Server server;
-    private VoteController voteController;
-    private TextonChangeLogger textonChangeLogger = new TextonChangeLogger();
+    private final Server server;
+    private final TextonChangeLogger textonChangeLogger = new TextonChangeLogger();
 
     @Inject
     public CommsManagerImpl(Provider<Server> serverProvider, Provider<VoteController> voteControllerProvider, Provider<EventBus> eventBusProvider) {
         server = serverProvider.get();
-        voteController = voteControllerProvider.get();
-        eventBus = eventBusProvider.get();
+        VoteController voteController = voteControllerProvider.get();
+        EventBus eventBus = eventBusProvider.get();
         eventBus.register(this);
         eventBus.register(textonChangeLogger);
         voteController.init();
@@ -50,10 +47,10 @@ public class CommsManagerImpl implements CommsManager {
         return textonChangeLogger.getPath();
     }
 
-    public class TextonChangeLogger {
-        private List<TextonHeader> path = new ArrayList<>();
+    class TextonChangeLogger {
+        private final List<TextonHeader> path = new ArrayList<>();
 
-        public List<TextonHeader> getPath() {
+        List<TextonHeader> getPath() {
             return Collections.unmodifiableList(path);
         }
 

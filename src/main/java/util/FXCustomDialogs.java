@@ -78,8 +78,7 @@ public class FXCustomDialogs {
         dialog.setHeaderText("");
         dialog.setContentText(message);
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) return result.get();
-        else return null;
+        return result.orElse(null);
     }
 
     public static void showInfoSimple(String message) {

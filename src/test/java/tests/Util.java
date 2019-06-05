@@ -9,7 +9,7 @@ import org.hamcrest.Matcher;
  */
 
 //TODO Extend BaseMatcher, see second last overridden method.
-public class Util {
+class Util {
     static Matcher<Image> imageEquality(Image image1) {
         return new Matcher<Image>() {
             @Override

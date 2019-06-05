@@ -8,9 +8,9 @@ import java.util.List;
  * Created by Mikaël on 2017-09-30.
  */
 public class VoteChangeEvent {
-    private int numEnr;
-    private List<Integer> votes;
-    private VoteCollector voteCollector;
+    private final int numEnr;
+    private final List<Integer> votes;
+    private final VoteCollector voteCollector;
 
     public int getNumEnr() {
         return numEnr;

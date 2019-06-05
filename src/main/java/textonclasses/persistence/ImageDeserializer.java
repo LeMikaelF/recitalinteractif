@@ -26,8 +26,7 @@ public class ImageDeserializer extends JsonDeserializer<Image> {
 
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
             BufferedImage bufferedImage = ImageIO.read(bais);
-            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-            return image;
+            return SwingFXUtils.toFXImage(bufferedImage, null);
         }
     }
 

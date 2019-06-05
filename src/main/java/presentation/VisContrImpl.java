@@ -12,16 +12,12 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -63,13 +59,13 @@ public class VisContrImpl implements VisContr {
     private ConclusionBuilderVisJsFactory conclusionFactory;
 
     private Node conclusion;
-    private CompositeTextonCanvas canvas = new CompositeTextonCanvas();
-    private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
-    private IntegerProperty numEnr = new SimpleIntegerProperty();
-    private IntegerProperty votesEnr = new SimpleIntegerProperty();
-    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
+    private final CompositeTextonCanvas canvas = new CompositeTextonCanvas();
+    private final List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
+    private final IntegerProperty numEnr = new SimpleIntegerProperty();
+    private final IntegerProperty votesEnr = new SimpleIntegerProperty();
+    private final ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private boolean conclusionRunning;
-    private Graph graph = null;
+    private Graph graph;
 
     public VisContrImpl() {
         stageProperty.addListener((observable, oldValue, newValue) -> {

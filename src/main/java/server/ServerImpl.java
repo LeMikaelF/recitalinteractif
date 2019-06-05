@@ -5,7 +5,7 @@ import com.google.inject.Provider;
 public class ServerImpl implements Server {
 
     private static final String STATIC_FILES_LOCATION = "/";
-    ServerRunnable serverRunnable;
+    private final ServerRunnable serverRunnable;
     private Thread threadServer;
 
     public ServerImpl(Provider<ServerRunnable> provider) {

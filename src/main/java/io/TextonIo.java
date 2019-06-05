@@ -18,7 +18,7 @@ public abstract class TextonIo {
     public abstract Texton readTexton(int numTexton) throws IOException;
     public abstract void writeTexton(Texton texton, boolean overwrite) throws IOException;
     public abstract Graph getGraph() throws IOException;
-    public abstract TextonHeader readTextonHeader(int numTexton) throws IOException;
+    protected abstract TextonHeader readTextonHeader(int numTexton) throws IOException;
     public abstract void saveGraph(Graph graph) throws IOException;
     public abstract boolean validateGraph() throws IOException;
 }

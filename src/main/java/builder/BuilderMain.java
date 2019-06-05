@@ -25,6 +25,7 @@ public class BuilderMain extends Application implements Server {
     private final Injector guice;
 
     @Inject
+    private
     ServerRunnable serverRunnable;
 
     public BuilderMain() {

@@ -1,17 +1,12 @@
 package io;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import textonclasses.Graph;
 import textonclasses.Texton;
 import textonclasses.TextonHeader;
 import textonclasses.TextonLien;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -71,7 +66,7 @@ public abstract class TextonFileIo extends TextonIo {
 
 
 
-    protected final Path getPath() {
+    final Path getPath() {
         return path;
     }
 

@@ -1,6 +1,5 @@
 package io;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -11,7 +10,6 @@ import util.Util;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,7 @@ import java.util.List;
 public class JsonFileConnector extends TextonFileIo {
 
     @Inject
-    public JsonFileConnector(@Assisted Path path) throws IOException {
+    public JsonFileConnector(@Assisted Path path) {
         super(path);
 
 

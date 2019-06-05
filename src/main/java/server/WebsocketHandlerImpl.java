@@ -30,7 +30,7 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
 
     private static final AtomicBoolean broadcasting = new AtomicBoolean(false);
     private static final AtomicReference<BroadcastInfo> broadcastInfo = new AtomicReference<>();
-    private static ConcurrentMap<Session, Vote> clientsVotesMap = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Session, Vote> clientsVotesMap = new ConcurrentHashMap<>();
     @Inject
     private EventBus eventBus;
 
@@ -100,9 +100,7 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
         node.put("vote", vote.toString());
-        String response = new ObjectMapper().writeValueAsString(node);
-        //response = StringEscapeUtils.escapeEcmaScript(response);
-        return response;
+        return new ObjectMapper().writeValueAsString(node);
     }
 
     @Override
@@ -123,7 +121,7 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
     @Override
     @OnWebSocketError
     public void onError(Session session, Throwable throwable) {
-        //Do nothing
+        //no-op
     }
 
     @Override
@@ -158,9 +156,9 @@ public class WebsocketHandlerImpl implements WebsocketHandler {
 
     //Immutable class used to store broadcast info.
     private static class BroadcastInfo {
-        private int numLiens;
-        private int textonCourant;
-        private List<String> texts;
+        private final int numLiens;
+        private final int textonCourant;
+        private final List<String> texts;
 
         @JsonCreator
         BroadcastInfo(@JsonProperty("numLiens") int numLiens, @JsonProperty("textonCourant") int textonCourant, @JsonProperty("texts") List<String> texts) {

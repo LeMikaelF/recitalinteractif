@@ -15,9 +15,9 @@ import javafx.stage.StageStyle;
 import guice.FxGuiceModule;
 
 import java.io.IOException;
-
+//TODO Package program in portable executable for Windows/Apple
 public class Main extends Application {
-    Injector guice = Guice.createInjector(new FxGuiceModule(), new ServletGuiceModule());
+    private final Injector guice = Guice.createInjector(new FxGuiceModule(), new ServletGuiceModule());
 
     public static void main(String[] args) {
         dispatchFromArgs(args);
@@ -52,7 +52,7 @@ public class Main extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         try {
             guice.getInstance(EventBus.class).post(ControlEvent.SHUTDOWN);
         } catch (Exception e) {

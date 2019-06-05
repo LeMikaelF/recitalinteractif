@@ -14,13 +14,13 @@ import java.util.function.Consumer;
 /**
  * Created by Mikaël on 2017-10-09.
  */
-public class ScreenDispatcher {
+class ScreenDispatcher {
 
     private Rectangle2D initialVisPosition;
     private Rectangle2D initialTabBordPosition;
-    private boolean installed = false;
+    private boolean installed;
 
-    private BiConsumer<Stage, Integer> setupToScreen = (stage, value) -> {
+    private final BiConsumer<Stage, Integer> setupToScreen = (stage, value) -> {
         if(value == 0)
             initialTabBordPosition = new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight());
         if(value == 1)
@@ -34,6 +34,7 @@ public class ScreenDispatcher {
         stage.toFront();
     };
     @Inject
+    private
     EventBus eventBus;
 
     private static boolean isEnvironmentRight(Stage stage) {

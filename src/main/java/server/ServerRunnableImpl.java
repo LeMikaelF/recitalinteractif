@@ -1,13 +1,9 @@
 package server;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.servlet.GuiceFilter;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 
 import javax.servlet.DispatcherType;
 import java.net.URI;
@@ -19,7 +15,7 @@ import java.util.EnumSet;
  * Created by Mikaël on 2017-10-01.
  */
 public class ServerRunnableImpl implements ServerRunnable {
-    private org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
+    private final org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server();
 
     public ServerRunnableImpl() {
     }

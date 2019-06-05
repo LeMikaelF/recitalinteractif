@@ -1,7 +1,6 @@
 package util;
 
 import javafx.beans.value.ChangeListener;
-import javafx.scene.effect.Bloom;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -25,9 +24,9 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
     private Graph graph;
     private boolean isTextonSet;
     private List<Text> texts = new ArrayList<>(4);
-    private List<TextFlow> textFlows = new ArrayList<>();
-    private List<Text> descriptors = new ArrayList<>();
-    private Runnable onSetTextonAction = () -> {
+    private final List<TextFlow> textFlows = new ArrayList<>();
+    private final List<Text> descriptors = new ArrayList<>();
+    private final Runnable onSetTextonAction = () -> {
         if (!(getParent() instanceof AnchorPane)) {
             throw new RuntimeException("The parent of a TextonOverlayCanvasOnlyText must be an instance of AnchorPane.");
         }
@@ -39,8 +38,7 @@ public class TextonOverlayCanvasOnlyText extends TextonOverlayCanvas {
         //Construire les Text des titres des liens
         texts = graph.getChildren(getTexton().getNumTexton()).stream().map(i -> {
             String name = graph.getName(i);
-            Text text = new Text(name);
-            return text;
+            return new Text(name);
         }).limit(4).collect(Collectors.toList());
 
         //Generate TextFlow list to put descriptors and texts together.

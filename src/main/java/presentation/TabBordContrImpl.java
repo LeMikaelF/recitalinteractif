@@ -102,11 +102,11 @@ public class TabBordContrImpl implements TabBordContr {
     private Label lblHorlRecital;
     @FXML
     private Label lblHorloge;
-    private ImageView imageView = new ImageView();
-    private Path path = Paths.get(PropLoader.getMap().get("location"));
-    private CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
+    private final ImageView imageView = new ImageView();
+    private final Path path = Paths.get(PropLoader.getMap().get("location"));
+    private final CompositeTextonCanvas tcTabBord = new CompositeTextonCanvas();
 
-    private ChangeListener<Boolean> conclusionNodeOperations = (observable, oldValue, newValue) -> {
+    private final ChangeListener<Boolean> conclusionNodeOperations = (observable, oldValue, newValue) -> {
         if (newValue) {
             CanvasUtil.setNodeAnchorToAnchorPane(imageView, 0, 0, 0, 0);
             anchorPaneTabBord.getChildren().clear();
@@ -122,10 +122,10 @@ public class TabBordContrImpl implements TabBordContr {
     private long textonClock;
     private Texton texton;
     private Texton textonPrecedent;
-    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
     private Graph graph;
-    private List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
-    private IntegerProperty numEnr = new SimpleIntegerProperty();
+    private final List<IntegerProperty> votes = Stream.generate(SimpleIntegerProperty::new).limit(4).collect(Collectors.toList());
+    private final IntegerProperty numEnr = new SimpleIntegerProperty();
     @Inject
     private EventBus eventBus;
     @Inject
@@ -135,13 +135,13 @@ public class TabBordContrImpl implements TabBordContr {
     //This needs to be here because the constructor runs some necessary actions.
     @Inject
     private CommsManager commsManager;
-    private SimpleBooleanProperty conclusionRunning = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty conclusionRunning = new SimpleBooleanProperty(false);
 
     @Inject
     public TabBordContrImpl() {
     }
 
-    public Stage getStage() {
+    private Stage getStage() {
         return stageProperty.get();
     }
 
@@ -200,6 +200,7 @@ public class TabBordContrImpl implements TabBordContr {
                 }
             }
         } else {
+            //TODO Verify max-checking code
             //Determine which link has the most votes
             int max = 0;
             Vote vote = Vote.A;

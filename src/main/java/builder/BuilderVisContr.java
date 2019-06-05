@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 //... autres, au besoin.
 public class BuilderVisContr {
 
-    public JavaApplication javaApplication = new JavaApplication();
+    private final JavaApplication javaApplication = new JavaApplication();
     private WebEngine webEngine;
     @FXML
     private Menu menuPlugins;
@@ -74,22 +74,22 @@ public class BuilderVisContr {
     @Inject
     private Set<StatisticsPlugin> statPlugins;
     private Path path;
-    private ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
-    private StringProperty jsonFromJavascript = new SimpleStringProperty();
-    private BooleanProperty askForSaveOnJavascriptUpdate = new SimpleBooleanProperty(false);
-    private EventHandler<WebEvent<String>> webAlertHandler = event -> {
+    private final ObjectProperty<Stage> stageProperty = new SimpleObjectProperty<>();
+    private final StringProperty jsonFromJavascript = new SimpleStringProperty();
+    private final BooleanProperty askForSaveOnJavascriptUpdate = new SimpleBooleanProperty(false);
+    private final EventHandler<WebEvent<String>> webAlertHandler = event -> {
         //Remplacer la fonction javascript alert() par un dialogue JavaFX.
         FXCustomDialogs.showError(event.getData());
         requestFocusAfterAlert();
     };
-    private Callback<String, Boolean> webConfirmHandler = (Callback<String, Boolean>) param -> {
+    private final Callback<String, Boolean> webConfirmHandler = (Callback<String, Boolean>) param -> {
         //Remplacer la fonction javascript confirm() par un dialogue JavaFX.
         boolean b = FXCustomDialogs.showConfirmationAction(param);
         requestFocusAfterAlert();
         return b;
     };
     private Graph graph;
-    private ChangeListener<String> jsonUpdateCallback = (observable, oldValue, newValue) -> {
+    private final ChangeListener<String> jsonUpdateCallback = (observable, oldValue, newValue) -> {
         //This check is necessary to prevent stack overflows.
         if (newValue.equals("")) return;
         try {

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,15 +18,13 @@ public class Graph {
 
     private final List<TextonHeader> nodes;
     private final List<TextonLien> edges;
-    private TextonHeader texton0 = new TextonHeader(0, "Texton 0");
+    private final TextonHeader texton0 = new TextonHeader(0, "Texton 0");
 
     @JsonCreator
     public Graph(@JsonProperty("nodes") List<TextonHeader> nodes, @JsonProperty("edges") List<TextonLien> edges) {
         this.nodes = new ArrayList<>(nodes);
         this.nodes.sort((o1, o2) -> {
-            if(o1.getNumTexton() < o2.getNumTexton()) return -1;
-            if(o1.getNumTexton() > o2.getNumTexton()) return 1;
-            else return 0;
+            return Integer.compare(o1.getNumTexton(), o2.getNumTexton());
         });
 
         //This is necessary in order to textons from 1.

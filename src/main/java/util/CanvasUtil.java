@@ -1,21 +1,10 @@
 package util;
 
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
-import textonclasses.TextonLien;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

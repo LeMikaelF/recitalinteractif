@@ -7,13 +7,11 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import io.JsonFileConnector;
 import io.TextonIo;
 import io.TextonIoFactory;
-import util.TextonOverlayCanvas;
-import util.TextonOverlayCanvasOnlyText;
 
 /**
  * Created by Mikaël on 2017-10-11.
  */
-public class GuiceTestModule extends AbstractModule {
+class GuiceTestModule extends AbstractModule {
 
     @Override
     protected void configure() {

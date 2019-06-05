@@ -11,18 +11,18 @@ import java.util.List;
  */
 public abstract class ConclusionBuilder {
     private final Graph graph;
-    private List<TextonHeader> path;
+    private final List<TextonHeader> path;
 
     ConclusionBuilder(List<TextonHeader> path, Graph graph) {
         this.path = path;
         this.graph = graph;
     }
 
-    protected List<TextonHeader> getPath() {
+    List<TextonHeader> getPath() {
         return path;
     }
 
-    protected Graph getGraph() {
+    Graph getGraph() {
         return graph;
     }
 

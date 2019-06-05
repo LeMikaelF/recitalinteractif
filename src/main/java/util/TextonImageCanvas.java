@@ -13,10 +13,10 @@ import textonclasses.Texton;
 class TextonImageCanvas extends ResizableCanvas implements TCWithTexton {
     private Texton texton;
     private Graph graph;
-    BooleanProperty nullTextonProperty = new SimpleBooleanProperty(true);
+    private final BooleanProperty nullTextonProperty = new SimpleBooleanProperty(true);
 
     @Override
-    public void draw() {
+    protected void draw() {
         clearCanvas();
         getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
         if (texton != null)

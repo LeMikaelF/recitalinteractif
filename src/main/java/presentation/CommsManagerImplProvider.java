@@ -11,12 +11,14 @@ import com.google.inject.Provider;
 import server.Server;
 import server.VoteController;
 
-public class CommsManagerImplProvider implements Provider<CommsManagerImpl> {
+class CommsManagerImplProvider implements Provider<CommsManagerImpl> {
     @Inject
     Provider<Server> serverProvider;
     @Inject
+    private
     Provider<VoteController> voteControllerProvider;
     @Inject
+    private
     Provider<EventBus> eventBusProvider;
 
     public CommsManagerImpl get() {

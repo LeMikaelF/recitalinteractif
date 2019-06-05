@@ -18,10 +18,11 @@ import textonclasses.TextonHeader;
 import util.FXCustomDialogs;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class Util {
+class Util {
     static Node getPluginResultTable(StatisticsPlugin plugin, Graph graph) {
         plugin.init(graph);
         //If any of the prompts fails, return an empty node.
@@ -40,18 +41,18 @@ public class Util {
         }
 
         Map<TextonHeader, Double> pluginResults = plugin.compute();
-        ObservableList<Map.Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
+        ObservableList<Entry<TextonHeader, Double>> pluginResultsAsList = FXCollections.observableArrayList(pluginResults.entrySet());
 
-        TableColumn<Map.Entry<TextonHeader, Double>, Integer> columnNum = new TableColumn<>("Numéro");
-        columnNum.setCellValueFactory(param -> new SimpleObjectProperty<Integer>(param.getValue().getKey().getNumTexton()));
+        TableColumn<Entry<TextonHeader, Double>, Integer> columnNum = new TableColumn<>("Numéro");
+        columnNum.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getKey().getNumTexton()));
 
-        TableColumn<Map.Entry<TextonHeader, Double>, String> columnName = new TableColumn<>("Nom");
+        TableColumn<Entry<TextonHeader, Double>, String> columnName = new TableColumn<>("Nom");
         columnName.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getKey().getName()));
 
-        TableColumn<Map.Entry<TextonHeader, Double>, Double> columnStat = new TableColumn<>(plugin.getResultName());
-        columnStat.setCellValueFactory(param -> new SimpleObjectProperty<Double>(param.getValue().getValue()));
+        TableColumn<Entry<TextonHeader, Double>, Double> columnStat = new TableColumn<>(plugin.getResultName());
+        columnStat.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getValue()));
 
-        TableView<Map.Entry<TextonHeader, Double>> table = new TableView<>(pluginResultsAsList);
+        TableView<Entry<TextonHeader, Double>> table = new TableView<>(pluginResultsAsList);
         table.setEditable(false);
         table.getColumns().add(columnNum);
         table.getColumns().add(columnName);
