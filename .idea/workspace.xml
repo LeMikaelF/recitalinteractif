@@ -1,57 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="652f6ee2-4adb-4cc7-8a82-aced81a49174" name="Default" comment="Code inspections">
-      <change beforePath="" afterPath="$PROJECT_DIR$/travis.yml" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+    <list default="true" id="652f6ee2-4adb-4cc7-8a82-aced81a49174" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/builder/BuilderContr.java" afterPath="$PROJECT_DIR$/src/main/java/builder/BuilderContr.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/builder/BuilderMain.java" afterPath="$PROJECT_DIR$/src/main/java/builder/BuilderMain.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/builder/BuilderVisContr.java" afterPath="$PROJECT_DIR$/src/main/java/builder/BuilderVisContr.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/builder/Util.java" afterPath="$PROJECT_DIR$/src/main/java/builder/Util.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/builder/plugins/LtoPlugin.java" afterPath="$PROJECT_DIR$/src/main/java/builder/plugins/LtoPlugin.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/events/ControlObjectEvent.java" afterPath="$PROJECT_DIR$/src/main/java/events/ControlObjectEvent.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/events/ObjectEvent.java" afterPath="$PROJECT_DIR$/src/main/java/events/ObjectEvent.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/events/PresenterImageUpdateEvent.java" afterPath="$PROJECT_DIR$/src/main/java/events/PresenterImageUpdateEvent.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/events/ScreenDispatchEvent.java" afterPath="$PROJECT_DIR$/src/main/java/events/ScreenDispatchEvent.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/events/VoteChangeEvent.java" afterPath="$PROJECT_DIR$/src/main/java/events/VoteChangeEvent.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/guice/CommonModule.java" afterPath="$PROJECT_DIR$/src/main/java/guice/CommonModule.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/JsonFileConnector.java" afterPath="$PROJECT_DIR$/src/main/java/io/JsonFileConnector.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/TextonFileIo.java" afterPath="$PROJECT_DIR$/src/main/java/io/TextonFileIo.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/TextonIo.java" afterPath="$PROJECT_DIR$/src/main/java/io/TextonIo.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/CommsManager.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/CommsManager.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/CommsManagerImpl.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/CommsManagerImpl.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/CommsManagerImplProvider.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/CommsManagerImplProvider.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/ConclusionBuilder.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/ConclusionBuilder.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/Main.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/Main.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/ScreenDispatcher.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/ScreenDispatcher.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/VisContrImpl.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/MyWebSocketServlet.java" afterPath="$PROJECT_DIR$/src/main/java/server/MyWebSocketServlet.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/Server.java" afterPath="$PROJECT_DIR$/src/main/java/server/Server.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/ServerImpl.java" afterPath="$PROJECT_DIR$/src/main/java/server/ServerImpl.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/ServerRunnableImpl.java" afterPath="$PROJECT_DIR$/src/main/java/server/ServerRunnableImpl.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/VoteController.java" afterPath="$PROJECT_DIR$/src/main/java/server/VoteController.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/VoteControllerProvider.java" afterPath="$PROJECT_DIR$/src/main/java/server/VoteControllerProvider.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/WebsocketHandler.java" afterPath="$PROJECT_DIR$/src/main/java/server/WebsocketHandler.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/server/WebsocketHandlerImpl.java" afterPath="$PROJECT_DIR$/src/main/java/server/WebsocketHandlerImpl.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/textonclasses/Graph.java" afterPath="$PROJECT_DIR$/src/main/java/textonclasses/Graph.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/textonclasses/TextonLien.java" afterPath="$PROJECT_DIR$/src/main/java/textonclasses/TextonLien.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/textonclasses/persistence/ImageDeserializer.java" afterPath="$PROJECT_DIR$/src/main/java/textonclasses/persistence/ImageDeserializer.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/textonclasses/persistence/ImageSerializer.java" afterPath="$PROJECT_DIR$/src/main/java/textonclasses/persistence/ImageSerializer.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/CanvasUtil.java" afterPath="$PROJECT_DIR$/src/main/java/util/CanvasUtil.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java" afterPath="$PROJECT_DIR$/src/main/java/util/CompositeTextonCanvas.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/FXCustomDialogs.java" afterPath="$PROJECT_DIR$/src/main/java/util/FXCustomDialogs.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/PropLoader.java" afterPath="$PROJECT_DIR$/src/main/java/util/PropLoader.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/ResizableCanvas.java" afterPath="$PROJECT_DIR$/src/main/java/util/ResizableCanvas.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/TextonImageCanvas.java" afterPath="$PROJECT_DIR$/src/main/java/util/TextonImageCanvas.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvas.java" afterPath="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvas.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java" afterPath="$PROJECT_DIR$/src/main/java/util/TextonOverlayCanvasOnlyText.java" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/license/license.properties" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tests/ConclusionTest.java" afterPath="$PROJECT_DIR$/src/test/java/tests/ConclusionTest.java" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tests/GuiceTestModule.java" afterPath="$PROJECT_DIR$/src/test/java/tests/GuiceTestModule.java" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tests/JavaFXThreadingRule.java" afterPath="$PROJECT_DIR$/src/test/java/tests/JavaFXThreadingRule.java" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tests/Util.java" afterPath="$PROJECT_DIR$/src/test/java/tests/Util.java" />
+      <change beforePath="$PROJECT_DIR$/travis.yml" afterPath="$PROJECT_DIR$/.travis.yml" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -81,8 +33,8 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="travis.yml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/travis.yml">
+      <file leaf-file-name=".travis.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.travis.yml">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="22">
               <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
@@ -1262,7 +1214,7 @@
       <workItem from="1547093594252" duration="359000" />
       <workItem from="1558098292380" duration="832000" />
       <workItem from="1559677484680" duration="2978000" />
-      <workItem from="1559741994112" duration="2990000" />
+      <workItem from="1559741994112" duration="3381000" />
     </task>
     <task id="LOCAL-00001" summary="Cleanup">
       <created>1506642160319</created>
@@ -1432,7 +1384,14 @@
       <option name="project" value="LOCAL" />
       <updated>1524751239950</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="fix compile error in properties">
+      <created>1559746967610</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1559746967610</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1468,7 +1427,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="523811000" />
+    <option name="totallyTimeSpent" value="524202000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1491,11 +1450,11 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32894737" sideWeight="0.50195205" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32849973" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3366228" sideWeight="0.49319214" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28289473" sideWeight="0.49755502" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28289473" sideWeight="0.49755502" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44331065" sideWeight="0.49266502" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28165087" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28165087" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32894737" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294621" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2504183" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1616,7 +1575,8 @@
     <MESSAGE value="Fixed host address in index.js" />
     <MESSAGE value="Fix vote reset on texton change; this version used on first lecture-recital 12-4-18" />
     <MESSAGE value="Fix max vote bug; texts on web clients." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix max vote bug; texts on web clients." />
+    <MESSAGE value="fix compile error in properties" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix compile error in properties" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2009,7 +1969,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/travis.yml">
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="22">
           <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
