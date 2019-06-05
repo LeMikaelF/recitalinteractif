@@ -16,6 +16,8 @@ import guice.FxGuiceModule;
 
 import java.io.IOException;
 //TODO Package program in portable executable for Windows/Apple
+//TODO Replace config file with command line arguments
+//TODO Have «Commencer récital» ask for graph.json location
 public class Main extends Application {
     private final Injector guice = Guice.createInjector(new FxGuiceModule(), new ServletGuiceModule());
 
