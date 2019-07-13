@@ -1,7 +1,6 @@
 tests/JavaFXThreadingRule$OnJFXThreadStatement$2.class
 tests/ConclusionTest.class
 tests/Util.class
-tests/MiscTests.class
 tests/GuiceTestModule.class
 tests/JavaFXThreadingRule$OnJFXThreadStatement.class
 tests/Util$1.class
