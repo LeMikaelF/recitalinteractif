@@ -86,6 +86,14 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- Pour le connecteur de base de données Apache Derby -->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.15.1.3</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
@@ -104,7 +112,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.1</version>
+            <version>2.9.9</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

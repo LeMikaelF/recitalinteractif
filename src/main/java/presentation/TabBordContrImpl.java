@@ -161,6 +161,8 @@ public class TabBordContrImpl implements TabBordContr {
             } else if (event.getSource().equals(menuNaviguerAuTexton)) {
                 naviguerAuTexton();
             } else if (event.getSource().equals(menuOuvrirRecital)) {
+                //TODO Ici, il faut: dialogue pour demander graph.json (ne marchera pas avec sql)
+                //FIXME Ici, réinitialiser le chemin hypertextuel
                 changeTexton(1);
                 startRecitalTimer();
             } else if (event.getSource().equals(menuPrecedent)) {
