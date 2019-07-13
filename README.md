@@ -1,7 +1,7 @@
 *Travis build status*
 [![Build Status](https://travis-ci.com/LeMikaelF/recitalinteractif.svg?branch=master)](https://travis-ci.com/LeMikaelF/recitalinteractif)
 
-###Technologies utilisées
+### Technologies utilisées
 * Logique: Java
 * Dependency Injection: Google Guice
 * Serveur: Jetty (embedded)
