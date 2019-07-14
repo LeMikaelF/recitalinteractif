@@ -4,6 +4,7 @@ import com.google.inject.servlet.GuiceFilter;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import util.PropLoader;
 
 import javax.servlet.DispatcherType;
 import java.net.URI;
@@ -32,7 +33,8 @@ public class ServerRunnableImpl implements ServerRunnable {
         ServerConnector connector = new ServerConnector(server);
         //Changé pour marcher sous Linux
         //connector.setPort(80);
-        connector.setPort(5555);
+        int port = Integer.parseInt(PropLoader.getMap().get("port"));
+        connector.setPort(port);
         server.addConnector(connector);
 
         try {

@@ -14,6 +14,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import server.Server;
 import server.ServerRunnable;
 import util.FXCustomDialogs;
+import util.PropLoader;
 
 import java.io.IOException;
 
@@ -100,7 +101,8 @@ public class BuilderMain extends Application implements Server {
         ServerConnector connector = new ServerConnector(serverRunnable.getServer());
         //Changer pour marcher sous Linux.
         //connector.setPort(80);
-        connector.setPort(5555);
+        int port = Integer.parseInt(PropLoader.getMap().get("port"));
+        connector.setPort(port);
         connector.setHost("localhost");
         serverRunnable.getServer().setConnectors(new Connector[]{connector});
     }

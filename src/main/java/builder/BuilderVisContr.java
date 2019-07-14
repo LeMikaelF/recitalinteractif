@@ -28,6 +28,7 @@ import netscape.javascript.JSObject;
 import org.apache.commons.text.StringEscapeUtils;
 import textonclasses.Graph;
 import util.FXCustomDialogs;
+import util.PropLoader;
 import util.Util;
 
 import java.io.File;
@@ -178,7 +179,8 @@ public class BuilderVisContr {
             //webEngine.load(getClass().getResource("/public/builder/builder.html").toExternalForm());
             //Changé pour marcher sous Linux.
             //webEngine.load("http://localhost/builder/builder.html");
-            webEngine.load("http://localhost:5555/builder/builder.html");
+            String port = PropLoader.getMap().get("port");
+            webEngine.load("http://localhost:" + port + "/builder/builder.html");
             webEngine.getLoadWorker().stateProperty().addListener(
                     (ov, oldState, newState) -> {
                         if (newState == State.SUCCEEDED) {
