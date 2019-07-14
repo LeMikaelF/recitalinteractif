@@ -6,3 +6,4 @@ deploy:
   file: README.md
   on:
     repo: LeMikaelF/recitalinteractif
+    tags: true
