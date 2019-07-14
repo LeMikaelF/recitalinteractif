@@ -6,6 +6,3 @@ deploy:
   file: readme.MD
   on:
     repo: LeMikaelF/recitalinteractif
-      branches:
-        only:
-          - master

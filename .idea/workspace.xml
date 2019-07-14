@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="652f6ee2-4adb-4cc7-8a82-aced81a49174" name="Default" comment="Release">
+    <list default="true" id="652f6ee2-4adb-4cc7-8a82-aced81a49174" name="Default" comment="branch constraint on deploy">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/.travis.yml" afterPath="$PROJECT_DIR$/.travis.yml" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" afterPath="$PROJECT_DIR$/src/main/java/presentation/TabBordContrImpl.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -100,8 +99,8 @@
       <file leaf-file-name=".travis.yml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/.travis.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+            <state relative-caret-position="242">
+              <caret line="7" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -171,6 +170,9 @@
       <map>
         <entry key="$PROJECT_DIR$" value="conclusionDansVis" />
       </map>
+    </option>
+    <option name="PUSH_TAGS">
+      <GitPushTagMode />
     </option>
   </component>
   <component name="GradleLocalSettings">
@@ -1226,7 +1228,7 @@
       <workItem from="1559741994112" duration="13981000" />
       <workItem from="1562116751270" duration="60000" />
       <workItem from="1563034258583" duration="1337000" />
-      <workItem from="1563035779481" duration="13941000" />
+      <workItem from="1563035779481" duration="16172000" />
     </task>
     <task id="LOCAL-00001" summary="Cleanup">
       <created>1506642160319</created>
@@ -1459,7 +1461,21 @@
       <option name="project" value="LOCAL" />
       <updated>1563078139322</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="travis integration with gh releases">
+      <created>1563080066774</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1563080066774</updated>
+    </task>
+    <task id="LOCAL-00035" summary="branch constraint on deploy">
+      <created>1563080767834</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1563080767834</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1495,7 +1511,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="550140000" />
+    <option name="totallyTimeSpent" value="552371000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1623,8 +1639,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="test" />
-    <MESSAGE value="server working" />
     <MESSAGE value="tabbord wired up, graph connector written; not tested" />
     <MESSAGE value="Conclusion terminée" />
     <MESSAGE value="Fenêtre principale et visualisation d'image du builder terminées." />
@@ -1648,7 +1662,9 @@
     <MESSAGE value="Update vis.js" />
     <MESSAGE value="Fix readme markdown" />
     <MESSAGE value="Move port definition to properties file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Move port definition to properties file" />
+    <MESSAGE value="travis integration with gh releases" />
+    <MESSAGE value="branch constraint on deploy" />
+    <option name="LAST_COMMIT_MESSAGE" value="branch constraint on deploy" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2210,8 +2226,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.travis.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+        <state relative-caret-position="242">
+          <caret line="7" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding />
         </state>
       </provider>
