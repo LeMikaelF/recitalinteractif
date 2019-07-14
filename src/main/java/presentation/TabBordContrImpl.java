@@ -202,12 +202,12 @@ public class TabBordContrImpl implements TabBordContr {
                 }
             }
         } else {
-            //TODO Verify max-checking code
+
             //Determine which link has the most votes
             int max = 0;
             Vote vote = Vote.A;
             for (int i = 0; i < votes.size() - 1; i++) {
-                if (max < votes.get(i).get()) {
+                if (votes.get(i).get() > max) {
                     max = votes.get(i).get();
                     vote = Vote.values()[i];
                 }

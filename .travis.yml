@@ -1,1 +1,8 @@
 language: java
+deploy:
+  provider: releases
+  api_key:
+    secure: DEb/fNzGpnJUQWJxe4wQJcUDUe5hdUkj7CVLCTfhC+Z0smv+X+TJsln69amVxlWR+Ae3RUCtG/b8lXX0FpUNsurgfRXViKJSmIvf+3clFJ/0wmy/YNm1Kr7bixBG33NPAD9cH+TkjW4KuzWCx4Ku0pUHyjUL15sG6XGRfJwOYBnwfmhIrfYYGWsIOjQAQORxDxyE8zTNOYlh4p17W+q0tcaOfgikb/1Wub3qG8Ic/naFXzquVxjURo4UJXqve/6hoNdpmm2ws00M6xuLH1nYTI1/IQyFcwLPLz72e1AyeK2EZhc36TUTeVFQ7SRM7AmtJcnsj/h85Uq5sMDP8g326aegh8uYJnOIset+y48XFVqOMVAB99zRKXSja8NJqKbX5e4YEQU5bnqnMGL/NTsBaZPBZh3lr+/0cIlVqLMbEbfKDggycJ/mAAKrZIyEt//S7oFRrn7G6WRDJLeaF4u5kOD1NXxIWy6Wncu52sY1tS12XbBRtWzw/fhQwcBZtYJ1QK0CveNd8XIxpbLVcgo0G9Ypdfp5EkL343B5dImyStl0G0I9BfQYd9Lvm+54/Kkv5ca87lsZHjyrl3LP67PNlSJy5jfaLQOFMpKp1EcTmuJ2uwr6JKIAhpe12io8fSDSNbkjG04IPWjEVrstRlWJ8oWfLYftVTCzS4Xy6NyomHw=
+  file: readme.MD
+  on:
+    repo: LeMikaelF/recitalinteractif
