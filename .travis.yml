@@ -1,4 +1,6 @@
-language: java
+machine:
+  java:
+    version: oraclejdk8
 deploy:
   provider: releases
   file: README.md
