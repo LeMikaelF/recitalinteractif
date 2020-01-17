@@ -39,3 +39,7 @@
 
 # IntelliJ
 out/
+
+target/
+*.iml
+.idea/
