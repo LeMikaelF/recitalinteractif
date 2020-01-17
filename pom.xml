@@ -15,11 +15,11 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.openjfx</groupId>
+                <groupId>com.zenjava</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.2</version>
+                <version>8.8.3</version>
                 <configuration>
-                    <mainClass>HelloFX</mainClass>
+                    <mainClass>presentation.Main</mainClass>
                 </configuration>
             </plugin>
             <plugin>
