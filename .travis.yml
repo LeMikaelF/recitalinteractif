@@ -1,4 +1,6 @@
-dist: trusty
+language: java
+jdk:
+  - oraclejdk9
 deploy:
   provider: releases
   file: README.md
