@@ -1,6 +1,4 @@
-language: java
-jdk:
-  - oraclejdk8
+dist: trusty
 deploy:
   provider: releases
   file: README.md
