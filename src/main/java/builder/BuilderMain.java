@@ -99,8 +99,6 @@ public class BuilderMain extends Application implements Server {
         t.setDaemon(true);
         t.start();
         ServerConnector connector = new ServerConnector(serverRunnable.getServer());
-        //Changer pour marcher sous Linux.
-        //connector.setPort(80);
         int port = Integer.parseInt(PropLoader.getMap().get("port"));
         connector.setPort(port);
         connector.setHost("localhost");
