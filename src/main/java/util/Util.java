@@ -105,16 +105,4 @@ public class Util {
         return true;
     }
 
-    public static int ccToInt(Vote cc) {
-        Map<Vote, Integer> map = new HashMap<>();
-        map.put(Vote.A, 0);
-        map.put(Vote.B, 1);
-        map.put(Vote.C, 2);
-        map.put(Vote.D, 3);
-        return map.get(cc);
-    }
-
-    public static void toggleProperty(BooleanProperty prop) {
-        prop.set(!prop.get());
-    }
 }

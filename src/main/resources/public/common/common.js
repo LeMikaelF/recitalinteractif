@@ -1,4 +1,3 @@
-//Ceci sont les options appliquées au graphique avec Nastasia.
 //Attention: j'ai utilisé la propriété «sélectionné» pour simuler les textons déjà parcourus.
 //Dans l'implémentation réelle, les noeuds sélectionnés devront être pareils aux autres,
 //mais ceux qui ont déjà été parcourus sont représentés dans ce jeu d'options par l'option sélectionné.
@@ -47,36 +46,13 @@ var optionsNastasia = {
                 "min": 13
             }
         },
-        /*"shadow": {
-            "enabled": true,
-            "size": 11,
-            "x": 0,
-            "y": 0
-        },*/
         "width": 1.5,
         "smooth": false
     },
     "interaction": {
         "navigationButtons": true
     },
-    /* Ceci sont les options choisies avec Nastasia, mais elle ne montrent pas bien la structure du réseau.
     "physics": {
-        "enabled": true,
-        "forceAtlas2Based": {
-            "springLength": 500,
-            "avoidOverlap": 0.56
-        },
-        "minVelocity": 0.75,
-        "solver": "forceAtlas2Based"
-    }*/
-    "physics": {
-        /*"repulsion": {
-            "centralGravity": 0,
-            //"springLength": 330,
-            "springLength": 1500,
-            "springConstant": 0.065,
-            "nodeDistance": 405
-        },*/
         "forceAtlas2Based": {
             "avoidOverlap": 1,
             "springConstant": 0.02,
