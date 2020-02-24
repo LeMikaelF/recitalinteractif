@@ -43,3 +43,5 @@ out/
 target/
 *.iml
 .idea/
+
+Presentation.iml
