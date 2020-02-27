@@ -37,15 +37,6 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//TODO Ajouter un utilitaire de validation du graphe (peut être un plugin).
-//À valider: Maximum 4 liens par texton
-//Minimum 2 liens par texton
-//Pas de lien vers soi-même (pas de boucle d'un texton vers lui-même)
-//Le numéro des fichiers des textons correspond au numéro inscrit dans le json (dans le fichier).
-//Pas deux textons musicaux qui se suivent
-//Le texton d'accueil n'a pas de lien entrant.
-//Pas de liens réciproques (commentaire: les liens réciproques ne veulent pas dire un aller-retour. Il pourra y avoir des liens réciproques 10-17.)
-//... autres, au besoin.
 public class BuilderVisContr {
 
     private final JavaApplication javaApplication = new JavaApplication();
@@ -176,9 +167,7 @@ public class BuilderVisContr {
         try {
             graph = textonIo.getGraph();
             path = file.toPath();
-            //webEngine.load(getClass().getResource("/public/builder/builder.html").toExternalForm());
-            //Changé pour marcher sous Linux.
-            //webEngine.load("http://localhost/builder/builder.html");
+
             String port = PropLoader.getMap().get("port");
             webEngine.load("http://localhost:" + port + "/builder/builder.html");
             webEngine.getLoadWorker().stateProperty().addListener(
