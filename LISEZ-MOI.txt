@@ -1,8 +1,0 @@
-Attention: ceci est une version archivée du logiciel contrôleur utilisé
-dans le doctorat de Mikaël Francoeur. Le lecteur trouvera une version
-plus à jour sur la page personnelle Github de l'auteur:
-
-https://github.com/LeMikaelF/recitalinteractif
-
-Ce logiciel archivé n'est pas conçu pour une utilisation commerciale et ne
-comporte aucune garantie.
