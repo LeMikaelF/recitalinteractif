@@ -22,10 +22,10 @@ Le logiciel génère deux fenêtres sur l'ordinateur du présentateur (il est re
 Un utilitaire d'écriture de modules et d'édition de graphes est disponible en lançant le programme avec le flag `--builder`. Les modules (nommés « textons » dans le logiciel) doivent être placés dans un dossier avec le fichier du graphe (nommé `graph.json`). Ce dossier est indiqué dans le fichier `config.properties`, et correspond à la propriété `location`.
 
 ## 1 - Tableau de bord
-![Capture d'écran du tableau de bord](docs/Tableau%20de%20bord.png)
+![Capture d'écran du tableau de bord](img/Tableau%20de%20bord.png)
 
 ## 2 - Écran de présentation
-![Capture d'écran de l'écran de présentation](docs/Écran%20de%20présentation.png)
+![Capture d'écran de l'écran de présentation](img/Écran%20de%20présentation.png)
 
 ## 3 - Interface de vote
-![Capture d'écran de l'interface de vote](docs/Interface%20de%20vote.png)
+![Capture d'écran de l'interface de vote](img/Interface%20de%20vote.png)
